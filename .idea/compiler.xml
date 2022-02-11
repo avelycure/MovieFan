@@ -4,6 +4,8 @@
     <bytecodeTargetLevel target="1.7">
       <module name="MovieFan.app" target="11" />
       <module name="MovieFan.data" target="11" />
+      <module name="MovieFan.movie" target="11" />
+      <module name="MovieFan.person" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
