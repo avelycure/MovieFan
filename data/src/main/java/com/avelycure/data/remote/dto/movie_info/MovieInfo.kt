@@ -4,7 +4,7 @@ import com.avelycure.data.remote.dto.movie.MovieResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class DetailResponse(
+data class MovieInfo(
     val adult: Boolean,
     val backdrop_path: String?,
     val belongs_to_collection: MovieCollection?,
