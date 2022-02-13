@@ -1,5 +1,7 @@
 package com.avelycure.domain.repository
 
-interface IMovieRepository {
+import com.avelycure.domain.models.Movie
 
+interface IMovieRepository {
+    suspend fun getPopularMovies(nextPage: Int): List<Movie>
 }
