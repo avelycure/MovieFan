@@ -1,23 +1,21 @@
-package com.avelycure.data.remote.service.movie
+package com.avelycure.data.remote.service
 
-import com.avelycure.data.constants.RequestConstants
-import com.avelycure.data.remote.dto.movie.MovieResponse
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.utils.io.errors.*
 
-class SearchMovieService(
+class PopularMovieService(
     private val client: HttpClient
 ) {
-    suspend fun getMovieByName(query: String, page: Int): MovieResponse {
+    suspend fun getPopularMovies(nextPage: Int): com.avelycure.data.remote.dto.movie.MovieResponse {
         return try {
             client.get {
-                with(RequestConstants) {
-                    url("$BASE_URL/search/movie?api_key=$API_KEY&query=$query&page=$page")
+                with(com.avelycure.data.constants.RequestConstants){
+                    url("$BASE_URL/$POPULAR_MOVIES?api_key=$API_KEY&page=$nextPage")
                 }
             }
-        } catch (e: RedirectResponseException) {
+        }catch (e: RedirectResponseException) {
             throw Exception("Further action needs to be taken in order to complete the request")
         } catch (e: ClientRequestException) {
             throw Exception("The request contains bad syntax or cannot be fulfilled")

@@ -1,7 +1,5 @@
-package com.avelycure.data.remote.service.movie
+package com.avelycure.data.remote.service
 
-import com.avelycure.data.constants.RequestConstants
-import com.avelycure.data.remote.dto.movie_info.MovieInfo
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -10,10 +8,10 @@ import io.ktor.utils.io.errors.*
 class MovieInfoService(
     private val client: HttpClient
 ) {
-    suspend fun getMovieDetail(id: Int): MovieInfo {
+    suspend fun getMovieDetail(id: Int): com.avelycure.data.remote.dto.movie_info.MovieInfo {
         return try {
             client.get {
-                with(RequestConstants) {
+                with(com.avelycure.data.constants.RequestConstants) {
                     url("$BASE_URL/movie/$id?api_key=$API_KEY&append_to_response=$CREDITS,$MOVIE_IMAGES,$SIMILAR_MOVIES")
                 }
             }
