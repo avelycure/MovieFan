@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.avelycure.domain.models.Movie
 import com.avelycure.domain.state.DataState
 import com.avelycure.movie.domain.interactors.GetPopularMovies
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,14 +19,17 @@ class HomeViewModel
 ) : ViewModel() {
     val state: MutableState<HomeState> = mutableStateOf(HomeState())
 
-    fun fetchPopularMovies(nextPage: Int) {
+    fun fetchPopularMovies() {
         viewModelScope.launch {
             getPopularMovies
-                .execute(nextPage)
+                .execute(state.value.lastVisiblePage)
                 .collect { dataState ->
                     when (dataState) {
                         is DataState.Data -> {
-                            state.value = state.value.copy(movies = dataState.data ?: emptyList())
+                            state.value = state.value.copy(
+                                movies = dataState.data ?: emptyList(),
+                                lastVisiblePage = state.value.lastVisiblePage + 1
+                            )
                         }
                         is DataState.Response -> {
                         }
