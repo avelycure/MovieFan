@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/movie" />
             <option value="$PROJECT_DIR$/movie-info" />
             <option value="$PROJECT_DIR$/person" />
+            <option value="$PROJECT_DIR$/resources" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
