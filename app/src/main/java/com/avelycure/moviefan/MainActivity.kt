@@ -9,6 +9,13 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.avelycure.movie.presentation.HomeScreen
 import com.avelycure.movie.presentation.HomeViewModel
 import com.avelycure.moviefan.ui.theme.MovieFanTheme
@@ -17,31 +24,36 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val homeViewModel: HomeViewModel by viewModels()
+    fun NavGraphBuilder.addHomeScreen(
+        navController1: NavController
+    ){
+        composable(route = "popular_movies"){
+        val homeViewModel: HomeViewModel = hiltViewModel()
+            HomeScreen(
+                state = homeViewModel.state.value,
+                fetchPopularMovies = homeViewModel::fetchPopularMovies
+            )
+        }
+    }
+
+
+    private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MovieFanTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    HomeScreen(state = homeViewModel.state.value,
-                        fetchPopularMovies = { page -> homeViewModel.fetchPopularMovies(page) })
-                }
+                navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = "popular_movies",
+                    builder = {
+                        addHomeScreen(
+                            navController
+                        )
+                    }
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MovieFanTheme {
-        Greeting("Android")
     }
 }
