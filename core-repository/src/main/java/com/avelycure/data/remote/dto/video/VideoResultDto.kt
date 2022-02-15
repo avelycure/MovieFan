@@ -3,7 +3,7 @@ package com.avelycure.data.remote.dto.video
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class VideoResult(
+data class VideoResultDto(
     val iso_639_1: String,
     val iso_3166_1: String,
     val name: String,

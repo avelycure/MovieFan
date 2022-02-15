@@ -1,7 +1,7 @@
 package com.avelycure.data.remote.service
 
 import com.avelycure.data.constants.RequestConstants
-import com.avelycure.data.remote.dto.movie.MovieResponse
+import com.avelycure.data.remote.dto.movie.MovieResponseDto
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -10,7 +10,7 @@ import io.ktor.utils.io.errors.*
 class PopularMovieService(
     private val client: HttpClient
 ) {
-    suspend fun getPopularMovies(nextPage: Int): MovieResponse {
+    suspend fun getPopularMovies(nextPage: Int): MovieResponseDto {
         return try {
             client.get {
                 with(RequestConstants){

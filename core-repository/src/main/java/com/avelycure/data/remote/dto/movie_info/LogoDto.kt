@@ -3,7 +3,7 @@ package com.avelycure.data.remote.dto.movie_info
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Logo(
+data class LogoDto(
     val aspect_ratio: Float,
     val height: Int,
     val iso_639_1: String?,

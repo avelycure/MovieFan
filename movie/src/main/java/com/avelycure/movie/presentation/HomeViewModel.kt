@@ -4,7 +4,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.avelycure.domain.models.Movie
 import com.avelycure.domain.state.DataState
 import com.avelycure.movie.domain.interactors.GetPopularMovies
 import dagger.hilt.android.lifecycle.HiltViewModel

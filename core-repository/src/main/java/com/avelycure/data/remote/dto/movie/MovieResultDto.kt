@@ -3,7 +3,7 @@ package com.avelycure.data.remote.dto.movie
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MovieResult(
+data class MovieResultDto(
     val poster_path: String?,
     val adult: Boolean,
     val overview: String,

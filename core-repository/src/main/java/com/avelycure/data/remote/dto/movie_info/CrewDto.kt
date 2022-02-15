@@ -3,7 +3,7 @@ package com.avelycure.data.remote.dto.movie_info
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Cast(
+data class CrewDto(
     val adult: Boolean,
     val gender: Int?,
     val id: Int,
@@ -12,8 +12,7 @@ data class Cast(
     val original_name: String,
     val popularity: Float,
     val profile_path: String?,
-    val cast_id: Int,
-    val character: String,
     val credit_id: String,
-    val order: Int
+    val department: String,
+    val job: String
 )

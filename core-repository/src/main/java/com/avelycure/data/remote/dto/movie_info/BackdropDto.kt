@@ -3,7 +3,7 @@ package com.avelycure.data.remote.dto.movie_info
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Backdrop(
+data class BackdropDto(
     val aspect_ratio: Float,
     val file_path: String,
     val height: Int,

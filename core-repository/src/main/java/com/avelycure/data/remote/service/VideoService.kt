@@ -1,5 +1,6 @@
 package com.avelycure.data.remote.service
 
+import com.avelycure.data.remote.dto.video.VideoResponseDto
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -8,7 +9,7 @@ import io.ktor.utils.io.errors.*
 class VideoService(
     private val client: HttpClient
 ) {
-    suspend fun getVideos(id: Int): com.avelycure.data.remote.dto.video.VideoResponse {
+    suspend fun getVideos(id: Int): VideoResponseDto {
         return try {
             client.get {
                 with(com.avelycure.data.constants.RequestConstants) {

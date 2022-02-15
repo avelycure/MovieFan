@@ -2,7 +2,7 @@ package com.avelycure.domain.models
 
 data class Person(
     val id: Int,
-    val profilePath: String?,
+    val profilePath: String,
     val adult: Boolean,
     val name: String,
     val popularity: Float,
@@ -21,3 +21,5 @@ data class Person(
     var homepage: String? = ""
     var profileImages: List<Profile> = emptyList()
 }
+
+data class Profile(val path: String)

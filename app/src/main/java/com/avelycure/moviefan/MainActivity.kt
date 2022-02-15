@@ -18,24 +18,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.avelycure.movie.presentation.HomeScreen
 import com.avelycure.movie.presentation.HomeViewModel
+import com.avelycure.moviefan.destinations.addHomeScreen
+import com.avelycure.moviefan.destinations.addMovieInfoScreen
 import com.avelycure.moviefan.ui.theme.MovieFanTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    fun NavGraphBuilder.addHomeScreen(
-        navController1: NavController
-    ){
-        composable(route = "popular_movies"){
-        val homeViewModel: HomeViewModel = hiltViewModel()
-            HomeScreen(
-                state = homeViewModel.state.value,
-                fetchPopularMovies = homeViewModel::fetchPopularMovies
-            )
-        }
-    }
-
 
     private lateinit var navController: NavHostController
 
@@ -49,6 +38,9 @@ class MainActivity : ComponentActivity() {
                     startDestination = "popular_movies",
                     builder = {
                         addHomeScreen(
+                            navController
+                        )
+                        addMovieInfoScreen(
                             navController
                         )
                     }

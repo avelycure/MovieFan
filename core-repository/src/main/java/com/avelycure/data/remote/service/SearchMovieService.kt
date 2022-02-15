@@ -1,5 +1,6 @@
 package com.avelycure.data.remote.service
 
+import com.avelycure.data.remote.dto.movie.MovieResponseDto
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -8,7 +9,7 @@ import io.ktor.utils.io.errors.*
 class SearchMovieService(
     private val client: HttpClient
 ) {
-    suspend fun getMovieByName(query: String, page: Int): com.avelycure.data.remote.dto.movie.MovieResponse {
+    suspend fun getMovieByName(query: String, page: Int): MovieResponseDto {
         return try {
             client.get {
                 with(com.avelycure.data.constants.RequestConstants) {

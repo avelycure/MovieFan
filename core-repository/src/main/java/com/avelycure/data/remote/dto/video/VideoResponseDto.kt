@@ -3,7 +3,7 @@ package com.avelycure.data.remote.dto.video
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class VideoResponse(
+data class VideoResponseDto(
     val id: Int,
-    val results: List<VideoResult>
+    val results: List<VideoResultDto>
 )
