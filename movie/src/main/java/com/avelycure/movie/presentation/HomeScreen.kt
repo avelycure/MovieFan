@@ -14,12 +14,14 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
+import coil.size.OriginalSize
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
@@ -60,7 +62,6 @@ fun MoviesList(
                     .fillMaxWidth()
                     .height(251.dp)
                     .background(Color.Blue)
-                    .padding(vertical = 4.dp)
                     .clickable {
                         openMoreInfoScreen(movie.movieId)
                     }
@@ -100,14 +101,20 @@ fun LazyListState.OnBottomReached(
 @Composable
 fun MovieCard(movie: Movie, modifier: Modifier) {
     Row(
-        modifier = modifier
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Image(
-            painter = rememberImagePainter(RequestConstants.IMAGE + movie.posterPath),
+            painter = rememberImagePainter(RequestConstants.IMAGE + movie.posterPath,
+                builder = { size(OriginalSize) }),
+            modifier = Modifier.fillMaxHeight(),
+            contentDescription = null,
+            contentScale = ContentScale.FillHeight
+        )
+        Spacer(
             modifier = Modifier
-                .width(200.dp)
-                .fillMaxHeight(),
-            contentDescription = null
+                .fillMaxHeight()
+                .width(8.dp)
         )
         Column {
             Text(
