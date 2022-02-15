@@ -17,7 +17,7 @@ data class MovieInfo(
     val releaseDate: String,
     val status: String,
     val revenue: Int,
-    val tagline: String?,
+    val tagline: String,
     val title: String,
     val voteAverage: Float,
     val voteCount: Int,

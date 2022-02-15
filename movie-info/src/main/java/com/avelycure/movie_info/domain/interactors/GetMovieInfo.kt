@@ -1,21 +1,35 @@
 package com.avelycure.movie_info.domain.interactors
 
-import android.util.Log
+import com.avelycure.domain.models.MovieInfo
 import com.avelycure.domain.repository.IMovieInfoRepository
-import com.avelycure.domain.repository.IMovieRepository
+import com.avelycure.domain.state.DataState
+import com.avelycure.domain.state.ProgressBarState
+import com.avelycure.domain.state.UIComponent
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class GetMovieInfo(
     private val repository: IMovieInfoRepository,
-    private val repo: IMovieRepository
 ) {
 
-    fun execute(
-        id: Int
-    ) = flow{
-        Log.d("mytag", "IMovieInfo: " + repository.hashCode())
-        Log.d("mytag", "IMovie: " + repo.hashCode())
-        emit(1)
+    fun execute(id: Int): Flow<DataState<MovieInfo>> = flow {
+        try {
+            emit(DataState.Loading(progressBarState = ProgressBarState.Loading))
+
+            emit(DataState.Data(data = repository.getDetails(id)))
+        } catch (e: Exception) {
+            emit(
+                DataState.Response<MovieInfo>(
+                    uiComponent = UIComponent.Dialog(
+                        description = e.message
+                            ?: "GetMovieInfo: error occurred + ${e.stackTrace} + ${e.cause}"
+                    )
+                )
+            )
+        } finally {
+            emit(DataState.Loading(progressBarState = ProgressBarState.Loading))
+
+        }
     }
 
 }
