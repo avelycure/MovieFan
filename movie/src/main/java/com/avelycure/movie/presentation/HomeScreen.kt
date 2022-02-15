@@ -45,22 +45,27 @@ fun MoviesList(movies: List<Movie>,
             MovieCard(movie = movie)
         }
     }
-    listState.OnBottomReached {
+    listState.OnBottomReached(
+        buffer = 8
+    ) {
         fetchPopularMovies()
     }
 }
 
 @Composable
 fun LazyListState.OnBottomReached(
+    buffer: Int = 0,
     loadMore: () -> Unit
 ) {
+    require(buffer >= 0){"buffer cannot be negative"}
+
     val shouldLoadMore = remember {
         derivedStateOf {
 
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
                 ?: return@derivedStateOf true
 
-            lastVisibleItem.index == layoutInfo.totalItemsCount - 1
+            lastVisibleItem.index == layoutInfo.totalItemsCount - 1 - buffer
         }
     }
     LaunchedEffect(shouldLoadMore) {

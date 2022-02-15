@@ -27,7 +27,7 @@ class HomeViewModel
                     when (dataState) {
                         is DataState.Data -> {
                             state.value = state.value.copy(
-                                movies = dataState.data ?: emptyList(),
+                                movies = state.value.movies + (dataState.data ?: emptyList()),
                                 lastVisiblePage = state.value.lastVisiblePage + 1
                             )
                         }
