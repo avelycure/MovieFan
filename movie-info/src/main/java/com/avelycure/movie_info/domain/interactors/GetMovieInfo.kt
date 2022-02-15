@@ -22,13 +22,13 @@ class GetMovieInfo(
                 DataState.Response<MovieInfo>(
                     uiComponent = UIComponent.Dialog(
                         description = e.message
-                            ?: "GetMovieInfo: error occurred + ${e.stackTrace} + ${e.cause}"
+                            ?: "GetMovieInfo: error occurred + ${e.stackTrace} + ${e.cause}",
+                        title = "Error"
                     )
                 )
             )
         } finally {
-            emit(DataState.Loading(progressBarState = ProgressBarState.Loading))
-
+            emit(DataState.Loading(progressBarState = ProgressBarState.Idle))
         }
     }
 

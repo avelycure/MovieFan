@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-
+    implementation(project(':resources'))
     implementation(project(':core-models'))
     implementation(project(':core-repository'))
 

@@ -21,7 +21,8 @@ class GetPopularMovies(
             emit(
                 DataState.Response<List<Movie>>(
                     uiComponent = UIComponent.Dialog(
-                        description = e.message ?: "GetPopularMovies: error occurred + ${e.stackTrace} + ${e.cause}"
+                        description = e.message ?: "GetPopularMovies: error occurred + ${e.stackTrace} + ${e.cause}",
+                        title = "Error"
                     )
                 )
             )

@@ -26,6 +26,8 @@ import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
 import com.avelycure.movie.constants.HomeConstants.BUFFER_SIZE
+import com.avelycure.resources.BaseScreen
+import com.avelycure.resources.OnBottomReached
 import kotlinx.coroutines.flow.collect
 
 @Composable
@@ -34,11 +36,14 @@ fun HomeScreen(
     fetchPopularMovies: () -> Unit,
     openMoreInfoScreen: (Int) -> Unit
 ) {
-    MoviesList(
-        movies = state.movies,
-        fetchPopularMovies = fetchPopularMovies,
-        openMoreInfoScreen
-    )
+    BaseScreen(onRemoveHeadFromQueue = { },
+        progressBarState = state.progressBarState) {
+        MoviesList(
+            movies = state.movies,
+            fetchPopularMovies = fetchPopularMovies,
+            openMoreInfoScreen
+        )
+    }
 }
 
 @OptIn(ExperimentalCoilApi::class)
@@ -75,27 +80,6 @@ fun MoviesList(
     }
 }
 
-@Composable
-fun LazyListState.OnBottomReached(
-    buffer: Int = 0,
-    loadMore: () -> Unit
-) {
-    require(buffer >= 0) { "buffer cannot be negative" }
-
-    val shouldLoadMore = remember {
-        derivedStateOf {
-
-            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-                ?: return@derivedStateOf true
-
-            lastVisibleItem.index == layoutInfo.totalItemsCount - 1 - buffer
-        }
-    }
-    LaunchedEffect(shouldLoadMore) {
-        snapshotFlow { shouldLoadMore.value }
-            .collect { if (it) loadMore() }
-    }
-}
 
 @ExperimentalCoilApi
 @Composable

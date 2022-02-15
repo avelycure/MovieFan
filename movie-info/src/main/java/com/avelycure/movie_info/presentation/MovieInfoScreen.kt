@@ -19,6 +19,7 @@ import com.avelycure.movie_info.domain.mappers.getCastString
 import com.avelycure.movie_info.domain.mappers.getCompaniesString
 import com.avelycure.movie_info.domain.mappers.getCountriesString
 import com.avelycure.movie_info.domain.mappers.getGenresString
+import com.avelycure.resources.BaseScreen
 
 @Composable
 fun MovieInfoScreen(
@@ -26,23 +27,28 @@ fun MovieInfoScreen(
     id: Int,
     getMovieInfo: (Int) -> Unit
 ) {
-    LaunchedEffect(Unit) {
-        getMovieInfo(id)
-    }
-    val scrollState = rememberScrollState()
-
-    Column(
-        modifier = Modifier
-            .padding(4.dp)
-            .verticalScroll(scrollState)
+    BaseScreen(
+        onRemoveHeadFromQueue = {},
+        progressBarState = state.progressBarState
     ) {
-        Poster(state.movieInfo)
+        LaunchedEffect(Unit) {
+            getMovieInfo(id)
+        }
+        val scrollState = rememberScrollState()
 
-        Trailer()
+        Column(
+            modifier = Modifier
+                .padding(4.dp)
+                .verticalScroll(scrollState)
+        ) {
+            Poster(state.movieInfo)
 
-        MainInfo(state.movieInfo)
+            Trailer()
 
-        Images()
+            MainInfo(state.movieInfo)
+
+            Images()
+        }
     }
 
 }
@@ -52,7 +58,7 @@ fun MovieInfoScreen(
 fun Poster(movieInfo: MovieInfo) {
     Image(
         painter = rememberImagePainter(RequestConstants.IMAGE + movieInfo.posterPath,
-        builder = {size(OriginalSize)}),
+            builder = { size(OriginalSize) }),
         contentDescription = null,
         contentScale = ContentScale.FillWidth,
         modifier = Modifier
