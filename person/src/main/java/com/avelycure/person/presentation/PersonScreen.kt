@@ -1,4 +1,14 @@
 package com.avelycure.person.presentation
 
-class PersonScreen {
+import androidx.compose.runtime.Composable
+
+@Composable
+fun PersonScreen(
+    state: PersonState,
+    fetchPopularPerson: () -> Unit,
+    showMoreInfo: () -> Unit
+) {
+
+
+
 }
