@@ -2,12 +2,10 @@ package com.avelycure.data.repository
 
 import com.avelycure.data.remote.mappers.toMovie
 import com.avelycure.data.remote.mappers.toMovieInfo
-import com.avelycure.data.remote.service.MovieInfoService
-import com.avelycure.data.remote.service.PopularMovieService
+import com.avelycure.data.remote.service.movie.MovieInfoService
+import com.avelycure.data.remote.service.movie.PopularMovieService
 import com.avelycure.domain.models.Movie
 import com.avelycure.domain.models.MovieInfo
-import com.avelycure.domain.repository.IMovieInfoRepository
-import com.avelycure.domain.repository.IMovieRepository
 import com.avelycure.domain.repository.IRepository
 import javax.inject.Singleton
 

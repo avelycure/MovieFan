@@ -1,19 +1,20 @@
-package com.avelycure.data.remote.service
+package com.avelycure.data.remote.service.person
 
-import com.avelycure.data.remote.dto.movie.MovieResponseDto
+import com.avelycure.data.constants.RequestConstants
+import com.avelycure.data.remote.dto.person.ResponsePerson
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.utils.io.errors.*
 
-class SearchMovieService(
+class PopularPersonService(
     private val client: HttpClient
 ) {
-    suspend fun getMovieByName(query: String, page: Int): MovieResponseDto {
+    suspend fun getPopularPerson(page: Int): ResponsePerson {
         return try {
             client.get {
-                with(com.avelycure.data.constants.RequestConstants) {
-                    url("$BASE_URL/search/movie?api_key=$API_KEY&query=$query&page=$page")
+                with(RequestConstants) {
+                    url("$BASE_URL/person/popular?api_key=$API_KEY&append_to_response=$PERSON_IMAGES&page=${page}")
                 }
             }
         } catch (e: RedirectResponseException) {
@@ -23,7 +24,7 @@ class SearchMovieService(
         } catch (e: ServerResponseException) {
             throw Exception("The server failed to fulfil an apparently valid request")
         } catch (e: IOException) {
-            throw Exception("No internet connection")
+            throw IOException("No internet connection")
         } catch (e: Exception) {
             throw Exception(" Unknown error occurred")
         }

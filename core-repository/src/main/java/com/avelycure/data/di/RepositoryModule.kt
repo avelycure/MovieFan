@@ -1,12 +1,11 @@
 package com.avelycure.data.di
 
-import com.avelycure.data.remote.service.MovieInfoService
-import com.avelycure.data.remote.service.PopularMovieService
+import com.avelycure.data.remote.service.movie.MovieInfoService
+import com.avelycure.data.remote.service.movie.PopularMovieService
 import com.avelycure.data.repository.MovieRepository
 import com.avelycure.domain.repository.IMovieInfoRepository
 import com.avelycure.domain.repository.IMovieRepository
 import com.avelycure.domain.repository.IRepository
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
