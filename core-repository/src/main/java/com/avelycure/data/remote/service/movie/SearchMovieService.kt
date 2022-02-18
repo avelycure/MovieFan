@@ -1,19 +1,19 @@
-package com.avelycure.data.remote.service
+package com.avelycure.data.remote.service.movie
 
-import com.avelycure.data.remote.dto.video.VideoResponseDto
+import com.avelycure.data.remote.dto.movie.MovieResponseDto
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.utils.io.errors.*
 
-class VideoService(
+class SearchMovieService(
     private val client: HttpClient
 ) {
-    suspend fun getVideos(id: Int): VideoResponseDto {
+    suspend fun getMovieByName(query: String, page: Int): MovieResponseDto {
         return try {
             client.get {
                 with(com.avelycure.data.constants.RequestConstants) {
-                    url("$BASE_URL/movie/$id/videos?api_key=$API_KEY")
+                    url("$BASE_URL/search/movie?api_key=$API_KEY&query=$query&page=$page")
                 }
             }
         } catch (e: RedirectResponseException) {

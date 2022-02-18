@@ -1,5 +1,6 @@
 package com.avelycure.movie.presentation
 
+import BaseScreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,20 +15,17 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import coil.size.OriginalSize
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
 import com.avelycure.movie.constants.HomeConstants.BUFFER_SIZE
-import com.avelycure.resources.BaseScreen
-import com.avelycure.resources.OnBottomReached
+import infinite_list.OnBottomReached
 import kotlinx.coroutines.flow.collect
 
 @Composable
@@ -36,8 +34,11 @@ fun HomeScreen(
     fetchPopularMovies: () -> Unit,
     openMoreInfoScreen: (Int) -> Unit
 ) {
-    BaseScreen(onRemoveHeadFromQueue = { },
-        progressBarState = state.progressBarState) {
+    BaseScreen(
+        queue = state.errorQueue,
+        progressBarState = state.progressBarState,
+        onRemoveHeadFromQueue = {}
+    ){
         MoviesList(
             movies = state.movies,
             fetchPopularMovies = fetchPopularMovies,
@@ -67,6 +68,7 @@ fun MoviesList(
                     .fillMaxWidth()
                     .height(251.dp)
                     .background(Color.Blue)
+                    .padding(vertical = 4.dp)
                     .clickable {
                         openMoreInfoScreen(movie.movieId)
                     }
@@ -85,20 +87,14 @@ fun MoviesList(
 @Composable
 fun MovieCard(movie: Movie, modifier: Modifier) {
     Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier = modifier
     ) {
         Image(
-            painter = rememberImagePainter(RequestConstants.IMAGE + movie.posterPath,
-                builder = { size(OriginalSize) }),
-            modifier = Modifier.fillMaxHeight(),
-            contentDescription = null,
-            contentScale = ContentScale.FillHeight
-        )
-        Spacer(
+            painter = rememberImagePainter(RequestConstants.IMAGE + movie.posterPath),
             modifier = Modifier
-                .fillMaxHeight()
-                .width(8.dp)
+                .width(200.dp)
+                .fillMaxHeight(),
+            contentDescription = null
         )
         Column {
             Text(

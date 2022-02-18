@@ -1,4 +1,4 @@
-package com.avelycure.data.remote.service
+package com.avelycure.data.remote.service.movie
 
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.remote.dto.movie.MovieResponseDto
