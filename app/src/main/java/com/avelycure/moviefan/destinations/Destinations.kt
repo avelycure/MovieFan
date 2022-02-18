@@ -1,6 +1,5 @@
 package com.avelycure.moviefan.destinations
 
-import android.os.Bundle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.compose.composable
@@ -9,7 +8,8 @@ import com.avelycure.movie.presentation.HomeViewModel
 import com.avelycure.movie_info.presentation.MovieInfoScreen
 import com.avelycure.movie_info.presentation.MovieInfoViewModel
 import com.avelycure.moviefan.constants.AppConstants.DEFAULT_MOVIE_ID
-import com.avelycure.moviefan.constants.AppConstants.MOVIE_ID
+import com.avelycure.person.presentation.PersonScreen
+import com.avelycure.person.presentation.PersonViewModel
 
 fun NavGraphBuilder.addHomeScreen(
     navController: NavController
@@ -37,6 +37,19 @@ fun NavGraphBuilder.addMovieInfoScreen(
             state = movieInfoViewModel.state.value,
             backStackEntry.arguments?.getInt("movieId") ?: DEFAULT_MOVIE_ID,
             movieInfoViewModel::getDetails
+        )
+    }
+}
+
+fun NavGraphBuilder.addPersonsScreen(
+    navController: NavController
+) {
+    composable(route = "persons") {
+        val personsViewModel: PersonViewModel = hiltViewModel()
+        PersonScreen(
+            state = personsViewModel.state.value,
+            fetchPopularPerson = personsViewModel::getPopularPerson,
+            showMoreInfo = {}
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.avelycure.movie.presentation
 
+import BaseScreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +25,7 @@ import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
 import com.avelycure.movie.constants.HomeConstants.BUFFER_SIZE
+import infinite_list.OnBottomReached
 import kotlinx.coroutines.flow.collect
 
 @Composable
@@ -32,11 +34,17 @@ fun HomeScreen(
     fetchPopularMovies: () -> Unit,
     openMoreInfoScreen: (Int) -> Unit
 ) {
-    MoviesList(
-        movies = state.movies,
-        fetchPopularMovies = fetchPopularMovies,
-        openMoreInfoScreen
-    )
+    BaseScreen(
+        queue = state.errorQueue,
+        progressBarState = state.progressBarState,
+        onRemoveHeadFromQueue = {}
+    ){
+        MoviesList(
+            movies = state.movies,
+            fetchPopularMovies = fetchPopularMovies,
+            openMoreInfoScreen
+        )
+    }
 }
 
 @OptIn(ExperimentalCoilApi::class)
@@ -74,27 +82,6 @@ fun MoviesList(
     }
 }
 
-@Composable
-fun LazyListState.OnBottomReached(
-    buffer: Int = 0,
-    loadMore: () -> Unit
-) {
-    require(buffer >= 0) { "buffer cannot be negative" }
-
-    val shouldLoadMore = remember {
-        derivedStateOf {
-
-            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-                ?: return@derivedStateOf true
-
-            lastVisibleItem.index == layoutInfo.totalItemsCount - 1 - buffer
-        }
-    }
-    LaunchedEffect(shouldLoadMore) {
-        snapshotFlow { shouldLoadMore.value }
-            .collect { if (it) loadMore() }
-    }
-}
 
 @ExperimentalCoilApi
 @Composable

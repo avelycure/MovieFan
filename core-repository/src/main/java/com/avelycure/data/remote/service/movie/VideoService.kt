@@ -1,20 +1,19 @@
-package com.avelycure.data.remote.service
+package com.avelycure.data.remote.service.movie
 
-import com.avelycure.data.constants.RequestConstants
-import com.avelycure.data.remote.dto.movie_info.MovieInfoDto
+import com.avelycure.data.remote.dto.video.VideoResponseDto
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.utils.io.errors.*
 
-class MovieInfoService(
+class VideoService(
     private val client: HttpClient
 ) {
-    suspend fun getMovieDetail(id: Int): MovieInfoDto {
+    suspend fun getVideos(id: Int): VideoResponseDto {
         return try {
             client.get {
-                with(RequestConstants) {
-                    url("$BASE_URL/movie/$id?api_key=$API_KEY&append_to_response=$CREDITS,$MOVIE_IMAGES,$SIMILAR_MOVIES")
+                with(com.avelycure.data.constants.RequestConstants) {
+                    url("$BASE_URL/movie/$id/videos?api_key=$API_KEY")
                 }
             }
         } catch (e: RedirectResponseException) {
@@ -24,7 +23,7 @@ class MovieInfoService(
         } catch (e: ServerResponseException) {
             throw Exception("The server failed to fulfil an apparently valid request")
         } catch (e: IOException) {
-            throw IOException("No internet connection")
+            throw Exception("No internet connection")
         } catch (e: Exception) {
             throw Exception(" Unknown error occurred")
         }
