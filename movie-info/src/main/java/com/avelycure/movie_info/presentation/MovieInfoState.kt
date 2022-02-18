@@ -2,8 +2,11 @@ package com.avelycure.movie_info.presentation
 
 import com.avelycure.domain.models.MovieInfo
 import com.avelycure.domain.state.ProgressBarState
+import com.avelycure.domain.state.Queue
+import com.avelycure.domain.state.UIComponent
 
 data class MovieInfoState(
+    val errorQueue: Queue<UIComponent> = Queue(mutableListOf()),
     val progressBarState: ProgressBarState = ProgressBarState.Idle,
     val movieInfo: MovieInfo = MovieInfo(
         false, 0, "", "", "", "",

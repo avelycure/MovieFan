@@ -28,7 +28,7 @@ class GetMovieInfo(
                 )
             )
         } finally {
-            emit(DataState.Loading(progressBarState = ProgressBarState.Loading))
+            emit(DataState.Loading(progressBarState = ProgressBarState.Idle))
 
         }
     }

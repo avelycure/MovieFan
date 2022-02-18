@@ -1,5 +1,6 @@
 package com.avelycure.movie_info.presentation
 
+import BaseScreen
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
@@ -19,6 +20,11 @@ fun MovieInfoScreen(
     id: Int,
     getMovieInfo: (Int) -> Unit
 ) {
+BaseScreen(
+    queue = state.errorQueue,
+    progressBarState = state.progressBarState,
+    onRemoveHeadFromQueue = {}
+) {
     LaunchedEffect(key1 = Unit) {
         getMovieInfo(id)
     }
@@ -30,7 +36,7 @@ fun MovieInfoScreen(
 
         Images()
     }
-
+}
 }
 
 @Composable

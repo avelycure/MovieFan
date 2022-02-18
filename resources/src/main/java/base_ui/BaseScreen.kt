@@ -13,7 +13,7 @@ import com.avelycure.domain.state.UIComponent
 import com.avelycure.domain.state.Queue
 
 @Composable
-fun DefaultScreenUI(
+fun BaseScreen(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     queue: Queue<UIComponent> = Queue(mutableListOf()),
     progressBarState: ProgressBarState = ProgressBarState.Idle,
