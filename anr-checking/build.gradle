@@ -30,3 +30,8 @@ android {
         jvmTarget = '1.8'
     }
 }
+
+dependencies {
+    implementation 'com.google.firebase:firebase-analytics-ktx:20.1.0'
+}
+apply plugin: 'com.google.gms.google-services'

@@ -2,25 +2,17 @@ package com.avelycure.moviefan
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.material.MaterialTheme
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleRegistryOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.avelycure.anr_checking.ANRChecking
-import com.avelycure.movie.presentation.HomeScreen
-import com.avelycure.movie.presentation.HomeViewModel
+import com.avelycure.anr_checking.CrashReporter
 import com.avelycure.moviefan.destinations.addHomeScreen
 import com.avelycure.moviefan.destinations.addMovieInfoScreen
 import com.avelycure.moviefan.destinations.addPersonsScreen
@@ -29,17 +21,18 @@ import com.avelycure.moviefan.ui.theme.MovieFanTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavHostController
     private lateinit var handler: Handler
-    private lateinit var ANRchecker: ANRChecking
+    private lateinit var crashReporter: CrashReporter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handler = Handler(mainLooper)
-        ANRchecker = ANRChecking(handler)
-        ANRchecker.pingMainLooper()
+        crashReporter = CrashReporter(handler, lifecycle, applicationContext)
+        crashReporter.registerObserver()
+        Thread.sleep(6000L)
         setContent {
             MovieFanTheme {
                 navController = rememberNavController()
@@ -65,6 +58,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
 }
