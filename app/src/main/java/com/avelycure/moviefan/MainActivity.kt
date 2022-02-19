@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         handler = Handler(mainLooper)
         crashReporter = CrashReporter(handler, lifecycle, applicationContext)
         crashReporter.registerObserver()
-        Thread.sleep(6000L)
         setContent {
             MovieFanTheme {
                 navController = rememberNavController()

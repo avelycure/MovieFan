@@ -5,6 +5,7 @@ plugins {
     id 'kotlin-android-extensions'
     id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -55,7 +56,7 @@ dependencies {
     implementation(project(":movie"))
     implementation(project(":person"))
     implementation(project(":movie-info"))
-    implementation(project(":anr-checking"))
+    implementation(project(':crash-report'))
 
     //Compose
     implementation "androidx.compose.ui:ui:$compose_version"
@@ -65,19 +66,21 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation 'androidx.activity:activity-compose:1.4.0'
 
+    //Core
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
 
+    //Crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.8'
+
     //Hilt
     implementation "com.google.dagger:hilt-android:2.40.5"
     kapt "com.google.dagger:hilt-compiler:2.40.5"
 
-    //navigation
+    //Navigation
     def nav_version = "2.4.1"
-
     implementation("androidx.navigation:navigation-compose:$nav_version")
-
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 }

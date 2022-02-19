@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -34,4 +35,3 @@ android {
 dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx:20.1.0'
 }
-apply plugin: 'com.google.gms.google-services'

@@ -11,10 +11,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/anr-checking" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core-models" />
             <option value="$PROJECT_DIR$/core-repository" />
+            <option value="$PROJECT_DIR$/crash-report" />
             <option value="$PROJECT_DIR$/movie" />
             <option value="$PROJECT_DIR$/movie-info" />
             <option value="$PROJECT_DIR$/person" />
