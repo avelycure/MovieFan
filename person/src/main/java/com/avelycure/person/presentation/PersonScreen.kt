@@ -1,6 +1,5 @@
 package com.avelycure.person.presentation
 
-import BaseScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,7 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.avelycure.domain.models.Person
 import com.avelycure.person.constants.PersonConstants.BUFFER_SIZE
-import infinite_list.OnBottomReached
+import com.avelycure.resources.BaseScreen
+import com.avelycure.resources.OnBottomReached
 
 @Composable
 fun PersonScreen(

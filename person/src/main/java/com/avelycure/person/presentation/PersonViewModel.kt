@@ -30,6 +30,9 @@ class PersonViewModel
                         )
                     }
                     is DataState.Loading -> {
+                        state.value = state.value.copy(
+                            progressBarState = dataState.progressBarState
+                        )
                     }
                     is DataState.Response -> {
                     }
