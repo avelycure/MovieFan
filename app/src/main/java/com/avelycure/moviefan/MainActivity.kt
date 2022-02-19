@@ -1,6 +1,7 @@
 package com.avelycure.moviefan
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -17,6 +18,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.avelycure.anr_checking.ANRChecking
 import com.avelycure.movie.presentation.HomeScreen
 import com.avelycure.movie.presentation.HomeViewModel
 import com.avelycure.moviefan.destinations.addHomeScreen
@@ -30,9 +32,14 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
+    private lateinit var handler: Handler
+    private lateinit var ANRchecker: ANRChecking
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handler = Handler(mainLooper)
+        ANRchecker = ANRChecking(handler)
+        ANRchecker.pingMainLooper()
         setContent {
             MovieFanTheme {
                 navController = rememberNavController()

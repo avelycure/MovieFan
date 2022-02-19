@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":movie"))
     implementation(project(":person"))
     implementation(project(":movie-info"))
+    implementation(project(":anr-checking"))
 
     //Compose
     implementation "androidx.compose.ui:ui:$compose_version"

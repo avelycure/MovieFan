@@ -48,7 +48,6 @@ dependencies {
     implementation(project(':resources'))
     implementation(project(':core-models'))
     implementation(project(':core-repository'))
-    implementation(project(':resources'))
 
     //Compose
     implementation "androidx.compose.ui:ui:$compose_version"
