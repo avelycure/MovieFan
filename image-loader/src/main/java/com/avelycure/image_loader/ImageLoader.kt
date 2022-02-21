@@ -8,6 +8,7 @@ import android.os.Handler
 import android.widget.ImageView
 import com.avelycure.image_loader.constants.ImageLoaderConstants.POOL_SIZE
 import com.avelycure.image_loader.cache.Cacher
+import com.avelycure.image_loader.target.CustomTarget
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -43,6 +44,17 @@ class ImageLoader(context: Context, threadsNum: Int = POOL_SIZE) {
                 handler.post {
                     imageView.setImageBitmap(image)
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun loadImage(url: String, target: CustomTarget) {
+        executors.execute {
+            try {
+                val bmp = getBitmap(url)
+                target.onResourceReady(bmp)
             } catch (e: Exception) {
                 e.printStackTrace()
             }

@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.avelycure.anr_checking.CrashReporter
+import com.avelycure.image_loader.ImageLoader
 import com.avelycure.moviefan.destinations.addHomeScreen
 import com.avelycure.moviefan.destinations.addMovieInfoScreen
 import com.avelycure.moviefan.destinations.addPersonsScreen
@@ -23,12 +24,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavHostController
     private lateinit var handler: Handler
     private lateinit var crashReporter: CrashReporter
+    private lateinit var imageLoader: ImageLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handler = Handler(mainLooper)
         crashReporter = CrashReporter(handler, lifecycle, applicationContext)
         crashReporter.registerObserver()
+        imageLoader = ImageLoader(this)
         setContent {
             MovieFanTheme {
                 navController = rememberNavController()
@@ -40,7 +43,8 @@ class MainActivity : AppCompatActivity() {
                         startDestination = "popular_movies",
                         builder = {
                             addHomeScreen(
-                                navController
+                                navController,
+                                imageLoader
                             )
                             addMovieInfoScreen(
                                 navController

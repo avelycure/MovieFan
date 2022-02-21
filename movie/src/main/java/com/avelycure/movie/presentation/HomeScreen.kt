@@ -1,5 +1,6 @@
 package com.avelycure.movie.presentation
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,15 +12,16 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
+import com.avelycure.image_loader.target.CustomTarget
 import com.avelycure.movie.constants.HomeConstants.BUFFER_SIZE
 import com.avelycure.resources.BaseScreen
 import com.avelycure.resources.OnBottomReached
@@ -28,17 +30,19 @@ import com.avelycure.resources.OnBottomReached
 fun HomeScreen(
     state: HomeState,
     fetchPopularMovies: () -> Unit,
-    openMoreInfoScreen: (Int) -> Unit
+    openMoreInfoScreen: (Int) -> Unit,
+    loadImage: (String, CustomTarget) -> Unit
 ) {
     BaseScreen(
         queue = state.errorQueue,
         progressBarState = state.progressBarState,
         onRemoveHeadFromQueue = {}
-    ){
+    ) {
         MoviesList(
             movies = state.movies,
             fetchPopularMovies = fetchPopularMovies,
-            openMoreInfoScreen
+            openMoreInfoScreen = openMoreInfoScreen,
+            loadImage = loadImage
         )
     }
 }
@@ -48,7 +52,8 @@ fun HomeScreen(
 fun MoviesList(
     movies: List<Movie>,
     fetchPopularMovies: () -> Unit,
-    openMoreInfoScreen: (Int) -> Unit
+    openMoreInfoScreen: (Int) -> Unit,
+    loadImage: (String, CustomTarget) -> Unit
 ) {
     val listState = rememberLazyListState()
     LazyColumn(
@@ -67,7 +72,8 @@ fun MoviesList(
                     .padding(vertical = 4.dp)
                     .clickable {
                         openMoreInfoScreen(movie.movieId)
-                    }
+                    },
+                loadImage = loadImage
             )
         }
     }
@@ -81,17 +87,44 @@ fun MoviesList(
 
 @ExperimentalCoilApi
 @Composable
-fun MovieCard(movie: Movie, modifier: Modifier) {
+fun MovieCard(movie: Movie,
+              modifier: Modifier,
+              loadImage: (String, CustomTarget) -> Unit) {
     Row(
         modifier = modifier
     ) {
-        Image(
-            painter = rememberImagePainter(RequestConstants.IMAGE + movie.posterPath),
-            modifier = Modifier
-                .width(200.dp)
-                .fillMaxHeight(),
-            contentDescription = null
-        )
+        var image by remember { mutableStateOf<ImageBitmap?>(null) }
+        DisposableEffect(movie.posterPath) {
+
+            val target = object : CustomTarget {
+                override fun onResourceReady(bitmap: Bitmap) {
+                    image = bitmap.asImageBitmap()
+                }
+            }
+
+            loadImage(RequestConstants.IMAGE + movie.posterPath, target)
+
+            onDispose {
+                image = null
+            }
+        }
+
+        if (image != null) {
+            /*Image(
+                painter = rememberImagePainter(RequestConstants.IMAGE + movie.posterPath),
+                modifier = Modifier
+                    .width(200.dp)
+                    .fillMaxHeight(),
+                contentDescription = null
+            )*/
+            Image(
+                image!!,
+                contentDescription = null,
+                modifier = Modifier
+                    .width(200.dp)
+                    .fillMaxHeight(),
+            )
+        }
         Column {
             Text(
                 text = movie.title,
