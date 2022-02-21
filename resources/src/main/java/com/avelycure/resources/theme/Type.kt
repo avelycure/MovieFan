@@ -1,4 +1,4 @@
-package com.avelycure.moviefan.ui.theme
+package com.avelycure.resources.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

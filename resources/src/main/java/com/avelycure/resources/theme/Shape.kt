@@ -1,4 +1,4 @@
-package com.avelycure.moviefan.ui.theme
+package com.avelycure.resources.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
