@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/core-models" />
             <option value="$PROJECT_DIR$/core-repository" />
             <option value="$PROJECT_DIR$/crash-report" />
+            <option value="$PROJECT_DIR$/image-loader" />
             <option value="$PROJECT_DIR$/movie" />
             <option value="$PROJECT_DIR$/movie-info" />
             <option value="$PROJECT_DIR$/person" />
