@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -62,7 +63,7 @@ fun MoviesList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(251.dp)
-                    .background(Color.Blue)
+                    .background(MaterialTheme.colors.surface)
                     .padding(vertical = 4.dp)
                     .clickable {
                         openMoreInfoScreen(movie.movieId)

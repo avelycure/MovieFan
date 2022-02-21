@@ -1,4 +1,4 @@
-package com.avelycure.moviefan.ui.theme
+package com.avelycure.resources.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
@@ -7,24 +7,21 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = Indigo,
+    primaryVariant = Signal,
+    secondary = LightBlue,
+    onSurface = Night,
+    error = Karmin,
+    onError = AlazarRed
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+    surface = Magnolia,
+    onSurface = LightPurple,
+    primary = LightBlue,
+    secondary = Indigo,
+    error = Karmin,
+    onError = AlazarRed,
 )
 
 @Composable

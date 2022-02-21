@@ -1,14 +1,10 @@
-package com.avelycure.moviefan
+package com.avelycure.moviefan.presentation
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Scaffold
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleRegistryOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -16,8 +12,8 @@ import com.avelycure.anr_checking.CrashReporter
 import com.avelycure.moviefan.destinations.addHomeScreen
 import com.avelycure.moviefan.destinations.addMovieInfoScreen
 import com.avelycure.moviefan.destinations.addPersonsScreen
-import com.avelycure.moviefan.ui.bottom_bar.BottomNavigationBar
-import com.avelycure.moviefan.ui.theme.MovieFanTheme
+import com.avelycure.moviefan.presentation.bottom_bar.BottomNavigationBar
+import com.avelycure.resources.theme.MovieFanTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

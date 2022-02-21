@@ -1,4 +1,4 @@
-package com.avelycure.moviefan.ui.bottom_bar
+package com.avelycure.moviefan.presentation.bottom_bar
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
