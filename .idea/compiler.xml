@@ -4,7 +4,6 @@
     <bytecodeTargetLevel target="1.7">
       <module name="MovieFan.app" target="11" />
       <module name="MovieFan.auth-repository" target="11" />
-      <module name="MovieFan.authorization" target="11" />
       <module name="MovieFan.cache-cleaner" target="11" />
       <module name="MovieFan.core-repository" target="11" />
       <module name="MovieFan.crash-report" target="11" />
@@ -12,6 +11,7 @@
       <module name="MovieFan.image-loader" target="11" />
       <module name="MovieFan.movie" target="11" />
       <module name="MovieFan.movie-info" target="11" />
+      <module name="MovieFan.office" target="11" />
       <module name="MovieFan.person" target="11" />
       <module name="MovieFan.resources" target="11" />
     </bytecodeTargetLevel>

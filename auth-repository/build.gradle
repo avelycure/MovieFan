@@ -36,9 +36,6 @@ android {
 dependencies {
     implementation(project(':core-models'))
 
-    //Firebase
-    implementation 'com.google.firebase:firebase-auth-ktx:21.0.1'
-
     //Hilt
     implementation "com.google.dagger:hilt-android:2.40.5"
     kapt "com.google.dagger:hilt-compiler:2.40.5"
