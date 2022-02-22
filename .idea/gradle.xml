@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/core-models" />
             <option value="$PROJECT_DIR$/core-repository" />
             <option value="$PROJECT_DIR$/crash-report" />
+            <option value="$PROJECT_DIR$/google-sign-in" />
             <option value="$PROJECT_DIR$/image-loader" />
             <option value="$PROJECT_DIR$/movie" />
             <option value="$PROJECT_DIR$/movie-info" />

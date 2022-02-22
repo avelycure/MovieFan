@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.avelycure.google_sign_in">
+
+    <application>
+        <activity
+            android:name=".presentation.GoogleSignInActivity"
+            android:exported="true" />
+    </application>
+
+</manifest>
