@@ -1,7 +1,5 @@
 package com.avelycure.movie.presentation
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,20 +11,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
 import com.avelycure.image_loader.ImageLoader
-import com.avelycure.movie.R
 import com.avelycure.movie.constants.HomeConstants.BUFFER_SIZE
 import com.avelycure.resources.BaseScreen
 import com.avelycure.resources.OnBottomReached
@@ -52,7 +44,6 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun MoviesList(
     movies: List<Movie>,
@@ -89,8 +80,6 @@ fun MoviesList(
     }
 }
 
-
-@ExperimentalCoilApi
 @Composable
 fun MovieCard(
     movie: Movie,
