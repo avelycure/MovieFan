@@ -13,9 +13,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object CacheModule {
 
-    @Provides
+    /*@Provides
     @Singleton
     fun provideImageLoader(@ApplicationContext context: Context):ImageLoader{
         return ImageLoader(context)
-    }
+    }*/
 }

@@ -21,12 +21,10 @@ fun NavGraphBuilder.addHomeScreen(
         HomeScreen(
             state = homeViewModel.state.value,
             fetchPopularMovies = homeViewModel::fetchPopularMovies,
-        { id: Int ->
-            navController.navigate("movieInfo/${id}")
-        },
-            {
-                url, target -> imageLoader.loadImage(url, target)
-            }
+            { id: Int ->
+                navController.navigate("movieInfo/${id}")
+            },
+            imageLoader
         )
     }
 }

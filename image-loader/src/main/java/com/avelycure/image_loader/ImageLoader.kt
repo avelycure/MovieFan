@@ -8,15 +8,19 @@ import android.os.Handler
 import android.widget.ImageView
 import com.avelycure.image_loader.constants.ImageLoaderConstants.POOL_SIZE
 import com.avelycure.image_loader.cache.Cacher
-import com.avelycure.image_loader.target.CustomTarget
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class ImageLoader(context: Context, threadsNum: Int = POOL_SIZE) {
+class ImageLoader(
+    context: Context,
+    placeholder: Int,
+    threadsNum: Int = POOL_SIZE
+) {
     private val executors: ExecutorService = Executors.newFixedThreadPool(threadsNum)
     private val handler: Handler = Handler(context.mainLooper)
     private val cacher: Cacher
+    val defaultImage: Bitmap = BitmapFactory.decodeResource(context.resources, placeholder)
 
     init {
         val am = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -50,11 +54,30 @@ class ImageLoader(context: Context, threadsNum: Int = POOL_SIZE) {
         }
     }
 
-    fun loadImage(url: String, target: CustomTarget) {
+    fun loadImage(
+        url: String,
+        onDownloaded: (Bitmap) -> Unit,
+    ) {
         executors.execute {
             try {
                 val bmp = getBitmap(url)
-                target.onResourceReady(bmp)
+                onDownloaded(bmp)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun loadImage(
+        url: String,
+        onDownloaded: (Bitmap) -> Unit,
+        onPreload: (Bitmap) -> Unit
+    ) {
+        executors.execute {
+            try {
+                onPreload(defaultImage)
+                val bmp = getBitmap(url)
+                onDownloaded(bmp)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
