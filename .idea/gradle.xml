@@ -23,6 +23,7 @@
             <option value="$PROJECT_DIR$/office" />
             <option value="$PROJECT_DIR$/person" />
             <option value="$PROJECT_DIR$/resources" />
+            <option value="$PROJECT_DIR$/settings" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

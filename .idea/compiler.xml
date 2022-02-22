@@ -14,6 +14,7 @@
       <module name="MovieFan.office" target="11" />
       <module name="MovieFan.person" target="11" />
       <module name="MovieFan.resources" target="11" />
+      <module name="MovieFan.settings" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
