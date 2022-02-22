@@ -11,6 +11,7 @@
       <module name="MovieFan.image-loader" target="11" />
       <module name="MovieFan.movie" target="11" />
       <module name="MovieFan.movie-info" target="11" />
+      <module name="MovieFan.movie-picker" target="11" />
       <module name="MovieFan.office" target="11" />
       <module name="MovieFan.person" target="11" />
       <module name="MovieFan.resources" target="11" />
