@@ -34,7 +34,11 @@ class CrashReporter(
         lifecycle.addObserver(this)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    /**
+     * Main thread will live even if the app goes to the background.
+     * The only reason to stop tracking is that the app was closed(ON_DESTROY method)
+     */
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun stopLogging() {
         lifecycle.removeObserver(this)
         t.interrupt()
