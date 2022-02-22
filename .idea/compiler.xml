@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.7">
       <module name="MovieFan.app" target="11" />
+      <module name="MovieFan.auth-repository" target="11" />
       <module name="MovieFan.authorization" target="11" />
       <module name="MovieFan.cache-cleaner" target="11" />
       <module name="MovieFan.core-repository" target="11" />

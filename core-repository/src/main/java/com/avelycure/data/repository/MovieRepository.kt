@@ -12,7 +12,6 @@ import com.avelycure.domain.models.Person
 import com.avelycure.domain.repository.IRepository
 import javax.inject.Singleton
 
-@Singleton
 internal class MovieRepository(
     private val popularMovieService: PopularMovieService,
     private val movieInfoService: MovieInfoService,
