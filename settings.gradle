@@ -3,6 +3,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://jitpack.io' }
         jcenter() // Warning: this repository is going to shut down soon
     }
 }
@@ -15,6 +16,10 @@ include ':person'
 include ':movie-info'
 include ':resources'
 include ':crash-report'
-include ':authorization'
+include ':auth-repository'
 include ':image-loader'
 include ':cache-cleaner'
+include ':office'
+include ':settings'
+include ':movie-picker'
+include ':network-service'

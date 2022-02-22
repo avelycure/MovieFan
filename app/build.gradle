@@ -59,7 +59,7 @@ dependencies {
     implementation(project(":movie-info"))
     implementation(project(':crash-report'))
     implementation(project(':image-loader'))
-    implementation(project(':authorization'))
+    implementation(project(':auth-repository'))
     implementation(project(':cache-cleaner'))
 
     //Compose

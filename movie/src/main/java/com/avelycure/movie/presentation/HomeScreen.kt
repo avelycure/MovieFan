@@ -1,7 +1,5 @@
 package com.avelycure.movie.presentation
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,24 +10,24 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
 import com.avelycure.image_loader.ImageLoader
-import com.avelycure.movie.R
 import com.avelycure.movie.constants.HomeConstants.BUFFER_SIZE
+import com.avelycure.movie.constants.HomeConstants.STARS_NUMBER
 import com.avelycure.resources.BaseScreen
 import com.avelycure.resources.OnBottomReached
+import com.avelycure.resources.theme.Gold
+import com.gowtham.ratingbar.RatingBar
+import com.gowtham.ratingbar.RatingBarConfig
+import com.gowtham.ratingbar.StepSize
 
 @Composable
 fun HomeScreen(
@@ -52,7 +50,6 @@ fun HomeScreen(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun MoviesList(
     movies: List<Movie>,
@@ -72,9 +69,8 @@ fun MoviesList(
                 movie = movie,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(251.dp)
+                    .height(256.dp)
                     .background(MaterialTheme.colors.surface)
-                    .padding(vertical = 4.dp)
                     .clickable {
                         openMoreInfoScreen(movie.movieId)
                     },
@@ -89,8 +85,6 @@ fun MoviesList(
     }
 }
 
-
-@ExperimentalCoilApi
 @Composable
 fun MovieCard(
     movie: Movie,
@@ -105,7 +99,7 @@ fun MovieCard(
                 imageLoader.defaultImage.asImageBitmap()
             )
         }
-        DisposableEffect(movie.posterPath) {
+        DisposableEffect(image) {
             imageLoader.loadImage(
                 RequestConstants.IMAGE + movie.posterPath
             ) { bmp ->
@@ -118,25 +112,46 @@ fun MovieCard(
             image,
             contentDescription = null,
             modifier = Modifier
-                .width(200.dp)
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .wrapContentWidth(),
         )
-        Column {
+        Column(
+            modifier = Modifier.padding(8.dp),
+        ) {
             Text(
                 text = movie.title,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .padding(vertical = 2.dp),
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
+                fontSize = 22.sp
             )
             Text(
                 text = movie.originalTitle + ", " + movie.releaseDate.take(4),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .padding(vertical = 2.dp),
                 fontSize = 14.sp
             )
+            Row(verticalAlignment = Alignment.Bottom) {
+                RatingBar(value = movie.voteAverage,
+                    config = RatingBarConfig()
+                        .activeColor(Gold)
+                        .numStars(STARS_NUMBER)
+                        .stepSize(StepSize.HALF),
+                    onValueChange = {},
+                    onRatingChanged = {})
+                Text(
+                    text = movie.voteCount.toString(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(vertical = 2.dp),
+                    fontSize = 10.sp
+                )
+            }
             Text(
                 text = buildString {
                     for (genreId in movie.genreIds)
@@ -144,8 +159,9 @@ fun MovieCard(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
-                fontSize = 16.sp
+                    .wrapContentHeight()
+                    .padding(vertical = 2.dp),
+                fontSize = 14.sp
             )
         }
     }

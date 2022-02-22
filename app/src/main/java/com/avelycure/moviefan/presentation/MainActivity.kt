@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         handler = Handler(mainLooper)
         crashReporter = CrashReporter(handler, lifecycle, applicationContext)
         crashReporter.registerObserver()
-        imageLoader = ImageLoader(this, R.drawable.image_placeholder)
+        imageLoader = ImageLoader(this, R.drawable.placeholder)
         setContent {
             MovieFanTheme {
                 navController = rememberNavController()

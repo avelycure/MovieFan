@@ -12,7 +12,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/authorization" />
+            <option value="$PROJECT_DIR$/auth-repository" />
             <option value="$PROJECT_DIR$/cache-cleaner" />
             <option value="$PROJECT_DIR$/core-models" />
             <option value="$PROJECT_DIR$/core-repository" />
@@ -20,8 +20,12 @@
             <option value="$PROJECT_DIR$/image-loader" />
             <option value="$PROJECT_DIR$/movie" />
             <option value="$PROJECT_DIR$/movie-info" />
+            <option value="$PROJECT_DIR$/movie-picker" />
+            <option value="$PROJECT_DIR$/network-service" />
+            <option value="$PROJECT_DIR$/office" />
             <option value="$PROJECT_DIR$/person" />
             <option value="$PROJECT_DIR$/resources" />
+            <option value="$PROJECT_DIR$/settings" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
