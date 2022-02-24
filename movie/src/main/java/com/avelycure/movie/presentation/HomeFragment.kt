@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.avelycure.domain.constants.MovieConstants.GET_MORE_INFO
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +23,16 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: HomeAdapter
     private val homeViewModel: HomeViewModel by viewModels()
 
+    companion object{
+        fun getInstance(
+            getMoreInfo: (Int) -> Unit
+        ){
+            val homeFragment = HomeFragment()
+            val args=  Bundle().apply {
+            }
+            homeFragment.arguments = args
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
