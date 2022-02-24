@@ -3,60 +3,47 @@ package com.avelycure.moviefan.presentation
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import androidx.activity.compose.setContent
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.Scaffold
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
+import androidx.fragment.app.FragmentManager
 import com.avelycure.anr_checking.CrashReporter
 import com.avelycure.image_loader.ImageLoader
+import com.avelycure.movie.presentation.HomeFragment
+import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.moviefan.R
-import com.avelycure.moviefan.destinations.addHomeScreen
-import com.avelycure.moviefan.destinations.addMovieInfoScreen
-import com.avelycure.moviefan.destinations.addPersonsScreen
-import com.avelycure.moviefan.presentation.bottom_bar.BottomNavigationBar
-import com.avelycure.resources.theme.MovieFanTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var navController: NavHostController
     private lateinit var handler: Handler
     private lateinit var crashReporter: CrashReporter
     private lateinit var imageLoader: ImageLoader
+    private lateinit var fragmentManager: FragmentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
         handler = Handler(mainLooper)
         crashReporter = CrashReporter(handler, lifecycle, applicationContext)
         crashReporter.registerObserver()
         imageLoader = ImageLoader(this, R.drawable.placeholder)
-        setContent {
-            MovieFanTheme {
-                navController = rememberNavController()
-                Scaffold(
-                    bottomBar = { BottomNavigationBar(navController) }
-                ) {
-                    NavHost(
-                        navController = navController,
-                        startDestination = "popular_movies",
-                        builder = {
-                            addHomeScreen(
-                                navController,
-                                imageLoader
-                            )
-                            addMovieInfoScreen(
-                                navController
-                            )
-                            addPersonsScreen(
-                                navController
-                            )
-                        }
-                    )
-                }
-            }
-        }
+        fragmentManager = supportFragmentManager
+
+        loadHomeScreen()
+    }
+
+    private fun loadHomeScreen() {
+        fragmentManager
+            .beginTransaction()
+            .add(R.id.fragment_container, HomeFragment.getInstance { id: Int ->
+                fragmentManager
+                    .beginTransaction()
+                    .add(R.id.fragment_container, MovieInfoFragment.getInstance(id))
+                    .addToBackStack(null)
+                    .commit()
+            })
+            .addToBackStack(null)
+            .commit()
     }
 }

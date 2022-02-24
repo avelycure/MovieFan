@@ -8,16 +8,16 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@drawable/ic_launcher_background"
+        android:label="MovieFan"
+        android:roundIcon="@drawable/ic_launcher_background"
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieFan">
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MovieFan.NoActionBar">
+            android:label="MainActivity"
+            android:theme="@style/Theme.MovieFan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,12 +1,13 @@
 package com.avelycure.movie.presentation
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.avelycure.domain.state.DataState
 import com.avelycure.movie.domain.interactors.GetPopularMovies
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +17,8 @@ class HomeViewModel
 @Inject constructor(
     private val getPopularMovies: GetPopularMovies
 ) : ViewModel() {
-    val state: MutableState<HomeState> = mutableStateOf(HomeState())
+    private val _state = MutableStateFlow(HomeState())
+    val state = _state.asStateFlow()
 
     fun fetchPopularMovies() {
         viewModelScope.launch {
@@ -25,16 +27,17 @@ class HomeViewModel
                 .collect { dataState ->
                     when (dataState) {
                         is DataState.Data -> {
-                            state.value = state.value.copy(
-                                movies = state.value.movies + (dataState.data ?: emptyList()),
-                                lastVisiblePage = state.value.lastVisiblePage + 1
+                            Log.d("mytag", "got data")
+                            _state.value = _state.value.copy(
+                                movies = _state.value.movies + (dataState.data ?: emptyList()),
+                                lastVisiblePage = _state.value.lastVisiblePage + 1
                             )
                         }
                         is DataState.Response -> {
                         }
                         is DataState.Loading -> {
-                            state.value =
-                                state.value.copy(progressBarState = dataState.progressBarState)
+                            _state.value =
+                                _state.value.copy(progressBarState = dataState.progressBarState)
                         }
                     }
                 }
