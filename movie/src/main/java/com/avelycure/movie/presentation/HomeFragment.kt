@@ -15,6 +15,7 @@ import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import java.io.Serializable
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -25,12 +26,14 @@ class HomeFragment : Fragment() {
 
     companion object{
         fun getInstance(
-            getMoreInfo: (Int) -> Unit
-        ){
+            getInfo: (Int) -> Unit
+        ): HomeFragment {
             val homeFragment = HomeFragment()
             val args=  Bundle().apply {
+                putSerializable(GET_MORE_INFO, getInfo as Serializable)
             }
             homeFragment.arguments = args
+            return homeFragment
         }
     }
 
@@ -45,7 +48,6 @@ class HomeFragment : Fragment() {
             homeViewModel.state.collect { homeState ->
                 adapter.data = homeState.movies
                 adapter.notifyDataSetChanged()
-                Log.d("mytag", "collected data")
             }
         }
         return view
@@ -53,14 +55,15 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("mytag", "requested data")
         homeViewModel.fetchPopularMovies()
     }
 
-    fun initViewElements(view: View) {
+    private fun initViewElements(view: View) {
         homeRecyclerView = view.findViewById(R.id.home_rv_movies)
         adapter = HomeAdapter(ImageLoader(view.context, R.drawable.placeholder))
         homeRecyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
         homeRecyclerView.adapter = adapter
+
+        adapter.onClickedItem = arguments?.getSerializable(GET_MORE_INFO) as (Int) -> Unit
     }
 }

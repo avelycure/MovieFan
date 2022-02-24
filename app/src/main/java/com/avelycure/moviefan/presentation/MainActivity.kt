@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager
 import com.avelycure.anr_checking.CrashReporter
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.presentation.HomeFragment
+import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.moviefan.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,7 +36,14 @@ class MainActivity : AppCompatActivity() {
     private fun loadHomeScreen() {
         fragmentManager
             .beginTransaction()
-            .add(R.id.fragment_container, HomeFragment())
+            .add(R.id.fragment_container, HomeFragment.getInstance { id: Int ->
+                fragmentManager
+                    .beginTransaction()
+                    .add(R.id.fragment_container, MovieInfoFragment.getInstance(id))
+                    .addToBackStack(null)
+                    .commit()
+            })
+            .addToBackStack(null)
             .commit()
     }
 }

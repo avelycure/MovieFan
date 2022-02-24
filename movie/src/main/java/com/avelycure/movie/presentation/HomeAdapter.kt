@@ -17,7 +17,7 @@ class HomeAdapter(
     val imageLoader: ImageLoader
 ) : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     var data: List<Movie> = emptyList()
-    var onClickedItem: (Movie) -> Unit = {}
+    var onClickedItem: (Int) -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
         return HomeViewHolder(
@@ -41,7 +41,7 @@ class HomeAdapter(
         private val tvOriginalTitle =
             view.findViewById<AppCompatTextView>(R.id.pmi_original_title)
 
-        fun bind(item: Movie?, onClicked: (Movie) -> Unit) {
+        fun bind(item: Movie?, onClicked: (Int) -> Unit) {
             item?.let { popularMovie ->
                 tvTitle.text = popularMovie.title
                 tvReviews.text = popularMovie.voteCount.toString()
@@ -59,7 +59,7 @@ class HomeAdapter(
             }
 
             itemView.setOnClickListener {
-                onClicked(item!!)
+                onClicked(item!!.movieId)
             }
         }
     }
