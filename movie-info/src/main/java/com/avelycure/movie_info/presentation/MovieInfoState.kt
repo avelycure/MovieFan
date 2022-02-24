@@ -1,5 +1,6 @@
 package com.avelycure.movie_info.presentation
 
+import com.avelycure.domain.models.Movie
 import com.avelycure.domain.models.MovieInfo
 import com.avelycure.domain.state.ProgressBarState
 import com.avelycure.domain.state.Queue
@@ -12,5 +13,7 @@ data class MovieInfoState(
         false, 0, "", "", "", "",
         0f, emptyList(), emptyList(), emptyList(), "", "", 0, "", "",
         0f, 0, "", emptyList(), 0, emptyList(), emptyList(), emptyList()
-    )
+    ),
+    val images: List<String> = emptyList(),
+    val similar: List<Movie> = emptyList()
 )
