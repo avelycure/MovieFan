@@ -11,6 +11,8 @@ import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.presentation.HomeFragment
 import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.moviefan.R
+import com.avelycure.navigation.Compas
+import com.avelycure.navigation.Navigator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var crashReporter: CrashReporter
     private lateinit var imageLoader: ImageLoader
     private lateinit var fragmentManager: FragmentManager
+    private lateinit var compas: Compas
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +32,17 @@ class MainActivity : AppCompatActivity() {
         crashReporter.registerObserver()
         imageLoader = ImageLoader(this, R.drawable.placeholder)
         fragmentManager = supportFragmentManager
+        compas = Compas(this, R.id.fragment_container, listOf("movies", "persons"))
 
         loadHomeScreen()
     }
 
     private fun loadHomeScreen() {
-        fragmentManager
+        compas.add("movies", "movie_fragment", HomeFragment.getInstance { id: Int ->
+            compas.add("movies","movie_info", MovieInfoFragment.getInstance(id))
+        })
+
+        /*fragmentManager
             .beginTransaction()
             .add(R.id.fragment_container, HomeFragment.getInstance { id: Int ->
                 fragmentManager
@@ -44,6 +52,6 @@ class MainActivity : AppCompatActivity() {
                     .commit()
             })
             .addToBackStack(null)
-            .commit()
+            .commit()*/
     }
 }
