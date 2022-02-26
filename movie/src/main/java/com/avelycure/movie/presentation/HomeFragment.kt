@@ -14,6 +14,7 @@ import com.avelycure.core_navigation.IInstantiator
 import com.avelycure.domain.constants.MovieConstants.GET_MORE_INFO
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
+import com.avelycure.movie.constants.HomeConstants.NUMBER_OF_FETCHED_MOVIES
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import java.io.Serializable
@@ -47,8 +48,10 @@ class HomeFragment : Fragment() {
         initViewElements(view)
         lifecycleScope.launchWhenStarted {
             homeViewModel.state.collect { homeState ->
+                val insertPos = adapter.data.size
                 adapter.data = homeState.movies
-                adapter.notifyDataSetChanged()
+                adapter.notifyItemRangeInserted(insertPos, NUMBER_OF_FETCHED_MOVIES)
+                adapter.loading = false
             }
         }
         return view
@@ -67,5 +70,6 @@ class HomeFragment : Fragment() {
         homeRecyclerView.adapter = adapter
 
         adapter.onClickedItem = arguments?.getSerializable(GET_MORE_INFO) as (Int) -> Unit
+        adapter.fetchMore = homeViewModel::fetchPopularMovies
     }
 }
