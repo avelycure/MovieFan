@@ -54,6 +54,7 @@ dependencies {
     implementation(project(':image-loader'))
     implementation(project(':auth-repository'))
     implementation(project(':cache-cleaner'))
+    implementation(project(':core-navigation'))
     implementation(project(':navigation'))
 
     //Core

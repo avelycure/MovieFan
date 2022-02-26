@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/auth-repository" />
             <option value="$PROJECT_DIR$/cache-cleaner" />
             <option value="$PROJECT_DIR$/core-models" />
+            <option value="$PROJECT_DIR$/core-navigation" />
             <option value="$PROJECT_DIR$/core-repository" />
             <option value="$PROJECT_DIR$/crash-report" />
             <option value="$PROJECT_DIR$/image-loader" />

@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.avelycure.core_navigation.IInstantiator
 import com.avelycure.domain.constants.MovieConstants.GET_MORE_INFO
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
@@ -24,15 +25,15 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: HomeAdapter
     private val homeViewModel: HomeViewModel by viewModels()
 
-    companion object{
-        fun getInstance(
-            getInfo: (Int) -> Unit
-        ): HomeFragment {
+    companion object Instantiator:IInstantiator {
+        private const val tag = "HOME"
+        override fun getTag(): String {
+            return tag
+        }
+
+        override fun getInstance(bundle: Bundle): Fragment {
             val homeFragment = HomeFragment()
-            val args=  Bundle().apply {
-                putSerializable(GET_MORE_INFO, getInfo as Serializable)
-            }
-            homeFragment.arguments = args
+            homeFragment.arguments = bundle
             return homeFragment
         }
     }
@@ -61,7 +62,8 @@ class HomeFragment : Fragment() {
     private fun initViewElements(view: View) {
         homeRecyclerView = view.findViewById(R.id.home_rv_movies)
         adapter = HomeAdapter(ImageLoader(view.context, R.drawable.placeholder))
-        homeRecyclerView.layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
+        homeRecyclerView.layoutManager =
+            LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
         homeRecyclerView.adapter = adapter
 
         adapter.onClickedItem = arguments?.getSerializable(GET_MORE_INFO) as (Int) -> Unit

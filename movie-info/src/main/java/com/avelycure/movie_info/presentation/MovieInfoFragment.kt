@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.avelycure.core_navigation.IInstantiator
 import com.avelycure.domain.constants.MovieConstants.DEFAULT_MOVIE_ID
 import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
 import com.avelycure.domain.models.Movie
@@ -26,13 +27,15 @@ import kotlinx.coroutines.flow.collect
 @AndroidEntryPoint
 class MovieInfoFragment : Fragment() {
 
-    companion object {
-        fun getInstance(id: Int): MovieInfoFragment {
+    companion object Instantiator: IInstantiator{
+        private const val tag = "MOVIE_INFO"
+        override fun getTag(): String {
+            return tag
+        }
+
+        override fun getInstance(bundle: Bundle): Fragment {
             val movieInfoFragment = MovieInfoFragment()
-            val args = Bundle().apply {
-                putInt(MOVIE_ID, id)
-            }
-            movieInfoFragment.arguments = args
+            movieInfoFragment.arguments = bundle
             return movieInfoFragment
         }
     }
