@@ -46,7 +46,6 @@ class HomeAdapter(
 
         fun bind(item: Movie?, onClicked: (Int) -> Unit) {
             item?.let { popularMovie ->
-                movieLogo.setImageBitmap(imageLoader.defaultImage)
                 tvTitle.text = popularMovie.title
                 tvReviews.text = popularMovie.voteCount.toString()
                 ratingBar.rating = popularMovie.voteAverage / 2F

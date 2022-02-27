@@ -2,25 +2,29 @@ package com.avelycure.navigation
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.avelycure.core_navigation.DirectoryStack
 import com.avelycure.core_navigation.IInstantiator
 import com.avelycure.core_navigation.Navigator
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
 /**
  * Class to navigate between fragments
  */
-class Compas(
-    private val context: Context,
-    private val containerId: Int,
-    rootFragments: List<DirectoryStack>,
-    insts: List<IInstantiator>
-) : Navigator {
-    private val fragmentManager: FragmentManager =
-        (context as AppCompatActivity).supportFragmentManager
+class Compas() : Navigator {
+
+    private lateinit var context: Context
+
+    private lateinit var fragmentManager: FragmentManager
+
+    private var containerId: Int = 0
 
     private lateinit var curDir: String
+
+    var finishApp: () -> Unit = {}
 
     /**
      * Global directories
@@ -31,14 +35,6 @@ class Compas(
      * Objects that create fragments
      */
     private val instantiators: HashMap<String, IInstantiator> = hashMapOf()
-
-    init {
-        for (root in rootFragments)
-            roots.add(root)
-
-        for (inst in insts)
-            instantiators[inst.getTag()] = inst
-    }
 
     /**
      * If directory is not empty -> check if there is needed fragment
@@ -74,7 +70,25 @@ class Compas(
         }
     }
 
-    override fun setHomeFragment() {
+
+    override fun setHomeFragment(
+        c: Context,
+        rootFragments: List<DirectoryStack>,
+        insts: List<IInstantiator>,
+        id: Int,
+        finish: () -> Unit
+    ) {
+        for (root in rootFragments)
+            roots.add(root)
+
+        for (inst in insts)
+            instantiators[inst.getTag()] = inst
+
+        containerId = id
+        context = c
+        fragmentManager = (context as AppCompatActivity).supportFragmentManager
+        finishApp = finish
+
         val fragment = instantiators[roots[0].dirName]?.getInstance(Bundle())
 
         if (fragment != null) {
@@ -99,17 +113,21 @@ class Compas(
         if (roots.find { it.dirName == curDir }?.data?.size != 1) {
             roots.find { it.dirName == curDir }?.data?.removeLast()
             openLastFragmentInDirectory(curDir)
+            Log.d("mytag", "Called back1")
         } else {
+            Log.d("mytag", "Called back2")
             val prevDir = roots.indexOfFirst { it.dirName == curDir } - 1
             if (prevDir != -1) {
                 curDir = roots[prevDir].dirName
                 back()
-            } else
+            } else {
+                Log.d("mytag", "Called back3")
                 closeApp()
+            }
         }
     }
 
     private fun closeApp() {
-
+        finishApp()
     }
 }

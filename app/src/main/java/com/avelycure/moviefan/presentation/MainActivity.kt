@@ -16,6 +16,7 @@ import com.avelycure.moviefan.R
 import com.avelycure.navigation.Compas
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageLoader: ImageLoader
     private lateinit var fragmentManager: FragmentManager
 
-    private lateinit var compas: Navigator
+    @Inject lateinit var compas: Navigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,15 +36,16 @@ class MainActivity : AppCompatActivity() {
         crashReporter.registerObserver()
         imageLoader = ImageLoader(this, R.drawable.placeholder)
         fragmentManager = supportFragmentManager
-        addCompas()
-        compas.setHomeFragment()
+
+        setUpCompas()
+
+        navigateHome()
     }
 
-    private fun addCompas() {
-        compas = Compas(
-            this,
-            R.id.fragment_container,
-            listOf(
+    private fun setUpCompas() {
+        compas.setHomeFragment(
+            c = this,
+            rootFragments = listOf(
                 DirectoryStack(
                     "MOVIES", mutableListOf()
                 ),
@@ -51,15 +53,19 @@ class MainActivity : AppCompatActivity() {
                     "PERSONS", mutableListOf()
                 )
             ),
-            listOf(
+            insts = listOf(
                 HomeFragment.Instantiator,
                 MovieInfoFragment.Instantiator
-            )
+            ),
+            id = R.id.fragment_container, finish = this::finish
         )
+    }
+
+    private fun navigateHome() {
         compas.add(
-            "MOVIES",
-            HomeFragment.Instantiator.getTag(),
-            Bundle().apply {
+            directory = "MOVIES",
+            fragmentName = HomeFragment.Instantiator.getTag(),
+            bundle = Bundle().apply {
                 putSerializable(GET_MORE_INFO, { id: Int ->
                     compas.add(
                         "MOVIES",

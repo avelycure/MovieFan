@@ -42,6 +42,7 @@ class ImageLoader(
     }
 
     fun loadImage(url: String, imageView: ImageView) {
+        imageView.setImageBitmap(defaultImage)
         executors.execute {
             try {
                 val image = getBitmap(url)
