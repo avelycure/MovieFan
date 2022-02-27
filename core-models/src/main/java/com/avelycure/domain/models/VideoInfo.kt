@@ -7,5 +7,5 @@ import com.avelycure.domain.constants.ErrorCodes
  * development in future
  */
 data class VideoInfo(
-    val key: String = ErrorCodes.ERROR_NO_TRAILER_CODE.toString()
+    val key: String = ErrorCodes.ERROR_NO_TRAILER_CODE
 )

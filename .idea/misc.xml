@@ -7,6 +7,7 @@
         <entry key="image-loader/src/main/res/layout/test_activity.xml" value="0.12454710144927536" />
         <entry key="movie-info/src/main/res/layout/item_images.xml" value="0.11141304347826086" />
         <entry key="movie-info/src/main/res/layout/item_similar_movies.xml" value="0.11141304347826086" />
+        <entry key="movie-info/src/main/res/layout/movie_info.xml" value="0.1621376811594203" />
         <entry key="movie-info/src/main/res/layout/movie_info_fragment.xml" value="0.11141304347826086" />
         <entry key="movie/src/main/res/layout/home_fragment.xml" value="0.11141304347826086" />
         <entry key="movie/src/main/res/layout/item_movie.xml" value="0.40460526315789475" />

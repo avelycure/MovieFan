@@ -2,10 +2,12 @@ package com.avelycure.moviefan.presentation
 
 import android.os.Bundle
 import android.os.Handler
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.avelycure.anr_checking.CrashReporter
 import com.avelycure.core_navigation.DirectoryStack
+import com.avelycure.core_navigation.NavigationConstants.LOAD_IMAGES
 import com.avelycure.core_navigation.Navigator
 import com.avelycure.domain.constants.MovieConstants.GET_MORE_INFO
 import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
@@ -26,7 +28,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageLoader: ImageLoader
     private lateinit var fragmentManager: FragmentManager
 
-    @Inject lateinit var compas: Navigator
+    @Inject
+    lateinit var compas: Navigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +75,9 @@ class MainActivity : AppCompatActivity() {
                         MovieInfoFragment.Instantiator.getTag(),
                         Bundle().apply {
                             putInt(MOVIE_ID, id)
+                            putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
+                                imageLoader.loadImage(url, id)
+                            } as Serializable)
                         }
                     )
                 } as Serializable)

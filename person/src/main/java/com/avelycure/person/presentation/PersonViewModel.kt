@@ -1,12 +1,12 @@
 package com.avelycure.person.presentation
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.avelycure.domain.state.DataState
 import com.avelycure.person.domain.interactors.GetPopularPersons
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,20 +17,21 @@ class PersonViewModel
     private val getPopularPersons: GetPopularPersons
 ) : ViewModel() {
 
-    val state: MutableState<PersonState> = mutableStateOf(PersonState())
+    private val _state = MutableStateFlow(PersonState())
+    val state = _state.asStateFlow()
 
     fun getPopularPerson(page: Int) {
         viewModelScope.launch {
             getPopularPersons.execute(page).collect { dataState ->
                 when (dataState) {
                     is DataState.Data -> {
-                        state.value = state.value.copy(
-                            persons = state.value.persons + (dataState.data?: emptyList()),
-                            lastVisiblePage = state.value.lastVisiblePage + 1
+                        _state.value = _state.value.copy(
+                            persons = _state.value.persons + (dataState.data?: emptyList()),
+                            lastVisiblePage = _state.value.lastVisiblePage + 1
                         )
                     }
                     is DataState.Loading -> {
-                        state.value = state.value.copy(
+                        _state.value = _state.value.copy(
                             progressBarState = dataState.progressBarState
                         )
                     }
