@@ -34,7 +34,9 @@ class MovieInfoViewModel
                     when (dataState) {
                         is DataState.Data -> {
                             _state.value = _state.value.copy(
-                                movieInfo = dataState.data ?: _state.value.movieInfo
+                                movieInfo = dataState.data ?: _state.value.movieInfo,
+                                images = dataState.data?.imagesBackdrop ?: emptyList(),
+                                similar = dataState.data?.similar ?: emptyList()
                             )
                         }
                         is DataState.Loading -> {

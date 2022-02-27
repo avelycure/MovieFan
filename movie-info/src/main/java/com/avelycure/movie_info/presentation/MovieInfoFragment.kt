@@ -52,6 +52,9 @@ class MovieInfoFragment : Fragment() {
 
     private val movieInfoViewModel: MovieInfoViewModel by viewModels()
 
+    private lateinit var movieImagesAdapter: MovieImagesAdapter
+    private lateinit var similarMoviesAdapter: SimilarMoviesAdapter
+
     private lateinit var ivPoster: AppCompatImageView
     private lateinit var tvTitle: AppCompatTextView
     private lateinit var tvTagline: AppCompatTextView
@@ -72,9 +75,6 @@ class MovieInfoFragment : Fragment() {
     private lateinit var tvOverview: AppCompatTextView
     private lateinit var rvMovieImages: RecyclerView
     private lateinit var rvSimilarMovies: RecyclerView
-
-    private lateinit var movieImagesAdapter: MovieImagesAdapter
-    private lateinit var similarMoviesAdapter: SimilarMoviesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
