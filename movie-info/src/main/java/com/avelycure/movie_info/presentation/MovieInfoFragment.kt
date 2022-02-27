@@ -1,9 +1,12 @@
 package com.avelycure.movie_info.presentation
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatRatingBar
 import androidx.appcompat.widget.AppCompatTextView
@@ -12,6 +15,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.avelycure.core_navigation.IInstantiator
+import com.avelycure.core_navigation.NavigationConstants.LOAD_IMAGES
+import com.avelycure.data.constants.RequestConstants
 import com.avelycure.domain.constants.MovieConstants.DEFAULT_MOVIE_ID
 import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
 import com.avelycure.domain.models.Movie
@@ -22,25 +28,34 @@ import com.avelycure.movie_info.presentation.adapters.MovieImagesAdapter
 import com.avelycure.movie_info.presentation.adapters.SimilarMoviesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import java.io.Serializable
 
 @AndroidEntryPoint
 class MovieInfoFragment : Fragment() {
 
-    companion object {
-        fun getInstance(id: Int): MovieInfoFragment {
+    companion object Instantiator : IInstantiator {
+        private const val tag = "MOVIE_INFO"
+        override fun getTag(): String {
+            return tag
+        }
+
+        override fun getInstance(bundle: Bundle): Fragment {
             val movieInfoFragment = MovieInfoFragment()
-            val args = Bundle().apply {
-                putInt(MOVIE_ID, id)
-            }
-            movieInfoFragment.arguments = args
+            movieInfoFragment.arguments = bundle
             return movieInfoFragment
         }
     }
+
+    private var loadImage: (String, ImageView) -> Unit = { _, _ -> }
 
     private var movieId: Int = DEFAULT_MOVIE_ID
 
     private val movieInfoViewModel: MovieInfoViewModel by viewModels()
 
+    private lateinit var movieImagesAdapter: MovieImagesAdapter
+    private lateinit var similarMoviesAdapter: SimilarMoviesAdapter
+
+    private lateinit var ivPoster: AppCompatImageView
     private lateinit var tvTitle: AppCompatTextView
     private lateinit var tvTagline: AppCompatTextView
     private lateinit var ratingBar: AppCompatRatingBar
@@ -61,9 +76,6 @@ class MovieInfoFragment : Fragment() {
     private lateinit var rvMovieImages: RecyclerView
     private lateinit var rvSimilarMovies: RecyclerView
 
-    private lateinit var movieImagesAdapter: MovieImagesAdapter
-    private lateinit var similarMoviesAdapter: SimilarMoviesAdapter
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,6 +83,8 @@ class MovieInfoFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.movie_info, container, false)
         movieId = arguments?.getInt(MOVIE_ID, DEFAULT_MOVIE_ID) ?: DEFAULT_MOVIE_ID
+        loadImage =
+            arguments?.getSerializable(LOAD_IMAGES) as? (String, ImageView) -> Unit ?: { _, _ -> }
         return view
     }
 
@@ -81,12 +95,26 @@ class MovieInfoFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             movieInfoViewModel.state.collect { state ->
                 setUI(state.movieInfo, state.images, state.similar)
+
+                if (state.videoIsAvailable && !state.videoIsUploaded) {
+                    Log.d("mytag", "Begin transaction")
+                    childFragmentManager
+                        .beginTransaction()
+                        .add(
+                            R.id.youtube_container,
+                            YTFragment.getInstance(state.videoInfo.key)
+                        )
+                        .commit()
+                    movieInfoViewModel.onTrigger(MovieInfoEvents.VideoIsUploaded)
+                }
             }
         }
         movieInfoViewModel.getDetails(movieId)
+        movieInfoViewModel.getTrailerCode(movieId)
     }
 
     private fun setUI(movieInfo: MovieInfo, images: List<String>, similar: List<Movie>) {
+        loadImage(RequestConstants.IMAGE + movieInfo.posterPath, ivPoster)
         tvTitle.text = movieInfo.title
         tvTagline.text = movieInfo.tagline
         ratingBar.rating = movieInfo.voteAverage
@@ -111,6 +139,7 @@ class MovieInfoFragment : Fragment() {
     }
 
     private fun initViewElements(view: View) {
+        ivPoster = view.findViewById(R.id.mi_poster)
         tvTitle = view.findViewById(R.id.mi_title)
         tvOverview = view.findViewById(R.id.mi_overview)
         tvTagline = view.findViewById(R.id.mi_tagline)

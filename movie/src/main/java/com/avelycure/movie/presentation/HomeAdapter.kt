@@ -1,11 +1,13 @@
 package com.avelycure.movie.presentation
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatRatingBar
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
@@ -18,6 +20,7 @@ class HomeAdapter(
 ) : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     var data: List<Movie> = emptyList()
     var onClickedItem: (Int) -> Unit = {}
+    var fetchMore: () -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
         return HomeViewHolder(
@@ -62,5 +65,24 @@ class HomeAdapter(
                 onClicked(item!!.movieId)
             }
         }
+    }
+
+    var loading: Boolean = false
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        Log.d("mytag", "called scrolling")
+        val manager = recyclerView.layoutManager
+        val llm = manager as LinearLayoutManager
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val visiblePosition = llm.findLastCompletelyVisibleItemPosition()
+                if (!loading && visiblePosition > itemCount - 10) {
+                    Log.d("mytag", "vis: ${visiblePosition}, itemCount: ${itemCount}")
+                    fetchMore()
+                    loading = true
+                }
+            }
+        })
     }
 }
