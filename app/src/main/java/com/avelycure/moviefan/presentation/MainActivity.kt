@@ -1,5 +1,6 @@
 package com.avelycure.moviefan.presentation
 
+import android.app.Person
 import android.os.Bundle
 import android.os.Handler
 import android.widget.ImageView
@@ -16,6 +17,8 @@ import com.avelycure.movie.presentation.HomeFragment
 import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.moviefan.R
 import com.avelycure.navigation.Compas
+import com.avelycure.person.presentation.PersonFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import javax.inject.Inject
@@ -27,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var crashReporter: CrashReporter
     private lateinit var imageLoader: ImageLoader
     private lateinit var fragmentManager: FragmentManager
+
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     @Inject
     lateinit var compas: Navigator
@@ -40,12 +45,34 @@ class MainActivity : AppCompatActivity() {
         imageLoader = ImageLoader(this, R.drawable.placeholder)
         fragmentManager = supportFragmentManager
 
-        setUpCompas()
+        setUpRoots()
+        compas.openLastFragmentInDirectory("MOVIES")
 
-        navigateHome()
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
+        bottomNavigationView.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.dir_movies -> {
+                    compas.openLastFragmentInDirectory("MOVIES")
+                    true
+                }
+                R.id.dir_persons -> {
+                    compas.openLastFragmentInDirectory("PERSONS")
+                    true
+                }
+                R.id.dir_choose_movie -> {
+                    //compas.openLastFragmentInDirectory("CHOOSE")
+                    true
+                }
+                R.id.dir_office -> {
+                    //compas.openLastFragmentInDirectory("OFFICE")
+                    true
+                }
+                else -> {false}
+            }
+        }
     }
 
-    private fun setUpCompas() {
+    private fun setUpRoots() {
         compas.setHomeFragment(
             c = this,
             rootFragments = listOf(
@@ -58,14 +85,19 @@ class MainActivity : AppCompatActivity() {
             ),
             insts = listOf(
                 HomeFragment.Instantiator,
-                MovieInfoFragment.Instantiator
+                MovieInfoFragment.Instantiator,
+                PersonFragment.Instantiator
             ),
             id = R.id.fragment_container, finish = this::finish
         )
-    }
 
-    private fun navigateHome() {
-        compas.add(
+        compas.prepare(
+            directory = "PERSONS",
+            fragmentName = PersonFragment.Instantiator.getTag(),
+            bundle = Bundle()
+        )
+
+        compas.prepare(
             directory = "MOVIES",
             fragmentName = HomeFragment.Instantiator.getTag(),
             bundle = Bundle().apply {

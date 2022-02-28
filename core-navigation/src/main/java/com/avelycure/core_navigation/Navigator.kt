@@ -14,6 +14,12 @@ interface Navigator {
         bundle: Bundle
     )
 
+    fun prepare(
+        directory: String,
+        fragmentName: String,
+        bundle: Bundle
+    )
+
     fun setHomeFragment(
         c: Context,
         rootFragments: List<DirectoryStack>,
