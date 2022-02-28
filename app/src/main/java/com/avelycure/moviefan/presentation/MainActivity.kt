@@ -1,6 +1,5 @@
 package com.avelycure.moviefan.presentation
 
-import android.app.Person
 import android.os.Bundle
 import android.os.Handler
 import android.widget.ImageView
@@ -16,7 +15,6 @@ import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.presentation.HomeFragment
 import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.moviefan.R
-import com.avelycure.navigation.Compas
 import com.avelycure.person.presentation.PersonFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.dir_movies -> {
                     compas.openLastFragmentInDirectory("MOVIES")
                     true
@@ -67,7 +65,9 @@ class MainActivity : AppCompatActivity() {
                     //compas.openLastFragmentInDirectory("OFFICE")
                     true
                 }
-                else -> {false}
+                else -> {
+                    false
+                }
             }
         }
     }
