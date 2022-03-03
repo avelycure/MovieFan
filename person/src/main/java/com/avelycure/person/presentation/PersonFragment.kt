@@ -12,8 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.core_navigation.IInstantiator
+import com.avelycure.core_navigation.NavigationConstants
 import com.avelycure.domain.state.ProgressBarState
 import com.avelycure.person.R
+import com.avelycure.person.presentation.adapters.PersonAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -39,7 +41,7 @@ class PersonFragment : Fragment() {
 
     private lateinit var pb: ProgressBar
 
-    private lateinit var loadImages: (ImageView) -> Unit
+    private lateinit var loadImages: (String, ImageView) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +49,10 @@ class PersonFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.person_fragment, container, false)
+
+        loadImages =
+            arguments?.getSerializable(NavigationConstants.LOAD_IMAGES) as? (String, ImageView) -> Unit ?: { _, _ -> }
+
         return view
     }
 
@@ -62,7 +68,8 @@ class PersonFragment : Fragment() {
             personViewModel.state.collect { state ->
                 val insertPos = personAdapter.data.size
                 personAdapter.data = state.persons
-                personAdapter.notifyItemRangeInserted(insertPos, 15)
+                personAdapter.notifyDataSetChanged()
+                //personAdapter.notifyItemRangeInserted(insertPos, 15)
 
                 if(state.progressBarState is ProgressBarState.Loading)
                     pb.visibility = View.VISIBLE
@@ -75,6 +82,11 @@ class PersonFragment : Fragment() {
     private fun setRecyclerView(view: View) {
         rvPersons = view.findViewById(R.id.p_recycler_view)
         personAdapter = PersonAdapter()
+        personAdapter.scope = lifecycleScope
+        personAdapter.loadImage = loadImages
+        personAdapter.onExpand = { personId, itemId ->
+            personViewModel.onTrigger(PersonEvents.OnExpandPerson(personId, itemId))
+        }
         rvPersons.adapter = personAdapter
         rvPersons.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }

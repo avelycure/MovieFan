@@ -94,7 +94,11 @@ class MainActivity : AppCompatActivity() {
         compas.prepare(
             directory = "PERSONS",
             fragmentName = PersonFragment.Instantiator.getTag(),
-            bundle = Bundle()
+            bundle = Bundle().apply {
+                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
+                    imageLoader.loadImage(url, id)
+                } as Serializable)
+            }
         )
 
         compas.prepare(
@@ -112,6 +116,9 @@ class MainActivity : AppCompatActivity() {
                             } as Serializable)
                         }
                     )
+                } as Serializable)
+                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
+                    imageLoader.loadImage(url, id)
                 } as Serializable)
             }
         )

@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Programming/Android/MovieFan/person/src/main/res/layout/item_person_images.xml" value="0.22826086956521738" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.20555555555555555" />
         <entry key="image-loader/src/main/res/layout/test_activity.xml" value="0.12454710144927536" />

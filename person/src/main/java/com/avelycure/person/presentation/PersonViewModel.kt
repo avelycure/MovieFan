@@ -3,21 +3,27 @@ package com.avelycure.person.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.avelycure.domain.models.PersonInfo
 import com.avelycure.domain.state.DataState
 import com.avelycure.domain.state.Queue
 import com.avelycure.domain.state.UIComponent
+import com.avelycure.person.domain.interactors.GetPersonInfo
 import com.avelycure.person.domain.interactors.GetPopularPersons
+import com.avelycure.person.utils.setProperties
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class PersonViewModel
 @Inject constructor(
-    private val getPopularPersons: GetPopularPersons
+    private val getPopularPersons: GetPopularPersons,
+    private val getPersonInfo: GetPersonInfo
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PersonState())
@@ -29,6 +35,39 @@ class PersonViewModel
             is PersonEvents.OnOpenPersonScreen -> {
                 getPopularPerson()
             }
+            is PersonEvents.OnExpandPerson -> {
+                onExpand(event.personId, event.itemId)
+            }
+        }
+    }
+
+    private fun onExpand(personId: Int, itemId: Int) {
+        Log.d("mytag", "onexpand")
+        viewModelScope.launch {
+            getPersonInfo.execute(personId).collect { dataState ->
+                when (dataState) {
+                    is DataState.Data -> {
+                        val list = _state.value.persons.toMutableList()
+                        val person = list[itemId]
+                        person.setProperties(dataState.data)
+                        list[itemId] = person
+                        _state.value = _state.value.copy(
+                            persons = list
+                        )
+                        Log.d("mytag", list.toString())
+                    }
+                    is DataState.Response -> {
+                        appendToMessageQueue(
+                            dataState.uiComponent as UIComponent.Dialog
+                        )
+                    }
+                    is DataState.Loading -> {
+                        _state.value = _state.value.copy(
+                            progressBarState = dataState.progressBarState
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -37,20 +76,17 @@ class PersonViewModel
             getPopularPersons.execute(_state.value.lastVisiblePage).collect { dataState ->
                 when (dataState) {
                     is DataState.Data -> {
-                        Log.d("mytag", "GOT DATA: ${dataState.data}")
                         _state.value = _state.value.copy(
-                            persons = _state.value.persons + (dataState.data?: emptyList()),
+                            persons = _state.value.persons + (dataState.data ?: emptyList()),
                             lastVisiblePage = _state.value.lastVisiblePage + 1
                         )
                     }
                     is DataState.Loading -> {
-                        Log.d("mytag", "GOT LOAD")
                         _state.value = _state.value.copy(
                             progressBarState = dataState.progressBarState
                         )
                     }
                     is DataState.Response -> {
-                        Log.d("mytag", "GOT PROB")
                         appendToMessageQueue(
                             dataState.uiComponent as UIComponent.Dialog
                         )
