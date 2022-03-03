@@ -1,6 +1,5 @@
 package com.avelycure.movie_info.presentation
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,7 +27,6 @@ import com.avelycure.movie_info.presentation.adapters.MovieImagesAdapter
 import com.avelycure.movie_info.presentation.adapters.SimilarMoviesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import java.io.Serializable
 
 @AndroidEntryPoint
 class MovieInfoFragment : Fragment() {
@@ -83,8 +81,10 @@ class MovieInfoFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.movie_info, container, false)
         movieId = arguments?.getInt(MOVIE_ID, DEFAULT_MOVIE_ID) ?: DEFAULT_MOVIE_ID
+
         loadImage =
             arguments?.getSerializable(LOAD_IMAGES) as? (String, ImageView) -> Unit ?: { _, _ -> }
+
         return view
     }
 
@@ -109,8 +109,7 @@ class MovieInfoFragment : Fragment() {
                 }
             }
         }
-        movieInfoViewModel.getDetails(movieId)
-        movieInfoViewModel.getTrailerCode(movieId)
+        movieInfoViewModel.onTrigger(MovieInfoEvents.OnOpenInfoFragment(movieId))
     }
 
     private fun setUI(movieInfo: MovieInfo, images: List<String>, similar: List<Movie>) {
@@ -162,16 +161,12 @@ class MovieInfoFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        val imageLoader = ImageLoader(
-            requireContext(),
-            R.drawable.placeholder
-        )
-        movieImagesAdapter = MovieImagesAdapter(imageLoader)
+        movieImagesAdapter = MovieImagesAdapter(loadImage)
         rvMovieImages.adapter = movieImagesAdapter
         rvMovieImages.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        similarMoviesAdapter = SimilarMoviesAdapter(imageLoader)
+        similarMoviesAdapter = SimilarMoviesAdapter(loadImage)
         rvSimilarMovies.adapter = similarMoviesAdapter
         rvSimilarMovies.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)

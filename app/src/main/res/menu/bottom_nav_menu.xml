@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/dir_movies"
+        android:title="Home"
+        android:icon="@mipmap/ic_movie"/>
+
+    <item
+        android:id="@+id/dir_persons"
+        android:title="Persons"
+        android:icon="@mipmap/ic_person"/>
+
+    <item
+        android:id="@+id/dir_choose_movie"
+        android:title="Choose movie"
+        android:icon="@mipmap/ic_person"/>
+
+    <item
+        android:id="@+id/dir_office"
+        android:title="Office"
+        android:icon="@mipmap/ic_person"/>
+</menu>

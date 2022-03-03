@@ -3,6 +3,7 @@ package com.avelycure.movie_info.presentation.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.data.constants.RequestConstants
@@ -11,7 +12,7 @@ import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie_info.R
 
 class SimilarMoviesAdapter(
-    private val imageLoader: ImageLoader
+    private val loadImage: (String, ImageView) -> Unit
 ) : RecyclerView.Adapter<SimilarMoviesAdapter.SimilarMoviesViewHolder>() {
     var similarMovies: List<Movie> = emptyList()
 
@@ -23,7 +24,7 @@ class SimilarMoviesAdapter(
     }
 
     override fun onBindViewHolder(holder: SimilarMoviesViewHolder, position: Int) {
-        imageLoader.loadImage(
+        loadImage(
             RequestConstants.IMAGE + similarMovies[position].posterPath,
             holder.image
         )
