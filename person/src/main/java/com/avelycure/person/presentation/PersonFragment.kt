@@ -16,6 +16,7 @@ import com.avelycure.core_navigation.NavigationConstants
 import com.avelycure.domain.state.ProgressBarState
 import com.avelycure.person.R
 import com.avelycure.person.presentation.adapters.PersonAdapter
+import com.avelycure.person.presentation.adapters.PersonImagesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -51,7 +52,8 @@ class PersonFragment : Fragment() {
         val view = inflater.inflate(R.layout.person_fragment, container, false)
 
         loadImages =
-            arguments?.getSerializable(NavigationConstants.LOAD_IMAGES) as? (String, ImageView) -> Unit ?: { _, _ -> }
+            arguments?.getSerializable(NavigationConstants.LOAD_IMAGES) as? (String, ImageView) -> Unit
+                ?: { _, _ -> }
 
         return view
     }
@@ -66,12 +68,13 @@ class PersonFragment : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             personViewModel.state.collect { state ->
-                val insertPos = personAdapter.data.size
+                val prevSize = personAdapter.data.size
                 personAdapter.data = state.persons
+                if (prevSize != state.persons.size)
+                    personAdapter.notifyItemRangeInserted(prevSize, 15)
                 personAdapter.notifyDataSetChanged()
-                //personAdapter.notifyItemRangeInserted(insertPos, 15)
 
-                if(state.progressBarState is ProgressBarState.Loading)
+                if (state.progressBarState is ProgressBarState.Loading)
                     pb.visibility = View.VISIBLE
                 else
                     pb.visibility = View.GONE
@@ -80,16 +83,16 @@ class PersonFragment : Fragment() {
     }
 
     private fun setRecyclerView(view: View) {
-        rvPersons = view.findViewById(R.id.p_recycler_view)
         personAdapter = PersonAdapter()
         personAdapter.scope = lifecycleScope
         personAdapter.loadImage = loadImages
         personAdapter.onExpand = { personId, itemId ->
             personViewModel.onTrigger(PersonEvents.OnExpandPerson(personId, itemId))
         }
+
+        rvPersons = view.findViewById(R.id.p_recycler_view)
         rvPersons.adapter = personAdapter
-        rvPersons.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        rvPersons.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
-
-
 }

@@ -28,9 +28,12 @@ class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
 
     var loadImage: (path: String, iv: ImageView) -> Unit = { _, _ -> }
 
+
     lateinit var scope: LifecycleCoroutineScope
 
     inner class PersonViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val personImagesAdapter: PersonImagesAdapter = PersonImagesAdapter()
+
         private val tvName: AppCompatTextView = view.findViewById(R.id.pi_primary_person_name)
         private val ivPoster: AppCompatImageView = view.findViewById(R.id.pi_primary_iv)
         private val tvBiography: AppCompatTextView = view.findViewById(R.id.pia_biography)
@@ -68,41 +71,31 @@ class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
         fun bind(item: Person?, position: Int) {
             item?.let { person ->
                 tvName.text = person.name
-                tvDepartment.text = person.knownForDepartment
-
-                showIfNotBlank(tvDateOfBirthTitle, tvDateOfBirth, person.birthday)
-                showIfNotBlank(tvPlaceOfBirthTitle, tvPlaceOfBirth, person.placeOfBirth)
-                showIfNotBlank(tvDeathdayTitle, tvDeathday, person.deathDay)
-                showIfNotBlank(tvAlsoKnownAsTitle, tvAlsoKnownAs, person.alsoKnownAs.toString())
-                showIfNotBlank(tvBiographyTitle, tvBiography, person.biography)
-                showIfNotBlank(tvHomepageTitle, tvHomepage, person.homepage)
                 showIfNotBlank(tvsTitle, tvs, person.knownForTv.toString())
                 showIfNotBlank(moviesTitle, movies, person.knownForMovie.toString())
+                tvDepartment.text = person.knownForDepartment
+
+                if (person.expanded) {
+                    expLayout.visibility = View.VISIBLE
+                    showIfNotBlank(tvDateOfBirthTitle, tvDateOfBirth, person.birthday)
+                    showIfNotBlank(tvPlaceOfBirthTitle, tvPlaceOfBirth, person.placeOfBirth)
+                    showIfNotBlank(tvDeathdayTitle, tvDeathday, person.deathDay)
+                    showIfNotBlank(tvAlsoKnownAsTitle, tvAlsoKnownAs, person.alsoKnownAs.toString())
+                    showIfNotBlank(tvBiographyTitle, tvBiography, person.biography)
+                    showIfNotBlank(tvHomepageTitle, tvHomepage, person.homepage)
+                } else {
+                    expLayout.visibility = View.GONE
+                }
+                personImagesAdapter.data = person.profileImages
+                rvPersonImages.adapter = personImagesAdapter
+                personImagesAdapter.loadImage = loadImage
+                rvPersonImages.layoutManager =
+                    LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
 
                 layout.setOnClickListener {
-                    val personImagesAdapter = PersonImagesAdapter()
-                    rvPersonImages.adapter = personImagesAdapter
-                    rvPersonImages.layoutManager =
-                        LinearLayoutManager(it.context, LinearLayoutManager.HORIZONTAL, false)
-
                     person.expanded = !person.expanded
 
                     onExpand(person.id, position)
-                    Log.d("mytag", "clicked")
-                    //scope.launch {
-                            /*.collect { personInfo ->
-                                val inputChanged = person.setProperties(personInfo)
-                                if (inputChanged) {
-                                    //bind(person, onExpand)
-                                    if (person.profileImages.isNotEmpty()) {
-                                        personImagesAdapter.data = person.profileImages
-                                        personImagesAdapter.notifyDataSetChanged()
-                                    }
-                                }
-
-                            }*/
-                    //}
-                    //bind(person, onExpand)
                 }
 
                 loadImage(

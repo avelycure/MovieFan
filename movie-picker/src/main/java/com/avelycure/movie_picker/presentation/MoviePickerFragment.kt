@@ -1,4 +1,4 @@
 package com.avelycure.movie_picker.presentation
 
-class MoviePickerScreen {
+class MoviePickerFragment {
 }

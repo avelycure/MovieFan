@@ -42,7 +42,6 @@ class PersonViewModel
     }
 
     private fun onExpand(personId: Int, itemId: Int) {
-        Log.d("mytag", "onexpand")
         viewModelScope.launch {
             getPersonInfo.execute(personId).collect { dataState ->
                 when (dataState) {
@@ -54,7 +53,6 @@ class PersonViewModel
                         _state.value = _state.value.copy(
                             persons = list
                         )
-                        Log.d("mytag", list.toString())
                     }
                     is DataState.Response -> {
                         appendToMessageQueue(
