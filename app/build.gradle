@@ -49,6 +49,7 @@ dependencies {
     implementation(project(':core-models'))
     implementation(project(":movie"))
     implementation(project(":person"))
+    implementation(project(":office"))
     implementation(project(":movie-info"))
     implementation(project(":movie-picker"))
     implementation(project(':crash-report'))

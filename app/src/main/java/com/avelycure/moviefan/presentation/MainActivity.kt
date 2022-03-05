@@ -17,6 +17,7 @@ import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.movie_picker.presentation.MoviePickerFragment
 import com.avelycure.moviefan.R
 import com.avelycure.person.presentation.PersonFragment
+import com.example.office.presentation.OfficeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
@@ -63,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.dir_office -> {
-                    //compas.openLastFragmentInDirectory("OFFICE")
+                    compas.openLastFragmentInDirectory("OFFICE")
                     true
                 }
                 else -> {
@@ -85,13 +86,17 @@ class MainActivity : AppCompatActivity() {
                 ),
                 DirectoryStack(
                     "CHOOSE", mutableListOf()
+                ),
+                DirectoryStack(
+                    "OFFICE", mutableListOf()
                 )
             ),
             insts = listOf(
                 HomeFragment.Instantiator,
                 MovieInfoFragment.Instantiator,
                 PersonFragment.Instantiator,
-                MoviePickerFragment.Instantiator
+                MoviePickerFragment.Instantiator,
+                OfficeFragment.Instantiator
             ),
             id = R.id.fragment_container, finish = this::finish
         )
@@ -131,6 +136,12 @@ class MainActivity : AppCompatActivity() {
         compas.prepare(
             directory = "CHOOSE",
             fragmentName = MoviePickerFragment.Instantiator.getTag(),
+            bundle = Bundle()
+        )
+
+        compas.prepare(
+            directory = "OFFICE",
+            fragmentName = OfficeFragment.Instantiator.getTag(),
             bundle = Bundle()
         )
     }

@@ -1,4 +1,4 @@
-package com.avelycure.authorization
+package com.example.office
 
 import org.junit.Test
 
