@@ -3,10 +3,14 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 android {
     compileSdk 31
+
+    def localProperties = new Properties()
+    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
     defaultConfig {
         minSdk 21
@@ -24,6 +28,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildTypes.each {
+        it.buildConfigField 'String', 'TMDB_API_KEY', localProperties.getProperty("MyTheMovieDBApiToken")
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -39,6 +46,13 @@ dependencies {
     //Hilt
     implementation "com.google.dagger:hilt-android:2.40.5"
     kapt "com.google.dagger:hilt-compiler:2.40.5"
+
+    //ktor
+    implementation "io.ktor:ktor-client-core:1.6.3"
+    implementation "io.ktor:ktor-client-android:1.6.3"
+    implementation "io.ktor:ktor-client-serialization:1.6.3"
+    implementation "io.ktor:ktor-client-logging:1.6.3"
+    implementation "ch.qos.logback:logback-classic:1.2.3"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'

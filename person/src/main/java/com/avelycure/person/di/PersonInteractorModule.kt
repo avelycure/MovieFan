@@ -1,6 +1,7 @@
 package com.avelycure.person.di
 
 import com.avelycure.domain.repository.IPersonRepository
+import com.avelycure.person.domain.interactors.GetPersonInfo
 import com.avelycure.person.domain.interactors.GetPopularPersons
 import dagger.Module
 import dagger.Provides
@@ -16,6 +17,12 @@ object PersonInteractorModule {
     @Singleton
     fun provideGetPopularPerson(repository: IPersonRepository): GetPopularPersons{
         return GetPopularPersons(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetPersonInfo(repository: IPersonRepository): GetPersonInfo{
+        return GetPersonInfo(repository)
     }
 
 }

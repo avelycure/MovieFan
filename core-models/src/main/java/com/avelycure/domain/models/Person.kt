@@ -19,7 +19,5 @@ data class Person(
     var placeOfBirth: String? = ""
     var imdbId: String = ""
     var homepage: String? = ""
-    var profileImages: List<Profile> = emptyList()
+    var profileImages: List<String> = emptyList()
 }
-
-data class Profile(val path: String)

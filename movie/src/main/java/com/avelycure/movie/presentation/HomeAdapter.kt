@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatRatingBar
 import androidx.appcompat.widget.AppCompatTextView
@@ -12,15 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
-import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
 
-class HomeAdapter(
-    val imageLoader: ImageLoader
-) : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
+class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     var data: List<Movie> = emptyList()
     var onClickedItem: (Int) -> Unit = {}
     var fetchMore: () -> Unit = {}
+    var loadImages: (String, ImageView) -> Unit = {_,_->}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeViewHolder {
         return HomeViewHolder(
@@ -55,7 +54,7 @@ class HomeAdapter(
                         append(TranslationConstants.movieGenre[genreId] + " ")
                 }
 
-                imageLoader.loadImage(
+                loadImages(
                     RequestConstants.IMAGE + popularMovie.posterPath,
                     movieLogo
                 )

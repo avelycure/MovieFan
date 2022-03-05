@@ -15,5 +15,5 @@ data class PersonInfo(
     val adult: Boolean = true,
     val imdbId: String = "",
     val homepage: String? = "",
-    val profileImages: List<Profile> = emptyList()
+    val profileImages: List<String> = emptyList()
 )

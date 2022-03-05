@@ -1,19 +1,16 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
-    id 'kotlin-android-extensions'
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         minSdk 21
-        targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        targetSdk 32
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -37,11 +34,17 @@ android {
 dependencies {
     implementation(project(':resources'))
     implementation(project(':core-models'))
+    implementation(project(':core-repository'))
+    implementation(project(':auth-repository'))
     implementation(project(':image-loader'))
+    implementation(project(':core-navigation'))
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
+    implementation 'androidx.fragment:fragment-ktx:1.4.1'
 
     //Hilt
     implementation "com.google.dagger:hilt-android:2.40.5"

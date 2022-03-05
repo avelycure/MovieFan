@@ -1,6 +1,7 @@
 package com.avelycure.data.remote.service.movie
 
 import com.avelycure.data.remote.dto.movie.MovieResponseDto
+import com.avelycure.data.constants.RequestConstants
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -12,7 +13,7 @@ class SearchMovieService(
     suspend fun getMovieByName(query: String, page: Int): MovieResponseDto {
         return try {
             client.get {
-                with(com.avelycure.data.constants.RequestConstants) {
+                with(RequestConstants) {
                     url("$BASE_URL/search/movie?api_key=$API_KEY&query=$query&page=$page")
                 }
             }

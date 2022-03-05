@@ -3,6 +3,7 @@ package com.avelycure.data.di
 import com.avelycure.data.remote.service.movie.MovieInfoService
 import com.avelycure.data.remote.service.movie.PopularMovieService
 import com.avelycure.data.remote.service.movie.VideoService
+import com.avelycure.data.remote.service.person.PersonInfoService
 import com.avelycure.data.remote.service.person.PopularPersonService
 import com.avelycure.data.repository.MovieRepository
 import com.avelycure.domain.repository.IMovieInfoRepository
@@ -62,6 +63,12 @@ object RepositoryModule {
 
     @Singleton
     @Provides
+    fun providePersonInfoService(client: HttpClient): PersonInfoService {
+        return PersonInfoService(client)
+    }
+
+    @Singleton
+    @Provides
     fun providePersonService(client: HttpClient): PopularPersonService {
         return PopularPersonService(client)
     }
@@ -83,13 +90,15 @@ object RepositoryModule {
         popularMovieService: PopularMovieService,
         movieInfoService: MovieInfoService,
         popularPersonService: PopularPersonService,
-        videoService: VideoService
+        videoService: VideoService,
+        personInfoService: PersonInfoService
     ): IRepository {
         return MovieRepository(
             popularMovieService,
             movieInfoService,
             popularPersonService,
-            videoService
+            videoService,
+            personInfoService
         )
     }
 

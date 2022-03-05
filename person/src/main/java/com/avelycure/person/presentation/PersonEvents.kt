@@ -6,4 +6,6 @@ sealed class PersonEvents {
 
     object OnOpenPersonScreen: PersonEvents()
 
+    data class OnExpandPerson(val personId: Int, val itemId: Int): PersonEvents()
+
 }

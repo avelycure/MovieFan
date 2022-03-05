@@ -2,6 +2,7 @@ package com.avelycure.data.constants
 
 import com.avelycure.data.BuildConfig
 
+
 object RequestConstants {
     const val BASE_URL = "https://api.themoviedb.org/3"
 
