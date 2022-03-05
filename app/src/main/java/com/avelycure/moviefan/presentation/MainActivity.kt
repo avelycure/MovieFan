@@ -17,6 +17,7 @@ import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.movie_picker.presentation.MoviePickerFragment
 import com.avelycure.moviefan.R
 import com.avelycure.person.presentation.PersonFragment
+import com.example.office.presentation.LoginFragment
 import com.example.office.presentation.OfficeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -96,7 +97,8 @@ class MainActivity : AppCompatActivity() {
                 MovieInfoFragment.Instantiator,
                 PersonFragment.Instantiator,
                 MoviePickerFragment.Instantiator,
-                OfficeFragment.Instantiator
+                OfficeFragment.Instantiator,
+                LoginFragment.Instantiator
             ),
             id = R.id.fragment_container, finish = this::finish
         )
@@ -141,7 +143,7 @@ class MainActivity : AppCompatActivity() {
 
         compas.prepare(
             directory = "OFFICE",
-            fragmentName = OfficeFragment.Instantiator.getTag(),
+            fragmentName = LoginFragment.Instantiator.getTag(),
             bundle = Bundle()
         )
     }

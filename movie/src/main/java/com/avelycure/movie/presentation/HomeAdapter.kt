@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
-import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
 
 class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {

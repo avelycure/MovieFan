@@ -21,7 +21,6 @@ import com.avelycure.domain.constants.MovieConstants.DEFAULT_MOVIE_ID
 import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
 import com.avelycure.domain.models.Movie
 import com.avelycure.domain.models.MovieInfo
-import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie_info.R
 import com.avelycure.movie_info.presentation.adapters.MovieImagesAdapter
 import com.avelycure.movie_info.presentation.adapters.SimilarMoviesAdapter

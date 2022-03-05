@@ -35,6 +35,7 @@ dependencies {
     implementation(project(':resources'))
     implementation(project(':core-models'))
     implementation(project(':core-repository'))
+    implementation(project(':auth-repository'))
     implementation(project(':image-loader'))
     implementation(project(':core-navigation'))
 

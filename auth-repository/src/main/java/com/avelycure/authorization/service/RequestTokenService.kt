@@ -1,20 +1,20 @@
-package com.avelycure.data.remote.service.movie
+package com.avelycure.authorization.service
 
-import com.avelycure.data.remote.dto.movie.MovieResponseDto
-import com.avelycure.data.constants.RequestConstants
+import com.avelycure.authorization.constants.RequestConstants
+import com.avelycure.authorization.dto.TokenDto
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
-import io.ktor.utils.io.errors.*
+import java.io.IOException
 
-class SearchMovieService(
+class RequestTokenService(
     private val client: HttpClient
 ) {
-    suspend fun getMovieByName(query: String, page: Int): MovieResponseDto {
+    suspend fun requestToken(): TokenDto {
         return try {
             client.get {
                 with(RequestConstants) {
-                    url("$BASE_URL/search/movie?api_key=$API_KEY&query=$query&page=$page")
+                    url("$BASE_URL/authentication/token/new?api_key=$API_KEY")
                 }
             }
         } catch (e: RedirectResponseException) {
@@ -24,7 +24,7 @@ class SearchMovieService(
         } catch (e: ServerResponseException) {
             throw Exception("The server failed to fulfil an apparently valid request")
         } catch (e: IOException) {
-            throw Exception("No internet connection")
+            throw IOException("No internet connection")
         } catch (e: Exception) {
             throw Exception(" Unknown error occurred")
         }

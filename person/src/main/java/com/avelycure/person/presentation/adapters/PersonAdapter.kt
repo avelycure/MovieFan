@@ -1,6 +1,5 @@
 package com.avelycure.person.presentation.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.domain.models.Person
-import com.avelycure.domain.models.PersonInfo
 import com.avelycure.person.R
-import com.avelycure.person.utils.setProperties
 import com.avelycure.person.utils.showIfNotBlank
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
     var data: List<Person> = emptyList()
