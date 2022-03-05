@@ -14,6 +14,7 @@ import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.presentation.HomeFragment
 import com.avelycure.movie_info.presentation.MovieInfoFragment
+import com.avelycure.movie_picker.presentation.MoviePickerFragment
 import com.avelycure.moviefan.R
 import com.avelycure.person.presentation.PersonFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.dir_choose_movie -> {
-                    //compas.openLastFragmentInDirectory("CHOOSE")
+                    compas.openLastFragmentInDirectory("CHOOSE")
                     true
                 }
                 R.id.dir_office -> {
@@ -81,24 +82,18 @@ class MainActivity : AppCompatActivity() {
                 ),
                 DirectoryStack(
                     "PERSONS", mutableListOf()
+                ),
+                DirectoryStack(
+                    "CHOOSE", mutableListOf()
                 )
             ),
             insts = listOf(
                 HomeFragment.Instantiator,
                 MovieInfoFragment.Instantiator,
-                PersonFragment.Instantiator
+                PersonFragment.Instantiator,
+                MoviePickerFragment.Instantiator
             ),
             id = R.id.fragment_container, finish = this::finish
-        )
-
-        compas.prepare(
-            directory = "PERSONS",
-            fragmentName = PersonFragment.Instantiator.getTag(),
-            bundle = Bundle().apply {
-                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
-                    imageLoader.loadImage(url, id)
-                } as Serializable)
-            }
         )
 
         compas.prepare(
@@ -121,6 +116,22 @@ class MainActivity : AppCompatActivity() {
                     imageLoader.loadImage(url, id)
                 } as Serializable)
             }
+        )
+
+        compas.prepare(
+            directory = "PERSONS",
+            fragmentName = PersonFragment.Instantiator.getTag(),
+            bundle = Bundle().apply {
+                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
+                    imageLoader.loadImage(url, id)
+                } as Serializable)
+            }
+        )
+
+        compas.prepare(
+            directory = "CHOOSE",
+            fragmentName = MoviePickerFragment.Instantiator.getTag(),
+            bundle = Bundle()
         )
     }
 

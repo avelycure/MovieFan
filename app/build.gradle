@@ -50,6 +50,7 @@ dependencies {
     implementation(project(":movie"))
     implementation(project(":person"))
     implementation(project(":movie-info"))
+    implementation(project(":movie-picker"))
     implementation(project(':crash-report'))
     implementation(project(':image-loader'))
     implementation(project(':auth-repository'))
