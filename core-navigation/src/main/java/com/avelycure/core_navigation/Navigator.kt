@@ -7,6 +7,8 @@ import android.os.Bundle
  * @directory is the part of bottom navigation
  */
 interface Navigator {
+    fun recreate(context: Context, finish: () -> Unit)
+
     fun openLastFragmentInDirectory(dir: String)
     fun add(
         directory: String,
@@ -14,13 +16,13 @@ interface Navigator {
         bundle: Bundle
     )
 
-    fun prepare(
+    fun prepareRoot(
         directory: String,
         fragmentName: String,
         bundle: Bundle
     )
 
-    fun setHomeFragment(
+    fun setUpNavigation(
         c: Context,
         rootFragments: List<DirectoryStack>,
         insts: List<IInstantiator>,
@@ -29,4 +31,5 @@ interface Navigator {
     )
 
     fun back()
+    fun directoryIsNotEmpty(dir: String): Boolean
 }
