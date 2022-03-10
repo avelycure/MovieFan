@@ -16,12 +16,6 @@ interface Navigator {
         bundle: Bundle
     )
 
-    fun prepareRoot(
-        directory: String,
-        fragmentName: String,
-        bundle: Bundle
-    )
-
     fun setUpNavigation(
         c: Context,
         rootFragments: List<DirectoryStack>,

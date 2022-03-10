@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         fragmentManager = supportFragmentManager
 
         setUpRoots()
+        initHome(savedInstanceState)
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener {
@@ -130,30 +131,33 @@ class MainActivity : AppCompatActivity() {
             ),
             id = R.id.fragment_container, finish = this::finish
         )
+    }
 
-        compas.add(
-            directory = "MOVIES",
-            fragmentName = HomeFragment.Instantiator.getTag(),
-            bundle = Bundle().apply {
-                putSerializable(GET_MORE_INFO, { id: Int ->
-                    compas.add(
-                        "MOVIES",
-                        MovieInfoFragment.Instantiator.getTag(),
-                        Bundle().apply {
-                            putInt(MOVIE_ID, id)
-                            putSerializable(
-                                LOAD_IMAGES,
-                                { url: String, id: ImageView ->
-                                    imageLoader.loadImage(url, id)
-                                } as Serializable)
-                        }
-                    )
-                } as Serializable)
-                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
-                    imageLoader.loadImage(url, id)
-                } as Serializable)
-            }
-        )
+    fun initHome(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null)
+            compas.add(
+                directory = "MOVIES",
+                fragmentName = HomeFragment.Instantiator.getTag(),
+                bundle = Bundle().apply {
+                    putSerializable(GET_MORE_INFO, { id: Int ->
+                        compas.add(
+                            "MOVIES",
+                            MovieInfoFragment.Instantiator.getTag(),
+                            Bundle().apply {
+                                putInt(MOVIE_ID, id)
+                                putSerializable(
+                                    LOAD_IMAGES,
+                                    { url: String, id: ImageView ->
+                                        imageLoader.loadImage(url, id)
+                                    } as Serializable)
+                            }
+                        )
+                    } as Serializable)
+                    putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
+                        imageLoader.loadImage(url, id)
+                    } as Serializable)
+                }
+            )
     }
 
     override fun onBackPressed() {
