@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
+import com.avelycure.domain.models.formatters.getNiceGenres
+import com.avelycure.domain.models.formatters.getOriginalTitleAndReleaseDate
 import com.avelycure.movie.R
 
 class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
@@ -48,11 +50,8 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
                 tvTitle.text = popularMovie.title
                 tvReviews.text = popularMovie.voteCount.toString()
                 ratingBar.rating = popularMovie.voteAverage / 2F
-                tvOriginalTitle.text = popularMovie.originalTitle
-                tvGenres.text = buildString {
-                    for (genreId in item.genreIds)
-                        append(TranslationConstants.movieGenre[genreId] + " ")
-                }
+                tvOriginalTitle.text = popularMovie.getOriginalTitleAndReleaseDate()
+                tvGenres.text = popularMovie.getNiceGenres()
 
                 loadImages(
                     RequestConstants.IMAGE + popularMovie.posterPath,

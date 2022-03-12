@@ -1,7 +1,6 @@
 package com.avelycure.movie_info.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,9 +20,13 @@ import com.avelycure.domain.constants.MovieConstants.DEFAULT_MOVIE_ID
 import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
 import com.avelycure.domain.models.Movie
 import com.avelycure.domain.models.MovieInfo
+import com.avelycure.domain.models.formatters.getNiceCompanies
+import com.avelycure.domain.models.formatters.getNiceCountries
+import com.avelycure.domain.models.formatters.getNiceGenres
 import com.avelycure.movie_info.R
 import com.avelycure.movie_info.presentation.adapters.MovieImagesAdapter
 import com.avelycure.movie_info.presentation.adapters.SimilarMoviesAdapter
+import com.avelycure.movie_info.utils.getMoney
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -96,7 +99,6 @@ class MovieInfoFragment : Fragment() {
                 setUI(state.movieInfo, state.images, state.similar)
 
                 if (state.videoIsAvailable && !state.videoIsUploaded) {
-                    Log.d("mytag", "Begin transaction")
                     childFragmentManager
                         .beginTransaction()
                         .add(
@@ -114,24 +116,33 @@ class MovieInfoFragment : Fragment() {
     private fun setUI(movieInfo: MovieInfo, images: List<String>, similar: List<Movie>) {
         loadImage(RequestConstants.IMAGE + movieInfo.posterPath, ivPoster)
         tvTitle.text = movieInfo.title
+
         tvTagline.text = movieInfo.tagline
+
         ratingBar.rating = movieInfo.voteAverage
+
         tvReviews.text = movieInfo.voteCount.toString()
-        tvGenresTitle.text = "Genres: "
-        tvGenres.text = movieInfo.genres.toString()
-        tvCountriesTitle.text = "Countries: "
-        tvCountries.text = movieInfo.productionCountries.toString()
-        tvCompaniesTitle.text = "Companies: "
-        tvCompanies.text = movieInfo.productionCompanies.toString()
-        tvBudgetTitle.text = "Budget: "
-        tvBudget.text =
-            "${((movieInfo.budget.toFloat() / 1000000F).toInt()).toString()} million USD"
-        tvRevenueTitle.text = "Revenue"
-        tvRevenue.text =
-            "${((movieInfo.revenue.toFloat() / 1000000F).toInt()).toString()} million USD"
+
+        tvGenresTitle.text = getString(R.string.tgenres)
+        tvGenres.text = movieInfo.getNiceGenres()
+
+        tvCountriesTitle.text = getString(R.string.tcountries)
+        tvCountries.text = movieInfo.getNiceCountries()
+
+        tvCompaniesTitle.text = getString(R.string.tcompanies)
+        tvCompanies.text = movieInfo.getNiceCompanies()
+
+        tvBudgetTitle.text = getString(R.string.tbudget)
+        tvBudget.text = getMoney(movieInfo.budget)
+
+        tvRevenueTitle.text = getString(R.string.trevenue)
+        tvRevenue.text = getMoney(movieInfo.budget)
+
         tvOverview.text = movieInfo.overview
-        tvCastTitle.text = "Cast: "
+
+        tvCastTitle.text = getString(R.string.tcast)
         tvCast.text = movieInfo.cast.toString()
+
         movieImagesAdapter.imagesList = images
         similarMoviesAdapter.similarMovies = similar
     }

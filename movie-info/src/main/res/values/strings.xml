@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tgenres"> Genres: </string>
+    <string name="tcountries">Countries: </string>
+    <string name="tcompanies">Companies: </string>
+    <string name="tbudget">Budget: </string>
+    <string name="trevenue">Revenue</string>
+    <string name="tcast">Cast: </string>
+</resources>
