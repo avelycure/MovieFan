@@ -40,32 +40,61 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         handler = Handler(mainLooper)
         crashReporter = CrashReporter(handler, lifecycle, applicationContext)
         crashReporter.registerObserver()
         imageLoader = ImageLoader(this, R.drawable.placeholder)
         fragmentManager = supportFragmentManager
 
-        setUpRoots()
-        compas.openLastFragmentInDirectory("MOVIES")
+        setUpRoots(savedInstanceState)
+        initHome(savedInstanceState)
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.dir_movies -> {
-                    compas.openLastFragmentInDirectory("MOVIES")
+                    if (compas.directoryIsNotEmpty("MOVIES"))
+                        compas.openLastFragmentInDirectory("MOVIES")
+                    else
+                        addHomeScreen()
                     true
                 }
                 R.id.dir_persons -> {
-                    compas.openLastFragmentInDirectory("PERSONS")
+                    if (compas.directoryIsNotEmpty("PERSONS"))
+                        compas.openLastFragmentInDirectory("PERSONS")
+                    else
+                        compas.add(
+                            directory = "PERSONS",
+                            tag = PersonFragment.Instantiator.getTag(),
+                            bundle = Bundle().apply {
+                                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
+                                    imageLoader.loadImage(url, id)
+                                } as Serializable)
+                            }
+                        )
                     true
                 }
                 R.id.dir_choose_movie -> {
-                    compas.openLastFragmentInDirectory("CHOOSE")
+                    if (compas.directoryIsNotEmpty("CHOOSE"))
+                        compas.openLastFragmentInDirectory("CHOOSE")
+                    else
+                        compas.add(
+                            directory = "CHOOSE",
+                            tag = MoviePickerFragment.Instantiator.getTag(),
+                            bundle = Bundle()
+                        )
                     true
                 }
                 R.id.dir_office -> {
-                    compas.openLastFragmentInDirectory("OFFICE")
+                    if (compas.directoryIsNotEmpty("OFFICE"))
+                        compas.openLastFragmentInDirectory("OFFICE")
+                    else
+                        compas.add(
+                            directory = "OFFICE",
+                            tag = LoginFragment.Instantiator.getTag(),
+                            bundle = Bundle()
+                        )
                     true
                 }
                 else -> {
@@ -75,37 +104,47 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUpRoots() {
-        compas.setHomeFragment(
-            c = this,
-            rootFragments = listOf(
-                DirectoryStack(
-                    "MOVIES", mutableListOf()
+    private fun setUpRoots(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null)
+            compas.setUpNavigation(
+                c = this,
+                rootFragments = listOf(
+                    DirectoryStack(
+                        "MOVIES", mutableListOf()
+                    ),
+                    DirectoryStack(
+                        "PERSONS", mutableListOf()
+                    ),
+                    DirectoryStack(
+                        "CHOOSE", mutableListOf()
+                    ),
+                    DirectoryStack(
+                        "OFFICE", mutableListOf()
+                    )
                 ),
-                DirectoryStack(
-                    "PERSONS", mutableListOf()
+                insts = listOf(
+                    HomeFragment.Instantiator,
+                    MovieInfoFragment.Instantiator,
+                    PersonFragment.Instantiator,
+                    MoviePickerFragment.Instantiator,
+                    OfficeFragment.Instantiator,
+                    LoginFragment.Instantiator
                 ),
-                DirectoryStack(
-                    "CHOOSE", mutableListOf()
-                ),
-                DirectoryStack(
-                    "OFFICE", mutableListOf()
-                )
-            ),
-            insts = listOf(
-                HomeFragment.Instantiator,
-                MovieInfoFragment.Instantiator,
-                PersonFragment.Instantiator,
-                MoviePickerFragment.Instantiator,
-                OfficeFragment.Instantiator,
-                LoginFragment.Instantiator
-            ),
-            id = R.id.fragment_container, finish = this::finish
-        )
+                id = R.id.fragment_container, finish = this::finish
+            )
+    }
 
-        compas.prepare(
+    private fun initHome(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
+            addHomeScreen()
+        } else
+            compas.recreate(this, this::finish, savedInstanceState)
+    }
+
+    private fun addHomeScreen(){
+        compas.add(
             directory = "MOVIES",
-            fragmentName = HomeFragment.Instantiator.getTag(),
+            tag = HomeFragment.Instantiator.getTag(),
             bundle = Bundle().apply {
                 putSerializable(GET_MORE_INFO, { id: Int ->
                     compas.add(
@@ -113,9 +152,11 @@ class MainActivity : AppCompatActivity() {
                         MovieInfoFragment.Instantiator.getTag(),
                         Bundle().apply {
                             putInt(MOVIE_ID, id)
-                            putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
-                                imageLoader.loadImage(url, id)
-                            } as Serializable)
+                            putSerializable(
+                                LOAD_IMAGES,
+                                { url: String, id: ImageView ->
+                                    imageLoader.loadImage(url, id)
+                                } as Serializable)
                         }
                     )
                 } as Serializable)
@@ -124,28 +165,11 @@ class MainActivity : AppCompatActivity() {
                 } as Serializable)
             }
         )
+    }
 
-        compas.prepare(
-            directory = "PERSONS",
-            fragmentName = PersonFragment.Instantiator.getTag(),
-            bundle = Bundle().apply {
-                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
-                    imageLoader.loadImage(url, id)
-                } as Serializable)
-            }
-        )
-
-        compas.prepare(
-            directory = "CHOOSE",
-            fragmentName = MoviePickerFragment.Instantiator.getTag(),
-            bundle = Bundle()
-        )
-
-        compas.prepare(
-            directory = "OFFICE",
-            fragmentName = LoginFragment.Instantiator.getTag(),
-            bundle = Bundle()
-        )
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        compas.onDestroy(outState)
     }
 
     override fun onBackPressed() {

@@ -10,17 +10,11 @@ interface Navigator {
     fun openLastFragmentInDirectory(dir: String)
     fun add(
         directory: String,
-        fragmentName: String,
+        tag: String,
         bundle: Bundle
     )
 
-    fun prepare(
-        directory: String,
-        fragmentName: String,
-        bundle: Bundle
-    )
-
-    fun setHomeFragment(
+    fun setUpNavigation(
         c: Context,
         rootFragments: List<DirectoryStack>,
         insts: List<IInstantiator>,
@@ -29,4 +23,7 @@ interface Navigator {
     )
 
     fun back()
+    fun directoryIsNotEmpty(dir: String): Boolean
+    fun onDestroy(outState: Bundle)
+    fun recreate(context: Context, finish: () -> Unit, savedInstanceState: Bundle)
 }
