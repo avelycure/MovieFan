@@ -56,6 +56,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.dir_movies -> {
                     if (compas.directoryIsNotEmpty("MOVIES"))
                         compas.openLastFragmentInDirectory("MOVIES")
+                    else
+                        addHomeScreen()
                     true
                 }
                 R.id.dir_persons -> {
@@ -134,31 +136,40 @@ class MainActivity : AppCompatActivity() {
 
     private fun initHome(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            compas.add(
-                directory = "MOVIES",
-                tag = HomeFragment.Instantiator.getTag(),
-                bundle = Bundle().apply {
-                    putSerializable(GET_MORE_INFO, { id: Int ->
-                        compas.add(
-                            "MOVIES",
-                            MovieInfoFragment.Instantiator.getTag(),
-                            Bundle().apply {
-                                putInt(MOVIE_ID, id)
-                                putSerializable(
-                                    LOAD_IMAGES,
-                                    { url: String, id: ImageView ->
-                                        imageLoader.loadImage(url, id)
-                                    } as Serializable)
-                            }
-                        )
-                    } as Serializable)
-                    putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
-                        imageLoader.loadImage(url, id)
-                    } as Serializable)
-                }
-            )
+            addHomeScreen()
         } else
             compas.recreate(this, this::finish, savedInstanceState)
+    }
+
+    private fun addHomeScreen(){
+        compas.add(
+            directory = "MOVIES",
+            tag = HomeFragment.Instantiator.getTag(),
+            bundle = Bundle().apply {
+                putSerializable(GET_MORE_INFO, { id: Int ->
+                    compas.add(
+                        "MOVIES",
+                        MovieInfoFragment.Instantiator.getTag(),
+                        Bundle().apply {
+                            putInt(MOVIE_ID, id)
+                            putSerializable(
+                                LOAD_IMAGES,
+                                { url: String, id: ImageView ->
+                                    imageLoader.loadImage(url, id)
+                                } as Serializable)
+                        }
+                    )
+                } as Serializable)
+                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
+                    imageLoader.loadImage(url, id)
+                } as Serializable)
+            }
+        )
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        compas.onDestroy(outState)
     }
 
     override fun onBackPressed() {
