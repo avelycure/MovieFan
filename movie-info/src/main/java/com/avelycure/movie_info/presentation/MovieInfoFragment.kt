@@ -14,7 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.core_navigation.IInstantiator
+import com.avelycure.core_navigation.NavigationConstants
+import com.avelycure.core_navigation.NavigationConstants.GET_MORE_INFO
 import com.avelycure.core_navigation.NavigationConstants.LOAD_IMAGES
+import com.avelycure.core_navigation.NavigationConstants.NAVIGATOR
+import com.avelycure.core_navigation.Navigator
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.domain.constants.MovieConstants.DEFAULT_MOVIE_ID
 import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
@@ -29,6 +33,7 @@ import com.avelycure.movie_info.presentation.adapters.SimilarMoviesAdapter
 import com.avelycure.movie_info.utils.getMoney
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import java.io.Serializable
 
 @AndroidEntryPoint
 class MovieInfoFragment : Fragment() {
@@ -47,6 +52,7 @@ class MovieInfoFragment : Fragment() {
     }
 
     private var loadImage: (String, ImageView) -> Unit = { _, _ -> }
+    private var openMovieInfo: (Int) -> Unit = { _ -> }
 
     private var movieId: Int = DEFAULT_MOVIE_ID
 
@@ -76,6 +82,9 @@ class MovieInfoFragment : Fragment() {
     private lateinit var rvMovieImages: RecyclerView
     private lateinit var rvSimilarMovies: RecyclerView
 
+    private lateinit var compas: Navigator
+
+    @Suppress("UNCHECKED_CAST")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -86,6 +95,11 @@ class MovieInfoFragment : Fragment() {
 
         loadImage =
             arguments?.getSerializable(LOAD_IMAGES) as? (String, ImageView) -> Unit ?: { _, _ -> }
+
+        openMovieInfo =
+            arguments?.getSerializable(GET_MORE_INFO) as? (Int) -> Unit ?: { _ -> }
+
+        compas = (arguments?.getSerializable(NavigationConstants.NAVIGATOR) as? Navigator)!!
 
         return view
     }
@@ -176,7 +190,21 @@ class MovieInfoFragment : Fragment() {
         rvMovieImages.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        similarMoviesAdapter = SimilarMoviesAdapter(loadImage)
+        similarMoviesAdapter = SimilarMoviesAdapter(loadImage) { id ->
+            compas.add(
+                "MOVIES",
+                MovieInfoFragment.Instantiator.tag,
+                Bundle().apply {
+                    putInt(MOVIE_ID, id)
+
+                    putSerializable(
+                        LOAD_IMAGES, loadImage as Serializable
+                    )
+
+                    putSerializable(NAVIGATOR, compas)
+                }
+            )
+        }
         rvSimilarMovies.adapter = similarMoviesAdapter
         rvSimilarMovies.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)

@@ -11,7 +11,8 @@ import com.avelycure.domain.models.Movie
 import com.avelycure.movie_info.R
 
 class SimilarMoviesAdapter(
-    private val loadImage: (String, ImageView) -> Unit
+    private val loadImage: (String, ImageView) -> Unit,
+    private val openMovieInfo: (Int) -> Unit
 ) : RecyclerView.Adapter<SimilarMoviesAdapter.SimilarMoviesViewHolder>() {
     var similarMovies: List<Movie> = emptyList()
 
@@ -23,15 +24,21 @@ class SimilarMoviesAdapter(
     }
 
     override fun onBindViewHolder(holder: SimilarMoviesViewHolder, position: Int) {
-        loadImage(
-            RequestConstants.IMAGE + similarMovies[position].posterPath,
-            holder.image
-        )
+        holder.bind(position)
     }
 
     override fun getItemCount() = similarMovies.size
 
-    class SimilarMoviesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class SimilarMoviesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val image: AppCompatImageView = itemView.findViewById(R.id.similar_movie_image_item)
+        fun bind(pos: Int) {
+            loadImage(
+                RequestConstants.IMAGE + similarMovies[pos].posterPath,
+                image
+            )
+            image.setOnClickListener {
+                openMovieInfo(similarMovies[pos].movieId)
+            }
+        }
     }
 }
