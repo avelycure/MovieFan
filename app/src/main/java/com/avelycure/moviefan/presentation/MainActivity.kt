@@ -2,7 +2,6 @@ package com.avelycure.moviefan.presentation
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
@@ -48,14 +47,13 @@ class MainActivity : AppCompatActivity() {
         imageLoader = ImageLoader(this, R.drawable.placeholder)
         fragmentManager = supportFragmentManager
 
-        setUpRoots()
+        setUpRoots(savedInstanceState)
         initHome(savedInstanceState)
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.dir_movies -> {
-                    Log.d("mytag", "" + compas.directoryIsNotEmpty("MOVIES"))
                     if (compas.directoryIsNotEmpty("MOVIES"))
                         compas.openLastFragmentInDirectory("MOVIES")
                     true
@@ -66,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                     else
                         compas.add(
                             directory = "PERSONS",
-                            fragmentName = PersonFragment.Instantiator.getTag(),
+                            tag = PersonFragment.Instantiator.getTag(),
                             bundle = Bundle().apply {
                                 putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
                                     imageLoader.loadImage(url, id)
@@ -81,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                     else
                         compas.add(
                             directory = "CHOOSE",
-                            fragmentName = MoviePickerFragment.Instantiator.getTag(),
+                            tag = MoviePickerFragment.Instantiator.getTag(),
                             bundle = Bundle()
                         )
                     true
@@ -92,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                     else
                         compas.add(
                             directory = "OFFICE",
-                            fragmentName = LoginFragment.Instantiator.getTag(),
+                            tag = LoginFragment.Instantiator.getTag(),
                             bundle = Bundle()
                         )
                     true
@@ -104,40 +102,41 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUpRoots() {
-        compas.setUpNavigation(
-            c = this,
-            rootFragments = listOf(
-                DirectoryStack(
-                    "MOVIES", mutableListOf()
+    private fun setUpRoots(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null)
+            compas.setUpNavigation(
+                c = this,
+                rootFragments = listOf(
+                    DirectoryStack(
+                        "MOVIES", mutableListOf()
+                    ),
+                    DirectoryStack(
+                        "PERSONS", mutableListOf()
+                    ),
+                    DirectoryStack(
+                        "CHOOSE", mutableListOf()
+                    ),
+                    DirectoryStack(
+                        "OFFICE", mutableListOf()
+                    )
                 ),
-                DirectoryStack(
-                    "PERSONS", mutableListOf()
+                insts = listOf(
+                    HomeFragment.Instantiator,
+                    MovieInfoFragment.Instantiator,
+                    PersonFragment.Instantiator,
+                    MoviePickerFragment.Instantiator,
+                    OfficeFragment.Instantiator,
+                    LoginFragment.Instantiator
                 ),
-                DirectoryStack(
-                    "CHOOSE", mutableListOf()
-                ),
-                DirectoryStack(
-                    "OFFICE", mutableListOf()
-                )
-            ),
-            insts = listOf(
-                HomeFragment.Instantiator,
-                MovieInfoFragment.Instantiator,
-                PersonFragment.Instantiator,
-                MoviePickerFragment.Instantiator,
-                OfficeFragment.Instantiator,
-                LoginFragment.Instantiator
-            ),
-            id = R.id.fragment_container, finish = this::finish
-        )
+                id = R.id.fragment_container, finish = this::finish
+            )
     }
 
-    fun initHome(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null)
+    private fun initHome(savedInstanceState: Bundle?) {
+        if (savedInstanceState == null) {
             compas.add(
                 directory = "MOVIES",
-                fragmentName = HomeFragment.Instantiator.getTag(),
+                tag = HomeFragment.Instantiator.getTag(),
                 bundle = Bundle().apply {
                     putSerializable(GET_MORE_INFO, { id: Int ->
                         compas.add(
@@ -158,6 +157,8 @@ class MainActivity : AppCompatActivity() {
                     } as Serializable)
                 }
             )
+        } else
+            compas.recreate(this, this::finish, savedInstanceState)
     }
 
     override fun onBackPressed() {

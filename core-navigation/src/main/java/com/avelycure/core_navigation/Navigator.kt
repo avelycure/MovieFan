@@ -7,12 +7,10 @@ import android.os.Bundle
  * @directory is the part of bottom navigation
  */
 interface Navigator {
-    fun recreate(context: Context, finish: () -> Unit)
-
     fun openLastFragmentInDirectory(dir: String)
     fun add(
         directory: String,
-        fragmentName: String,
+        tag: String,
         bundle: Bundle
     )
 
@@ -26,4 +24,6 @@ interface Navigator {
 
     fun back()
     fun directoryIsNotEmpty(dir: String): Boolean
+    fun onDestroy(outState: Bundle)
+    fun recreate(context: Context, finish: () -> Unit, savedInstanceState: Bundle)
 }
