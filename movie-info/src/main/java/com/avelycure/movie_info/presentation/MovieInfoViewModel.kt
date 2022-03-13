@@ -81,7 +81,6 @@ class MovieInfoViewModel
                                     videoInfo = dataState.data ?: VideoInfo(),
                                     videoIsAvailable = true
                                 )
-                            Log.d("mytag", "Got video: " + dataState.data)
                         }
                         is DataState.Loading -> {
                             _state.value = _state.value.copy(
