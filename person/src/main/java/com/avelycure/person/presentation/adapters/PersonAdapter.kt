@@ -15,10 +15,11 @@ import com.avelycure.domain.models.Person
 import com.avelycure.domain.models.formatters.getNiceMovies
 import com.avelycure.domain.models.formatters.getNiceTvs
 import com.avelycure.person.R
+import com.avelycure.person.utils.PersonDiffutilsCallback
 import com.avelycure.person.utils.showIfNotBlank
 
 class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
-    var data: List<Person> = emptyList()
+    val data: MutableList<Person> = mutableListOf()
 
     lateinit var onExpand: (personId: Int, itemId: Int) -> Unit
 
@@ -89,7 +90,7 @@ class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
                     LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
 
                 layout.setOnClickListener {
-                    person.expanded = !person.expanded
+                    //person.expanded = !person.expanded
 
                     onExpand(person.id, position)
                 }

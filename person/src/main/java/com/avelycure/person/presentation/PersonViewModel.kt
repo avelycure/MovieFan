@@ -42,17 +42,24 @@ class PersonViewModel
     }
 
     private fun onExpand(personId: Int, itemId: Int) {
+        Log.d(
+            "mytag",
+            "Before: ${_state.value.persons.map { "${it.name} + ${it.birthday} + ${it.expanded}" }}"
+        )
         viewModelScope.launch {
             getPersonInfo.execute(personId).collect { dataState ->
                 when (dataState) {
                     is DataState.Data -> {
                         val list = _state.value.persons.toMutableList()
-                        val person = list[itemId]
-                        person.setProperties(dataState.data)
-                        list[itemId] = person
+                        list[itemId].setProperties(dataState.data)
+                        list[itemId].expanded = true
                         _state.value = _state.value.copy(
                             persons = list,
                             lastExpandedItem = itemId
+                        )
+                        Log.d(
+                            "mytag",
+                            "After: ${_state.value.persons.map { "${it.name} + ${it.birthday} + ${it.expanded}" }}"
                         )
                     }
                     is DataState.Response -> {
@@ -77,6 +84,7 @@ class PersonViewModel
                     is DataState.Data -> {
                         _state.value = _state.value.copy(
                             persons = _state.value.persons + (dataState.data ?: emptyList()),
+                            //persons = dataState.data ?: emptyList(),
                             lastVisiblePage = _state.value.lastVisiblePage + 1
                         )
                     }

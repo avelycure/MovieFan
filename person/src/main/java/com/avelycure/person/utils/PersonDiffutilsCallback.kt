@@ -7,8 +7,6 @@ class PersonDiffutilsCallback(
     private val oldList: List<Person>,
     private val newList: List<Person>
 ) : DiffUtil.Callback() {
-
-
     override fun getOldListSize(): Int = oldList.size
 
     override fun getNewListSize(): Int = newList.size
@@ -16,7 +14,7 @@ class PersonDiffutilsCallback(
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val personOld = oldList[oldItemPosition]
         val personNew = newList[newItemPosition]
-        return personOld.id == personNew.id
+        return (personOld.id == personNew.id)
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
