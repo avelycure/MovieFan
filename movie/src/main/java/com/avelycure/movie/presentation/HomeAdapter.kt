@@ -10,14 +10,18 @@ import androidx.appcompat.widget.AppCompatRatingBar
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.avelycure.core_navigation.Navigator
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
+import com.avelycure.domain.models.formatters.getNiceGenres
+import com.avelycure.domain.models.formatters.getOriginalTitleAndReleaseDate
 import com.avelycure.movie.R
 
 class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     var data: List<Movie> = emptyList()
-    var onClickedItem: (Int) -> Unit = {}
+    var onClickedItem: (Int, navigator: Navigator) -> Unit = {_,_->}
+    lateinit var compas: Navigator
     var fetchMore: () -> Unit = {}
     var loadImages: (String, ImageView) -> Unit = {_,_->}
 
@@ -43,16 +47,13 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
         private val tvOriginalTitle =
             view.findViewById<AppCompatTextView>(R.id.pmi_original_title)
 
-        fun bind(item: Movie?, onClicked: (Int) -> Unit) {
+        fun bind(item: Movie?, onClicked: (Int, navigator: Navigator) -> Unit) {
             item?.let { popularMovie ->
                 tvTitle.text = popularMovie.title
                 tvReviews.text = popularMovie.voteCount.toString()
                 ratingBar.rating = popularMovie.voteAverage / 2F
-                tvOriginalTitle.text = popularMovie.originalTitle
-                tvGenres.text = buildString {
-                    for (genreId in item.genreIds)
-                        append(TranslationConstants.movieGenre[genreId] + " ")
-                }
+                tvOriginalTitle.text = popularMovie.getOriginalTitleAndReleaseDate()
+                tvGenres.text = popularMovie.getNiceGenres()
 
                 loadImages(
                     RequestConstants.IMAGE + popularMovie.posterPath,
@@ -61,7 +62,7 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
             }
 
             itemView.setOnClickListener {
-                onClicked(item!!.movieId)
+                onClicked(item!!.movieId, compas)
             }
         }
     }
@@ -69,7 +70,6 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     var loading: Boolean = false
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
-        Log.d("mytag", "called scrolling")
         val manager = recyclerView.layoutManager
         val llm = manager as LinearLayoutManager
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -77,7 +77,6 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
                 super.onScrolled(recyclerView, dx, dy)
                 val visiblePosition = llm.findLastCompletelyVisibleItemPosition()
                 if (!loading && visiblePosition > itemCount - 10) {
-                    Log.d("mytag", "vis: ${visiblePosition}, itemCount: ${itemCount}")
                     fetchMore()
                     loading = true
                 }

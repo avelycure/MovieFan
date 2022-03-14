@@ -12,7 +12,7 @@ internal class Cacher(limitKb: Int) : LruCache<String, Bitmap>(limitKb) {
     fun putBitmapInMemory(url: String, bmp: Bitmap) {
         if (getBitmapFromMemory(url) == null) {
             this.put(url, bmp)
-            Log.d("mytag", "added to cache:${url}")
+            //Log.d("mytag", "added to cache:${url}")
         }
     }
 }

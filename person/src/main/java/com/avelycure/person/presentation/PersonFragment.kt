@@ -9,6 +9,7 @@ import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.core_navigation.IInstantiator
@@ -17,6 +18,7 @@ import com.avelycure.domain.state.ProgressBarState
 import com.avelycure.person.R
 import com.avelycure.person.presentation.adapters.PersonAdapter
 import com.avelycure.person.presentation.adapters.PersonImagesAdapter
+import com.avelycure.person.utils.PersonDiffutilsCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -68,11 +70,11 @@ class PersonFragment : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             personViewModel.state.collect { state ->
-                val prevSize = personAdapter.data.size
-                personAdapter.data = state.persons
-                if (prevSize != state.persons.size)
-                    personAdapter.notifyItemRangeInserted(prevSize, 15)
-                personAdapter.notifyDataSetChanged()
+                val diffutilsCallback = PersonDiffutilsCallback(personAdapter.data, state.persons)
+                val diffUtilResult = DiffUtil.calculateDiff(diffutilsCallback)
+                personAdapter.data.clear()
+                personAdapter.data.addAll(state.persons)
+                diffUtilResult.dispatchUpdatesTo(personAdapter)
 
                 if (state.progressBarState is ProgressBarState.Loading)
                     pb.visibility = View.VISIBLE

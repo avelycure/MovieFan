@@ -12,11 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.domain.models.Person
+import com.avelycure.domain.models.formatters.getNiceMovies
+import com.avelycure.domain.models.formatters.getNiceTvs
 import com.avelycure.person.R
+import com.avelycure.person.utils.PersonDiffutilsCallback
 import com.avelycure.person.utils.showIfNotBlank
 
 class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
-    var data: List<Person> = emptyList()
+    val data: MutableList<Person> = mutableListOf()
 
     lateinit var onExpand: (personId: Int, itemId: Int) -> Unit
 
@@ -65,8 +68,8 @@ class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
         fun bind(item: Person?, position: Int) {
             item?.let { person ->
                 tvName.text = person.name
-                showIfNotBlank(tvsTitle, tvs, person.knownForTv.toString())
-                showIfNotBlank(moviesTitle, movies, person.knownForMovie.toString())
+                showIfNotBlank(tvsTitle, tvs, person.getNiceTvs())
+                showIfNotBlank(moviesTitle, movies, person.getNiceMovies())
                 tvDepartment.text = person.knownForDepartment
 
                 if (person.expanded) {
@@ -87,7 +90,7 @@ class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
                     LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
 
                 layout.setOnClickListener {
-                    person.expanded = !person.expanded
+                    //person.expanded = !person.expanded
 
                     onExpand(person.id, position)
                 }

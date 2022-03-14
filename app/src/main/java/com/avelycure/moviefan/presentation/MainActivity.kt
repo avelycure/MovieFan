@@ -7,9 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.avelycure.anr_checking.CrashReporter
 import com.avelycure.core_navigation.DirectoryStack
+import com.avelycure.core_navigation.NavigationConstants.GET_MORE_INFO
 import com.avelycure.core_navigation.NavigationConstants.LOAD_IMAGES
+import com.avelycure.core_navigation.NavigationConstants.NAVIGATOR
 import com.avelycure.core_navigation.Navigator
-import com.avelycure.domain.constants.MovieConstants.GET_MORE_INFO
 import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.presentation.HomeFragment
@@ -141,28 +142,37 @@ class MainActivity : AppCompatActivity() {
             compas.recreate(this, this::finish, savedInstanceState)
     }
 
-    private fun addHomeScreen(){
+    private fun addHomeScreen() {
+
+        val loadImage = { url: String, id: ImageView ->
+            imageLoader.loadImage(url, id)
+        }
+
+        val getMoreInfo = { id: Int, navigator: Navigator ->
+            compas.add(
+                directory = "MOVIES",
+                tag = MovieInfoFragment.Instantiator.getTag(),
+                bundle = Bundle().apply {
+                    putInt(MOVIE_ID, id)
+
+                    putSerializable(
+                        LOAD_IMAGES, loadImage as Serializable
+                    )
+
+                    putSerializable(NAVIGATOR, navigator)
+                }
+            )
+        }
+
         compas.add(
             directory = "MOVIES",
             tag = HomeFragment.Instantiator.getTag(),
             bundle = Bundle().apply {
-                putSerializable(GET_MORE_INFO, { id: Int ->
-                    compas.add(
-                        "MOVIES",
-                        MovieInfoFragment.Instantiator.getTag(),
-                        Bundle().apply {
-                            putInt(MOVIE_ID, id)
-                            putSerializable(
-                                LOAD_IMAGES,
-                                { url: String, id: ImageView ->
-                                    imageLoader.loadImage(url, id)
-                                } as Serializable)
-                        }
-                    )
-                } as Serializable)
-                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
-                    imageLoader.loadImage(url, id)
-                } as Serializable)
+                putSerializable(GET_MORE_INFO, getMoreInfo as Serializable)
+
+                putSerializable(LOAD_IMAGES, loadImage as Serializable)
+
+                putSerializable(NAVIGATOR, compas)
             }
         )
     }

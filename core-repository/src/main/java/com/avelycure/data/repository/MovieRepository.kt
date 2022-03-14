@@ -1,5 +1,6 @@
 package com.avelycure.data.repository
 
+import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.data.remote.mappers.*
 import com.avelycure.data.remote.service.movie.MovieInfoService
 import com.avelycure.data.remote.service.movie.PopularMovieService

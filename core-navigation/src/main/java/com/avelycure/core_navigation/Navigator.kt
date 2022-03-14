@@ -2,11 +2,12 @@ package com.avelycure.core_navigation
 
 import android.content.Context
 import android.os.Bundle
+import java.io.Serializable
 
 /**
  * @directory is the part of bottom navigation
  */
-interface Navigator {
+interface Navigator : Serializable {
     fun openLastFragmentInDirectory(dir: String)
     fun add(
         directory: String,
