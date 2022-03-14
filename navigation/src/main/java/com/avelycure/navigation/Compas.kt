@@ -35,17 +35,26 @@ class Compas() : Navigator {
      * If directory is not empty -> check if there is needed fragment
      */
     override fun openLastFragmentInDirectory(dir: String) {
-        Log.d("mytag", "open: ${fragmentManager.fragments}")
-        Log.d("mytag", "open: ${fragments}")
+        printFM("OPEN: ", fragmentManager.fragments)
+        printTags("OPEN: ", fragments)
+
         if (directoryIsNotEmpty(dir)) {
             val fragment = fragments.find { it.dirName == dir }?.fragments?.last()?.fragment
+            //val pfragment = fragments.find { it.dirName == curDir }?.fragments?.last()?.fragment
 
-            if (fragment != null) {
+            if (fragment != null /*&& pfragment!=null*/) {
+
+                //if merged in one transaction the fragment is not added to top
+                fragmentManager
+                    .beginTransaction()
+                    .remove(fragment)
+                    .commit()
 
                 fragmentManager
                     .beginTransaction()
-                    .replace(containerId, fragment)
+                    .add(containerId, fragment)
                     .commit()
+
                 curDir = dir
             }
         }
@@ -110,20 +119,31 @@ class Compas() : Navigator {
      * If the first directory has only root element than closeApp
      */
     override fun back() {
-        Log.d("mytag", "Fragments1: ${fragments}")
-        Log.d("mytag", "Fragments1: ${fragmentManager.fragments}")
+        printFM("BREMOVE", fragmentManager.fragments)
+        printTags("BREMOVE", fragments)
+
         //current directory
         val dir = fragments.find { it.dirName == curDir }
 
         //if there is more than one fragment in this directory
         if (dir?.fragments?.size ?: 0 > 1) {
 
-            dir?.fragments?.removeLast()
+            val fragment = dir?.fragments?.removeLast()?.fragment
 
             //immediate?
-            fragmentManager.popBackStack()
-            Log.d("mytag", "Fragments2: ${fragments}")
-            Log.d("mytag", "Fragments2: ${fragmentManager.fragments}")
+            //todo how many should be removed? only one?
+            //fragmentManager.popBackStackImmediate()
+
+
+            if (fragment != null) {
+                fragmentManager.beginTransaction()
+                    .remove(fragment)
+                    .commit()
+            }
+
+
+            printFM("AREMOVE", fragmentManager.fragments)
+            printTags("AREMOVE", fragments)
 
             openLastFragmentInDirectory(curDir)
         } else {
@@ -144,6 +164,23 @@ class Compas() : Navigator {
                     closeApp()
             }
         }
+    }
+
+    fun printFM(name: String, frags: List<Fragment>) {
+        val text = buildString {
+            for (f in frags)
+                append(f.javaClass.simpleName, " ")
+        }
+        Log.d("mytag", "$name : $text")
+    }
+
+    fun printTags(name: String, frags: List<DirectoryStack>) {
+        val text = buildString {
+            for (d in frags)
+                for (f in d.fragments)
+                    append(f.tag, " ")
+        }
+        Log.d("mytag", "$name : $text")
     }
 
     private fun closeApp() {
@@ -174,7 +211,7 @@ class Compas() : Navigator {
         fragmentManager = (context as AppCompatActivity).supportFragmentManager
         finishApp = finish
 
-        Log.d("mytag", "When recreating: " + fragmentManager.fragments)
+        //Log.d("mytag", "When recreating: " + fragmentManager.fragments)
 
         for (i in 0 until fragments.size) {
 
@@ -240,7 +277,7 @@ class Compas() : Navigator {
     }*/
 
     override fun onDestroy(outState: Bundle) {
-        Log.d("mytag", "Before destroy: " + fragmentManager.fragments)
+        //Log.d("mytag", "Before destroy: " + fragmentManager.fragments)
         saveState(outState)
     }
 }
