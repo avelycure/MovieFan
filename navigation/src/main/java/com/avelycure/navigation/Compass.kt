@@ -7,11 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.avelycure.core_navigation.*
+import kotlin.concurrent.thread
 
 /**
  * Class to navigate between fragments
  */
-class Compas() : Navigator {
+class Compass() : Navigator {
 
     private lateinit var fragmentManager: FragmentManager
 
@@ -33,16 +34,13 @@ class Compas() : Navigator {
 
     /**
      * If directory is not empty -> check if there is needed fragment
+     * Removing fragment from backstack
      */
     override fun openLastFragmentInDirectory(dir: String) {
-        printFM("OPEN: ", fragmentManager.fragments)
-        printTags("OPEN: ", fragments)
-
         if (directoryIsNotEmpty(dir)) {
             val fragment = fragments.find { it.dirName == dir }?.fragments?.last()?.fragment
-            //val pfragment = fragments.find { it.dirName == curDir }?.fragments?.last()?.fragment
 
-            if (fragment != null /*&& pfragment!=null*/) {
+            if (fragment != null) {
 
                 //if merged in one transaction the fragment is not added to top
                 fragmentManager
@@ -66,7 +64,6 @@ class Compas() : Navigator {
         bundle: Bundle
     ) {
         //the directory we are adding to
-        //val dirTag = fragments.find { it.dirName == directory }
         val dir = fragments.find { it.dirName == directory }
 
         val fragment = instantiators[tag]?.getInstance(bundle)
@@ -119,9 +116,6 @@ class Compas() : Navigator {
      * If the first directory has only root element than closeApp
      */
     override fun back() {
-        printFM("BREMOVE", fragmentManager.fragments)
-        printTags("BREMOVE", fragments)
-
         //current directory
         val dir = fragments.find { it.dirName == curDir }
 
@@ -130,20 +124,11 @@ class Compas() : Navigator {
 
             val fragment = dir?.fragments?.removeLast()?.fragment
 
-            //immediate?
-            //todo how many should be removed? only one?
-            //fragmentManager.popBackStackImmediate()
-
-
             if (fragment != null) {
                 fragmentManager.beginTransaction()
                     .remove(fragment)
                     .commit()
             }
-
-
-            printFM("AREMOVE", fragmentManager.fragments)
-            printTags("AREMOVE", fragments)
 
             openLastFragmentInDirectory(curDir)
         } else {
@@ -166,26 +151,11 @@ class Compas() : Navigator {
         }
     }
 
-    fun printFM(name: String, frags: List<Fragment>) {
-        val text = buildString {
-            for (f in frags)
-                append(f.javaClass.simpleName, " ")
-        }
-        Log.d("mytag", "$name : $text")
-    }
-
-    fun printTags(name: String, frags: List<DirectoryStack>) {
-        val text = buildString {
-            for (d in frags)
-                for (f in d.fragments)
-                    append(f.tag, " ")
-        }
-        Log.d("mytag", "$name : $text")
-    }
-
     private fun closeApp() {
         finishApp()
     }
+
+    // Recreating
 
     private fun saveState(outState: Bundle) {
 
@@ -211,8 +181,6 @@ class Compas() : Navigator {
         fragmentManager = (context as AppCompatActivity).supportFragmentManager
         finishApp = finish
 
-        //Log.d("mytag", "When recreating: " + fragmentManager.fragments)
-
         for (i in 0 until fragments.size) {
 
             for (j in 0 until fragments[i].fragments.size) {
@@ -226,58 +194,27 @@ class Compas() : Navigator {
         }
     }
 
-    /*private fun saveState(outState: Bundle) {
-        val dir = fragments.find { it.dirName == curDir }
-        val count = dir?.fragments?.size ?: 0
-
-        if (dir != null) {
-            for (i in 0 until count) {
-                fragmentManager.putFragment(
-                    outState,
-                    i.toString(),
-                    dir.fragments[i].fragment
-                )
-            }
-        }
-    }
-
-    override fun recreate(
-        context: Context,
-        finish: () -> Unit,
-        savedInstanceState: Bundle
-    ) {
-        fragmentManager = (context as AppCompatActivity).supportFragmentManager
-        finishApp = finish
-
-        //only in this version of save state
-        clearOtherBranches()
-
-        Log.d("mytag", "When recreating: " + fragmentManager.fragments)
-
-        val dir = fragments.find { it.dirName == curDir }
-
-        if (dir != null)
-            for (i in 0 until dir.fragments.size) {
-                val f = fragmentManager.getFragment(savedInstanceState, i.toString())
-                if (f != null)
-                    dir.fragments[i].fragment = f
-            }
-    }
-
-    private fun clearOtherBranches() {
-        for (dir in fragments) {
-            if (dir.dirName != curDir) {
-                for (screen in dir.fragments) {
-                    fragmentManager.beginTransaction()
-                        .remove(screen.fragment)
-                        .commit()
-                }
-            }
-        }
-    }*/
-
     override fun onDestroy(outState: Bundle) {
-        //Log.d("mytag", "Before destroy: " + fragmentManager.fragments)
         saveState(outState)
+    }
+
+
+    //Debugging
+
+    private fun printFM(name: String, frags: List<Fragment>) {
+        val text = buildString {
+            for (f in frags)
+                append(f.javaClass.simpleName, " ")
+        }
+        Log.d("mytag", "$name : $text")
+    }
+
+    private fun printTags(name: String, frags: List<DirectoryStack>) {
+        val text = buildString {
+            for (d in frags)
+                for (f in d.fragments)
+                    append(f.tag, " ")
+        }
+        Log.d("mytag", "$name : $text")
     }
 }

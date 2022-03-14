@@ -1,7 +1,7 @@
 package com.avelycure.navigation.di
 
 import com.avelycure.core_navigation.Navigator
-import com.avelycure.navigation.Compas
+import com.avelycure.navigation.Compass
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +14,6 @@ object NavigationModule{
     @Provides
     @Singleton
     fun provideNavigator(): Navigator{
-        return Compas()
+        return Compass()
     }
 }
