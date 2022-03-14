@@ -38,21 +38,22 @@ class Compass() : Navigator {
      */
     override fun openLastFragmentInDirectory(dir: String) {
         if (directoryIsNotEmpty(dir)) {
-            val fragment = fragments.find { it.dirName == dir }?.fragments?.last()?.fragment
+            val screen = fragments.find { it.dirName == dir }?.fragments?.last()
 
-            if (fragment != null) {
+            if (screen != null) {
 
                 //if merged in one transaction the fragment is not added to top
                 fragmentManager
                     .beginTransaction()
-                    .remove(fragment)
+                    .remove(screen.fragment)
                     .commit()
 
+
+                //    if (dir == screen.directory) {
                 fragmentManager
                     .beginTransaction()
-                    .add(containerId, fragment)
+                    .add(containerId, screen.fragment)
                     .commit()
-
                 curDir = dir
             }
         }
@@ -98,6 +99,7 @@ class Compass() : Navigator {
         curDir = fragments[0].dirName
         fragmentManager = (c as AppCompatActivity).supportFragmentManager
         finishApp = finish
+
     }
 
     /**
@@ -122,11 +124,12 @@ class Compass() : Navigator {
         //if there is more than one fragment in this directory
         if (dir?.fragments?.size ?: 0 > 1) {
 
-            val fragment = dir?.fragments?.removeLast()?.fragment
+            val screen = dir?.fragments?.removeLast()
 
-            if (fragment != null) {
-                fragmentManager.beginTransaction()
-                    .remove(fragment)
+            if (screen != null) {
+                fragmentManager
+                    .beginTransaction()
+                    .remove(screen.fragment)
                     .commit()
             }
 
@@ -158,7 +161,7 @@ class Compass() : Navigator {
     // Recreating
 
     private fun saveState(outState: Bundle) {
-
+        var counter = 0
         for (i in 0 until fragments.size) {
 
             val count = fragments[i].fragments.size
@@ -166,9 +169,10 @@ class Compass() : Navigator {
             for (j in 0 until count) {
                 fragmentManager.putFragment(
                     outState,
-                    (i * fragments.size + j).toString(),
+                    (counter).toString(),
                     fragments[i].fragments[j].fragment
                 )
+                counter++
             }
         }
     }
@@ -180,16 +184,18 @@ class Compass() : Navigator {
     ) {
         fragmentManager = (context as AppCompatActivity).supportFragmentManager
         finishApp = finish
+        var counter = 0
 
         for (i in 0 until fragments.size) {
 
             for (j in 0 until fragments[i].fragments.size) {
                 val f = fragmentManager.getFragment(
                     savedInstanceState,
-                    (i * fragments.size + j).toString()
+                    (counter).toString()
                 )
                 if (f != null)
                     fragments[i].fragments[j].fragment = f
+                counter++
             }
         }
     }
@@ -210,11 +216,14 @@ class Compass() : Navigator {
     }
 
     private fun printTags(name: String, frags: List<DirectoryStack>) {
-        val text = buildString {
-            for (d in frags)
+        Log.d("mytag", "***************")
+        for (d in frags) {
+            val text = buildString {
                 for (f in d.fragments)
-                    append(f.tag, " ")
+                    append("(${f.tag}, ${f.fragment.javaClass.simpleName}) ")
+            }
+            Log.d("mytag", "${d.dirName} : $text")
         }
-        Log.d("mytag", "$name : $text")
+        Log.d("mytag", "***************")
     }
 }

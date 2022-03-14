@@ -17,6 +17,7 @@ import com.avelycure.domain.state.ProgressBarState
 import com.avelycure.person.R
 import com.avelycure.person.presentation.adapters.PersonAdapter
 import com.avelycure.person.presentation.adapters.PersonImagesAdapter
+import com.avelycure.person.utils.PersonDiffutilsCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -72,7 +73,7 @@ class PersonFragment : Fragment() {
                 personAdapter.data = state.persons
                 if (prevSize != state.persons.size)
                     personAdapter.notifyItemRangeInserted(prevSize, 15)
-                personAdapter.notifyDataSetChanged()
+                personAdapter.notifyItemChanged(state.lastExpandedItem)
 
                 if (state.progressBarState is ProgressBarState.Loading)
                     pb.visibility = View.VISIBLE

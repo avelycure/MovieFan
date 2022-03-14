@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.data.constants.RequestConstants
 import com.avelycure.domain.models.Person
+import com.avelycure.domain.models.formatters.getNiceMovies
+import com.avelycure.domain.models.formatters.getNiceTvs
 import com.avelycure.person.R
 import com.avelycure.person.utils.showIfNotBlank
 
@@ -65,8 +67,8 @@ class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
         fun bind(item: Person?, position: Int) {
             item?.let { person ->
                 tvName.text = person.name
-                showIfNotBlank(tvsTitle, tvs, person.knownForTv.toString())
-                showIfNotBlank(moviesTitle, movies, person.knownForMovie.toString())
+                showIfNotBlank(tvsTitle, tvs, person.getNiceTvs())
+                showIfNotBlank(moviesTitle, movies, person.getNiceMovies())
                 tvDepartment.text = person.knownForDepartment
 
                 if (person.expanded) {

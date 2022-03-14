@@ -25,6 +25,7 @@ import com.avelycure.domain.constants.MovieConstants.DEFAULT_MOVIE_ID
 import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
 import com.avelycure.domain.models.Movie
 import com.avelycure.domain.models.MovieInfo
+import com.avelycure.domain.models.formatters.getNiceCast
 import com.avelycure.domain.models.formatters.getNiceCompanies
 import com.avelycure.domain.models.formatters.getNiceCountries
 import com.avelycure.domain.models.formatters.getNiceGenres
@@ -151,12 +152,12 @@ class MovieInfoFragment : Fragment() {
         tvBudget.text = getMoney(movieInfo.budget)
 
         tvRevenueTitle.text = getString(R.string.trevenue)
-        tvRevenue.text = getMoney(movieInfo.budget)
+        tvRevenue.text = getMoney(movieInfo.revenue)
 
         tvOverview.text = movieInfo.overview
 
         tvCastTitle.text = getString(R.string.tcast)
-        tvCast.text = movieInfo.cast.toString()
+        tvCast.text = movieInfo.getNiceCast()
 
         movieImagesAdapter.imagesList = images
         similarMoviesAdapter.similarMovies = similar

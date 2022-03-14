@@ -51,7 +51,8 @@ class PersonViewModel
                         person.setProperties(dataState.data)
                         list[itemId] = person
                         _state.value = _state.value.copy(
-                            persons = list
+                            persons = list,
+                            lastExpandedItem = itemId
                         )
                     }
                     is DataState.Response -> {
