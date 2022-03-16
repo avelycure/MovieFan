@@ -28,6 +28,7 @@
             <option value="$PROJECT_DIR$/person" />
             <option value="$PROJECT_DIR$/resources" />
             <option value="$PROJECT_DIR$/settings" />
+            <option value="$PROJECT_DIR$/widgets" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
