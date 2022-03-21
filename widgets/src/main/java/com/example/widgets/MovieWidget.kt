@@ -4,9 +4,18 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
-import android.widget.RemoteViews
+import android.content.Intent
+import android.os.Build
+import android.util.Log
 
 class MovieWidget: AppWidgetProvider() {
+
+    override fun onEnabled(context: Context?) {
+        super.onEnabled(context)
+        Log.d("mytag", "enabled")
+    }
+
+    // this method is called every 30 minutes
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -14,12 +23,22 @@ class MovieWidget: AppWidgetProvider() {
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
-        val thisWidget = ComponentName(context, MovieWidget::class.java)
+        Log.d("mytag", "command sent")
+
+        val thisWidget = ComponentName(
+            context,
+            MovieWidget::class.java
+        )
         val allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
 
-        for(widgetId in allWidgetIds){
-            val remoteViews = RemoteViews(context.packageName, R.layout.widget_layout)
-            appWidgetManager.updateAppWidget(widgetId, remoteViews)
+        val intent = Intent(
+            context.applicationContext,
+            MovieWidgetUpdateService::class.java
+        )
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
         }
     }
 }
