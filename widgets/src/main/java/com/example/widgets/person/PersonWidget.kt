@@ -1,4 +1,4 @@
-package com.example.widgets
+package com.example.widgets.person
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -6,34 +6,25 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.util.Log
+import com.example.widgets.movie.MovieWidget
 
-class MovieWidget: AppWidgetProvider() {
-
-    override fun onEnabled(context: Context?) {
-        super.onEnabled(context)
-        Log.d("mytag", "enabled")
-    }
-
-    // this method is called every 30 minutes
+class PersonWidget: AppWidgetProvider() {
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
+        appWidgetIds: IntArray?
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
-        Log.d("mytag", "command sent")
-
         val thisWidget = ComponentName(
             context,
-            MovieWidget::class.java
+            PersonWidget::class.java
         )
         val allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget)
 
         val intent = Intent(
             context.applicationContext,
-            MovieWidgetUpdateService::class.java
+            PersonWidgetUpdateService::class.java
         )
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds)
 

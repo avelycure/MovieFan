@@ -1,4 +1,4 @@
-package com.example.widgets
+package com.example.widgets.utils
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -7,6 +7,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.example.widgets.R
 
 class NotificationHelper(private val context: Context) {
     private val CHANNEL_ID = "1"

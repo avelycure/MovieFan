@@ -1,15 +1,15 @@
-package com.example.widgets
+package com.example.widgets.movie
 
-import android.app.Notification
 import android.app.Service
 import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
-import com.avelycure.domain.models.formatters.getOriginalTitleAndReleaseDate
 import com.avelycure.domain.models.formatters.getYear
 import com.avelycure.domain.repository.IMovieRepository
+import com.example.widgets.R
+import com.example.widgets.utils.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,12 +46,11 @@ class MovieWidgetUpdateService : Service() {
         val allWidgetIds = intent?.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
 
         if (allWidgetIds != null) {
-            val lastWidgetId = allWidgetIds[allWidgetIds.size - 1]
 
             for (widgetId in allWidgetIds) {
                 serviceScope.launch {
                     val remoteViews =
-                        RemoteViews(applicationContext.packageName, R.layout.widget_layout)
+                        RemoteViews(applicationContext.packageName, R.layout.movie_widget_layout)
                     val list = repo.getPopularMovies(1).take(3)
 
                     remoteViews.setTextViewText(
@@ -68,9 +67,11 @@ class MovieWidgetUpdateService : Service() {
                     )
                     appWidgetManager.updateAppWidget(widgetId, remoteViews)
 
-                    checkSum++
+                    synchronized(checkSum) {
+                        checkSum++
+                    }
 
-                    (checkSum == allWidgetIds.size)
+                    if (checkSum == allWidgetIds.size)
                         stopSelf()
                 }
             }
