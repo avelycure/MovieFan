@@ -5,10 +5,16 @@
       <map>
         <entry key="..\:/Programming/Android/MovieFan/movie-info/src/main/res/layout/item_similar_movies.xml" value="0.22826086956521738" />
         <entry key="..\:/Programming/Android/MovieFan/movie-picker/src/main/res/layout/movie_picker_fragment.xml" value="0.22826086956521738" />
+        <entry key="..\:/Programming/Android/MovieFan/movie/src/main/res/layout/item_movie.xml" value="0.22826086956521738" />
         <entry key="..\:/Programming/Android/MovieFan/office/src/main/res/layout/login_fragment.xml" value="0.22826086956521738" />
         <entry key="..\:/Programming/Android/MovieFan/office/src/main/res/layout/office_fragment.xml" value="0.22826086956521738" />
         <entry key="..\:/Programming/Android/MovieFan/person/src/main/res/layout/item_person.xml" value="0.1" />
         <entry key="..\:/Programming/Android/MovieFan/person/src/main/res/layout/item_person_images.xml" value="0.22826086956521738" />
+        <entry key="..\:/Programming/Android/MovieFan/widgets/src/main/res/drawable/widget_shape.xml" value="0.198" />
+        <entry key="..\:/Programming/Android/MovieFan/widgets/src/main/res/layout/person_widget_layout.xml" value="0.22826086956521738" />
+        <entry key="..\:/Programming/Android/MovieFan/widgets/src/main/res/layout/widget_info.xml" value="0.22826086956521738" />
+        <entry key="..\:/Programming/Android/MovieFan/widgets/src/main/res/layout/widget_layout.xml" value="0.22826086956521738" />
+        <entry key="..\:/Programming/Android/MovieFan/widgets/src/main/res/xml/widget_info.xml" value="0.22826086956521738" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.20555555555555555" />
         <entry key="image-loader/src/main/res/layout/test_activity.xml" value="0.12454710144927536" />

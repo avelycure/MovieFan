@@ -58,6 +58,7 @@ dependencies {
     implementation(project(':cache-cleaner'))
     implementation(project(':core-navigation'))
     implementation(project(':navigation'))
+    implementation(project(':widgets'))
 
     //Core
     implementation 'androidx.core:core-ktx:1.7.0'
