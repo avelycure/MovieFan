@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
 import com.avelycure.domain.models.formatters.getOriginalTitleAndReleaseDate
+import com.avelycure.domain.models.formatters.getYear
 import com.avelycure.domain.repository.IMovieRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -35,8 +36,11 @@ class MovieWidgetUpdateService : Service() {
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + Job())
 
+    var checkSum = 0
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("mytag", "command started")
+        checkSum = 0
 
         val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
         val allWidgetIds = intent?.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
@@ -52,21 +56,22 @@ class MovieWidgetUpdateService : Service() {
 
                     remoteViews.setTextViewText(
                         R.id.mwidget_tv1,
-                        "${list[0].title}(${list[0].getOriginalTitleAndReleaseDate()})"
+                        "1. ${list[0].title}, ${list[0].getYear()}"
                     )
                     remoteViews.setTextViewText(
                         R.id.mwidget_tv2,
-                        "${list[1].title}(${list[1].getOriginalTitleAndReleaseDate()})"
+                        "2. ${list[1].title}, ${list[1].getYear()}"
                     )
                     remoteViews.setTextViewText(
                         R.id.mwidget_tv3,
-                        "${list[2].title}(${list[2].getOriginalTitleAndReleaseDate()})"
+                        "3. ${list[2].title}, ${list[2].getYear()}"
                     )
                     appWidgetManager.updateAppWidget(widgetId, remoteViews)
 
-                    // this will cause bug in multithreading
-                    // (widgetId == lastWidgetId)
-                    //    stopSelf()
+                    checkSum++
+
+                    (checkSum == allWidgetIds.size)
+                        stopSelf()
                 }
             }
         }

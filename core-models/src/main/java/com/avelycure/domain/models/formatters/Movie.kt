@@ -19,3 +19,5 @@ fun Movie.getOriginalTitleAndReleaseDate(): String =
         originalTitle + ", " + this.releaseDate.substring(0, 4)
     else
         originalTitle
+
+fun Movie.getYear(): String = this.releaseDate.substring(0, 4)
