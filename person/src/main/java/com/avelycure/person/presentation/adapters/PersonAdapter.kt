@@ -121,4 +121,22 @@ class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
     override fun getItemCount(): Int {
         return data.size
     }
+
+    var fetchMore: () -> Unit = {}
+    var loading: Boolean = false
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        val manager = recyclerView.layoutManager
+        val llm = manager as LinearLayoutManager
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val visiblePosition = llm.findLastCompletelyVisibleItemPosition()
+                if (!loading && visiblePosition > itemCount - 10) {
+                    fetchMore()
+                    loading = true
+                }
+            }
+        })
+    }
 }

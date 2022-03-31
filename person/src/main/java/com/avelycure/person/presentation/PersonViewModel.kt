@@ -35,7 +35,7 @@ class PersonViewModel
     fun onTrigger(event: PersonEvents) {
         when (event) {
             is PersonEvents.OnRemoveHeadFromQueue -> removeHeadMessage()
-            is PersonEvents.OnOpenPersonScreen -> {
+            is PersonEvents.OnRequestMorePersons -> {
                 getPopularPerson()
             }
             is PersonEvents.OnExpandPerson -> {
@@ -81,7 +81,6 @@ class PersonViewModel
                     is DataState.Data -> {
                         _state.value = _state.value.copy(
                             persons = _state.value.persons + (dataState.data ?: emptyList()),
-                            //persons = dataState.data ?: emptyList(),
                             lastVisiblePage = _state.value.lastVisiblePage + 1
                         )
                     }

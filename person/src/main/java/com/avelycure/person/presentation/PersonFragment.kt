@@ -61,12 +61,12 @@ class PersonFragment : Fragment() {
 
         pb = view.findViewById(R.id.p_progress_bar)
 
-        personViewModel.onTrigger(PersonEvents.OnOpenPersonScreen)
+        personViewModel.onTrigger(PersonEvents.OnRequestMorePersons)
 
         lifecycleScope.launchWhenStarted {
             personViewModel.state.collect { state ->
                 val diffutilsCallback =
-                 PersonDiffutilsCallback(personAdapter.data, state.persons)
+                    PersonDiffutilsCallback(personAdapter.data, state.persons)
                 val diffUtilResult = DiffUtil.calculateDiff(diffutilsCallback)
                 personAdapter.data.clear()
                 personAdapter.data.addAll(state.persons)
@@ -77,6 +77,7 @@ class PersonFragment : Fragment() {
                 else {
                     pb.visibility = View.GONE
                 }
+                personAdapter.loading = false
             }
         }
     }
@@ -88,10 +89,13 @@ class PersonFragment : Fragment() {
         personAdapter.onExpand = { personId, itemId ->
             personViewModel.onTrigger(PersonEvents.OnExpandPerson(personId, itemId))
         }
+        personAdapter.fetchMore = {
+            personViewModel.onTrigger(PersonEvents.OnRequestMorePersons)
+        }
 
         rvPersons = view.findViewById(R.id.p_recycler_view)
-        rvPersons.adapter = personAdapter
         rvPersons.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        rvPersons.adapter = personAdapter
     }
 }
