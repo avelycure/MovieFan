@@ -2,6 +2,7 @@ package com.avelycure.image_loader.di
 
 import android.content.Context
 import com.avelycure.image_loader.ImageLoader
+import com.avelycure.image_loader.R
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,10 +13,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object CacheModule {
-
-    /*@Provides
+    @Provides
     @Singleton
     fun provideImageLoader(@ApplicationContext context: Context):ImageLoader{
-        return ImageLoader(context)
-    }*/
+        return ImageLoader(context, R.drawable.placeholder)
+    }
 }
