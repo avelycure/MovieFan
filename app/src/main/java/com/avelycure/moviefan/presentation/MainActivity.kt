@@ -2,6 +2,7 @@ package com.avelycure.moviefan.presentation
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
@@ -43,10 +44,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         handler = Handler(mainLooper)
-        crashReporter = CrashReporter(handler, lifecycle, applicationContext)
-        crashReporter.registerObserver()
         imageLoader = ImageLoader(this, R.drawable.placeholder)
         fragmentManager = supportFragmentManager
+
+        crashReporter = CrashReporter(handler, applicationContext)
+        crashReporter.registerObserver()
 
         setUpRoots(savedInstanceState)
         initHome(savedInstanceState)
