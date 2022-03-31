@@ -1,5 +1,6 @@
 package com.avelycure.person.presentation.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.data.constants.RequestConstants
@@ -24,7 +26,6 @@ class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
     lateinit var onExpand: (personId: Int, itemId: Int) -> Unit
 
     var loadImage: (path: String, iv: ImageView) -> Unit = { _, _ -> }
-
 
     lateinit var scope: LifecycleCoroutineScope
 
@@ -90,9 +91,11 @@ class PersonAdapter : RecyclerView.Adapter<PersonAdapter.PersonViewHolder>() {
                     LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
 
                 layout.setOnClickListener {
-                    //person.expanded = !person.expanded
-
                     onExpand(person.id, position)
+                    Log.d("PersonViewModel", "Adapter: $data")
+                    if(data.isNotEmpty()){
+                    Log.d("PersonViewModel", "Adapter: ${data[3].birthday}")
+                    }
                 }
 
                 loadImage(

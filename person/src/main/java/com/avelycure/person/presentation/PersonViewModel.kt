@@ -3,6 +3,7 @@ package com.avelycure.person.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.avelycure.domain.models.Person
 import com.avelycure.domain.models.PersonInfo
 import com.avelycure.domain.state.DataState
 import com.avelycure.domain.state.Queue
@@ -18,6 +19,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
+
+const val TAG = "PersonViewModel"
 
 @HiltViewModel
 class PersonViewModel
@@ -42,24 +45,18 @@ class PersonViewModel
     }
 
     private fun onExpand(personId: Int, itemId: Int) {
-        Log.d(
-            "mytag",
-            "Before: ${_state.value.persons.map { "${it.name} + ${it.birthday} + ${it.expanded}" }}"
-        )
         viewModelScope.launch {
             getPersonInfo.execute(personId).collect { dataState ->
                 when (dataState) {
                     is DataState.Data -> {
                         val list = _state.value.persons.toMutableList()
-                        list[itemId].setProperties(dataState.data)
-                        list[itemId].expanded = true
+                        val updatedPerson = list[itemId].copy()
+                        updatedPerson.setProperties(dataState.data)
+                        updatedPerson.expanded = !list[itemId].expanded
+                        list[itemId] = updatedPerson
                         _state.value = _state.value.copy(
                             persons = list,
                             lastExpandedItem = itemId
-                        )
-                        Log.d(
-                            "mytag",
-                            "After: ${_state.value.persons.map { "${it.name} + ${it.birthday} + ${it.expanded}" }}"
                         )
                     }
                     is DataState.Response -> {
@@ -68,8 +65,8 @@ class PersonViewModel
                         )
                     }
                     is DataState.Loading -> {
-                        _state.value = _state.value.copy(
-                            progressBarState = dataState.progressBarState
+                       _state.value = _state.value.copy(
+                           progressBarState = dataState.progressBarState
                         )
                     }
                 }
@@ -117,7 +114,7 @@ class PersonViewModel
             queue.remove()
             _state.value = _state.value.copy(errorQueue = queue)
         } catch (e: Exception) {
-            Log.d("mytag", "Nothing to remove from MessageQueue")
+            Log.d(TAG, "Nothing to remove from MessageQueue")
         }
     }
 }

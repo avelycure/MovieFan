@@ -13,7 +13,7 @@ import kotlin.concurrent.thread
 /**
  * Class to navigate between fragments
  */
-class Compass() : Navigator, Serializable {
+internal class Compass() : Navigator, Serializable {
 
     private lateinit var fragmentManager: FragmentManager
 

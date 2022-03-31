@@ -89,8 +89,6 @@ class MovieInfoFragment : Fragment() {
     private lateinit var rvMovieImages: RecyclerView
     private lateinit var rvSimilarMovies: RecyclerView
 
-    //private lateinit var compas: Navigator
-
     @Suppress("UNCHECKED_CAST")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -99,15 +97,6 @@ class MovieInfoFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.movie_info, container, false)
         movieId = arguments?.getInt(MOVIE_ID, DEFAULT_MOVIE_ID) ?: DEFAULT_MOVIE_ID
-
-        //loadImage =
-        //    arguments?.getSerializable(LOAD_IMAGES) as? (String, ImageView) -> Unit ?: { _, _ -> }
-
-        //openMovieInfo =
-        //    arguments?.getSerializable(GET_MORE_INFO) as? (Int) -> Unit ?: { _ -> }
-
-        //compas = (arguments?.getSerializable(NavigationConstants.NAVIGATOR) as? Navigator)!!
-
         return view
     }
 

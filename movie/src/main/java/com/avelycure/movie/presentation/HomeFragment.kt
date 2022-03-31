@@ -56,16 +56,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.home_fragment, container, false)
-        //loadImages =
-        //    arguments?.getSerializable(NavigationConstants.LOAD_IMAGES) as? (String, ImageView) -> Unit
-        //        ?: { _, _ -> }
-
-        //compas = (arguments?.getSerializable(NAVIGATOR) as? Navigator)!!
-
-
-        //openMovieInfo = arguments?.getSerializable(GET_MORE_INFO) as? (Int, navigator: Navigator) -> Unit
-        //    ?: { _ ,_-> }
-
         initViewElements(view)
 
         lifecycleScope.launchWhenStarted {
