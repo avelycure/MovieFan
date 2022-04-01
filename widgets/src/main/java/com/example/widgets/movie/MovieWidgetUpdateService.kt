@@ -36,12 +36,7 @@ class MovieWidgetUpdateService : Service() {
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + Job())
 
-    var checkSum = 0
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("mytag", "command started")
-        checkSum = 0
-
         val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
         val allWidgetIds = intent?.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
 
@@ -67,16 +62,10 @@ class MovieWidgetUpdateService : Service() {
                     )
                     appWidgetManager.updateAppWidget(widgetId, remoteViews)
 
-                    synchronized(checkSum) {
-                        checkSum++
-                    }
-
-                    if (checkSum == allWidgetIds.size)
-                        stopSelf()
+                    stopSelf(startId)
                 }
             }
         }
-
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 }

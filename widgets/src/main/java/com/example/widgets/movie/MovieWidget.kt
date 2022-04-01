@@ -18,8 +18,6 @@ class MovieWidget: AppWidgetProvider() {
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
-        Log.d("mytag", "command sent")
-
         val thisWidget = ComponentName(
             context,
             MovieWidget::class.java
