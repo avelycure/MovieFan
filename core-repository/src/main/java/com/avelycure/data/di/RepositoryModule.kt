@@ -5,7 +5,7 @@ import com.avelycure.data.remote.service.movie.PopularMovieService
 import com.avelycure.data.remote.service.movie.VideoService
 import com.avelycure.data.remote.service.person.PersonInfoService
 import com.avelycure.data.remote.service.person.PopularPersonService
-import com.avelycure.data.repository.MovieRepository
+import com.avelycure.data.repository.AppRepository
 import com.avelycure.domain.repository.IMovieInfoRepository
 import com.avelycure.domain.repository.IMovieRepository
 import com.avelycure.domain.repository.IPersonRepository
@@ -93,7 +93,7 @@ object RepositoryModule {
         videoService: VideoService,
         personInfoService: PersonInfoService
     ): IRepository {
-        return MovieRepository(
+        return AppRepository(
             popularMovieService,
             movieInfoService,
             popularPersonService,
