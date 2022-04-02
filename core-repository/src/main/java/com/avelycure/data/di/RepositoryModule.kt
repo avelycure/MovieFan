@@ -1,9 +1,7 @@
 package com.avelycure.data.di
 
 import android.content.Context
-import com.avelycure.data.local.MovieDbHelper
-import com.avelycure.data.local.MovieInfoDbHelper
-import com.avelycure.data.local.PersonDbHelper
+import com.avelycure.data.local.AppDbHelper
 import com.avelycure.data.remote.service.movie.MovieInfoService
 import com.avelycure.data.remote.service.movie.PopularMovieService
 import com.avelycure.data.remote.service.movie.VideoService
@@ -97,9 +95,7 @@ object RepositoryModule {
         popularPersonService: PopularPersonService,
         videoService: VideoService,
         personInfoService: PersonInfoService,
-        movieDbHelper: MovieDbHelper,
-        movieInfoDbHelper: MovieInfoDbHelper,
-        personDbHelper: PersonDbHelper
+        appDbHelper: AppDbHelper
     ): IRepository {
         return AppRepository(
             popularMovieService,
@@ -107,28 +103,14 @@ object RepositoryModule {
             popularPersonService,
             videoService,
             personInfoService,
-            movieDbHelper,
-            movieInfoDbHelper,
-            personDbHelper
+            appDbHelper,
         )
     }
 
     @Provides
     @Singleton
-    fun provideMovieDbHelper(@ApplicationContext context: Context): MovieDbHelper{
-        return MovieDbHelper(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideMovieInfoDbHelper(@ApplicationContext context: Context): MovieInfoDbHelper{
-        return MovieInfoDbHelper(context)
-    }
-
-    @Provides
-    @Singleton
-    fun providePersonDbHelper(@ApplicationContext context: Context): PersonDbHelper{
-        return PersonDbHelper(context)
+    fun provideMovieDbHelper(@ApplicationContext context: Context): AppDbHelper{
+        return AppDbHelper(context)
     }
 
     @Provides
