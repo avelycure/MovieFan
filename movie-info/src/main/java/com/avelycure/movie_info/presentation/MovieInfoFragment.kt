@@ -29,6 +29,7 @@ import com.avelycure.domain.models.formatters.getNiceCast
 import com.avelycure.domain.models.formatters.getNiceCompanies
 import com.avelycure.domain.models.formatters.getNiceCountries
 import com.avelycure.domain.models.formatters.getNiceGenres
+import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie_info.R
 import com.avelycure.movie_info.presentation.adapters.MovieImagesAdapter
 import com.avelycure.movie_info.presentation.adapters.SimilarMoviesAdapter
@@ -36,6 +37,7 @@ import com.avelycure.movie_info.utils.getMoney
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import java.io.Serializable
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MovieInfoFragment : Fragment() {
@@ -53,8 +55,11 @@ class MovieInfoFragment : Fragment() {
         }
     }
 
-    private var loadImage: (String, ImageView) -> Unit = { _, _ -> }
-    private var openMovieInfo: (Int) -> Unit = { _ -> }
+    @Inject
+    lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var navigator: Navigator
 
     private var movieId: Int = DEFAULT_MOVIE_ID
 
@@ -84,8 +89,6 @@ class MovieInfoFragment : Fragment() {
     private lateinit var rvMovieImages: RecyclerView
     private lateinit var rvSimilarMovies: RecyclerView
 
-    private lateinit var compas: Navigator
-
     @Suppress("UNCHECKED_CAST")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -94,15 +97,6 @@ class MovieInfoFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.movie_info, container, false)
         movieId = arguments?.getInt(MOVIE_ID, DEFAULT_MOVIE_ID) ?: DEFAULT_MOVIE_ID
-
-        loadImage =
-            arguments?.getSerializable(LOAD_IMAGES) as? (String, ImageView) -> Unit ?: { _, _ -> }
-
-        openMovieInfo =
-            arguments?.getSerializable(GET_MORE_INFO) as? (Int) -> Unit ?: { _ -> }
-
-        compas = (arguments?.getSerializable(NavigationConstants.NAVIGATOR) as? Navigator)!!
-
         return view
     }
 
@@ -130,7 +124,7 @@ class MovieInfoFragment : Fragment() {
     }
 
     private fun setUI(movieInfo: MovieInfo, images: List<String>, similar: List<Movie>) {
-        loadImage(RequestConstants.IMAGE + movieInfo.posterPath, ivPoster)
+        imageLoader.loadImage(RequestConstants.IMAGE + movieInfo.posterPath, ivPoster)
         tvTitle.text = movieInfo.title
 
         tvTagline.text = movieInfo.tagline
@@ -187,23 +181,23 @@ class MovieInfoFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        movieImagesAdapter = MovieImagesAdapter(loadImage)
+        movieImagesAdapter = MovieImagesAdapter { url, iv -> imageLoader.loadImage(url, iv) }
         rvMovieImages.adapter = movieImagesAdapter
         rvMovieImages.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        similarMoviesAdapter = SimilarMoviesAdapter(loadImage) { id ->
-            compas.add(
+        similarMoviesAdapter = SimilarMoviesAdapter( { url, iv -> imageLoader.loadImage(url, iv) }) { id ->
+            navigator.add(
                 "MOVIES",
                 MovieInfoFragment.Instantiator.tag,
                 Bundle().apply {
                     putInt(MOVIE_ID, id)
 
-                    putSerializable(
-                        LOAD_IMAGES, loadImage as Serializable
-                    )
+                    //putSerializable(
+                    //    LOAD_IMAGES, loadImage as Serializable
+                    //)
 
-                    putSerializable(NAVIGATOR, compas)
+                    //putSerializable(NAVIGATOR, compas)
                 }
             )
         }

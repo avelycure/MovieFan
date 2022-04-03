@@ -4,22 +4,20 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.initialize
 import java.lang.Exception
-import kotlin.concurrent.thread
 
 const val PING_TIME: Long = 4000L
+const val TAG = "CrashReporter"
 
+/**
+ * This class put small message in message queue and then waits for some time
+ * If the messages was handled -> then its okay, main thread is not blocked
+ * But if not -> ANR
+ */
 class CrashReporter(
     private val mainHandler: Handler,
-    private val lifecycle: Lifecycle,
     private val context: Context
 ) : LifecycleObserver {
     private var tick1: Int = 0
@@ -28,22 +26,14 @@ class CrashReporter(
     private lateinit var t: Thread
 
     fun registerObserver() {
-        //FirebaseApp.initializeApp(context)
         analytics = FirebaseAnalytics.getInstance(context)
         pingMainLooper()
-        lifecycle.addObserver(this)
     }
 
     /**
-     * Main thread will live even if the app goes to the background.
-     * The only reason to stop tracking is that the app was closed(ON_DESTROY method)
+     * Post to main looper to increase tick2, if after some time tick1==tick2 then
+     * main thread is blocked
      */
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private fun stopLogging() {
-        lifecycle.removeObserver(this)
-        t.interrupt()
-    }
-
     private fun pingMainLooper() {
         t = Thread {
             while (true) {
@@ -55,7 +45,7 @@ class CrashReporter(
                     if (tick1 != tick2)
                         tick1 = tick2
                     else {
-                        Log.d("mytag", "ANR!!!")
+                        Log.d(TAG, "ANR!")
                         val bundle = Bundle().apply {
                             putInt("a", 1)
                             putString("type", "ANR")
@@ -65,7 +55,7 @@ class CrashReporter(
                     }
                 } catch (e: Exception) {
                     if (e is InterruptedException)
-                        Log.d("mytag", "Crash reporter was interrupted")
+                        Log.d(TAG, "Crash reporter was interrupted")
                 }
             }
         }

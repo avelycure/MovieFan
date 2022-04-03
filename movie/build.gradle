@@ -43,6 +43,7 @@ dependencies {
     implementation(project(':core-repository'))
     implementation(project(':image-loader'))
     implementation(project(':core-navigation'))
+    implementation(project(':navigation'))
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'

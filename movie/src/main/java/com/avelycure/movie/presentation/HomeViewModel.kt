@@ -39,6 +39,7 @@ class HomeViewModel
                                 )
                             }
                             is DataState.Response -> {
+                                Log.d("mytag", "no internet exception in vm")
                             }
                             is DataState.Loading -> {
                                 _state.value =

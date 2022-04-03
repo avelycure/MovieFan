@@ -2,6 +2,7 @@ package com.avelycure.moviefan.presentation
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
@@ -43,10 +44,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         handler = Handler(mainLooper)
-        crashReporter = CrashReporter(handler, lifecycle, applicationContext)
-        crashReporter.registerObserver()
         imageLoader = ImageLoader(this, R.drawable.placeholder)
         fragmentManager = supportFragmentManager
+
+        crashReporter = CrashReporter(handler, applicationContext)
+        crashReporter.registerObserver()
 
         setUpRoots(savedInstanceState)
         initHome(savedInstanceState)
@@ -143,36 +145,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addHomeScreen() {
-
         val loadImage = { url: String, id: ImageView ->
             imageLoader.loadImage(url, id)
-        }
+        } as Serializable
 
         val getMoreInfo = { id: Int, navigator: Navigator ->
             compas.add(
                 directory = "MOVIES",
-                tag = MovieInfoFragment.Instantiator.getTag(),
+                tag = "MOVIE_INFO",
                 bundle = Bundle().apply {
                     putInt(MOVIE_ID, id)
 
-                    putSerializable(
-                        LOAD_IMAGES, loadImage as Serializable
-                    )
+                    //putSerializable(
+                    //    LOAD_IMAGES, loadImage
+                    //)
 
-                    putSerializable(NAVIGATOR, navigator)
+                    //putSerializable(NAVIGATOR, navigator)
                 }
             )
-        }
+        } as Serializable
 
         compas.add(
             directory = "MOVIES",
             tag = HomeFragment.Instantiator.getTag(),
             bundle = Bundle().apply {
-                putSerializable(GET_MORE_INFO, getMoreInfo as Serializable)
+                //putSerializable(GET_MORE_INFO, getMoreInfo)
 
-                putSerializable(LOAD_IMAGES, loadImage as Serializable)
+                //putSerializable(LOAD_IMAGES, loadImage)
 
-                putSerializable(NAVIGATOR, compas)
+                //putSerializable(NAVIGATOR, compas)
             }
         )
     }

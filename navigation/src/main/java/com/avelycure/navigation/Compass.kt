@@ -7,12 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.avelycure.core_navigation.*
+import java.io.Serializable
 import kotlin.concurrent.thread
 
 /**
  * Class to navigate between fragments
  */
-class Compass() : Navigator {
+internal class Compass() : Navigator, Serializable {
 
     private lateinit var fragmentManager: FragmentManager
 

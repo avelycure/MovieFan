@@ -8,6 +8,7 @@ import android.os.Handler
 import android.widget.ImageView
 import com.avelycure.image_loader.constants.ImageLoaderConstants.POOL_SIZE
 import com.avelycure.image_loader.cache.Cacher
+import java.io.Serializable
 import java.net.URL
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -16,7 +17,7 @@ class ImageLoader(
     context: Context,
     placeholder: Int,
     threadsNum: Int = POOL_SIZE
-) {
+): Serializable{
     private val executors: ExecutorService = Executors.newFixedThreadPool(threadsNum)
     private val handler: Handler = Handler(context.mainLooper)
     private val cacher: Cacher

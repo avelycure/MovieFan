@@ -20,8 +20,7 @@ import com.avelycure.movie.R
 
 class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
     var data: List<Movie> = emptyList()
-    var onClickedItem: (Int, navigator: Navigator) -> Unit = {_,_->}
-    lateinit var compas: Navigator
+    var onClickedItem: (Int) -> Unit = {_->}
     var fetchMore: () -> Unit = {}
     var loadImages: (String, ImageView) -> Unit = {_,_->}
 
@@ -47,7 +46,7 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
         private val tvOriginalTitle =
             view.findViewById<AppCompatTextView>(R.id.pmi_original_title)
 
-        fun bind(item: Movie?, onClicked: (Int, navigator: Navigator) -> Unit) {
+        fun bind(item: Movie?, onClicked: (Int) -> Unit) {
             item?.let { popularMovie ->
                 tvTitle.text = popularMovie.title
                 tvReviews.text = popularMovie.voteCount.toString()
@@ -62,7 +61,7 @@ class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
             }
 
             itemView.setOnClickListener {
-                onClicked(item!!.movieId, compas)
+                onClicked(item!!.movieId)
             }
         }
     }

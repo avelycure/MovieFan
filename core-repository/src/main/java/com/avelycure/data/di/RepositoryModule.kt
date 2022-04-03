@@ -1,11 +1,13 @@
 package com.avelycure.data.di
 
+import android.content.Context
+import com.avelycure.data.local.AppDbHelper
 import com.avelycure.data.remote.service.movie.MovieInfoService
 import com.avelycure.data.remote.service.movie.PopularMovieService
 import com.avelycure.data.remote.service.movie.VideoService
 import com.avelycure.data.remote.service.person.PersonInfoService
 import com.avelycure.data.remote.service.person.PopularPersonService
-import com.avelycure.data.repository.MovieRepository
+import com.avelycure.data.repository.AppRepository
 import com.avelycure.domain.repository.IMovieInfoRepository
 import com.avelycure.domain.repository.IMovieRepository
 import com.avelycure.domain.repository.IPersonRepository
@@ -13,6 +15,7 @@ import com.avelycure.domain.repository.IRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
@@ -91,18 +94,27 @@ object RepositoryModule {
         movieInfoService: MovieInfoService,
         popularPersonService: PopularPersonService,
         videoService: VideoService,
-        personInfoService: PersonInfoService
+        personInfoService: PersonInfoService,
+        appDbHelper: AppDbHelper
     ): IRepository {
-        return MovieRepository(
+        return AppRepository(
             popularMovieService,
             movieInfoService,
             popularPersonService,
             videoService,
-            personInfoService
+            personInfoService,
+            appDbHelper,
         )
     }
 
     @Provides
+    @Singleton
+    fun provideMovieDbHelper(@ApplicationContext context: Context): AppDbHelper{
+        return AppDbHelper(context)
+    }
+
+    @Provides
+    @Singleton
     fun providePersonRepository(
         repository: IRepository
     ): IPersonRepository {
@@ -110,6 +122,7 @@ object RepositoryModule {
     }
 
     @Provides
+    @Singleton
     fun provideMovieRepository(
         repository: IRepository
     ): IMovieRepository {
@@ -117,6 +130,7 @@ object RepositoryModule {
     }
 
     @Provides
+    @Singleton
     fun provideMovieInfoRepository(
         repository: IRepository
     ): IMovieInfoRepository {

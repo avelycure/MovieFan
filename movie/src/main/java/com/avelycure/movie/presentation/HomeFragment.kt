@@ -16,10 +16,12 @@ import com.avelycure.core_navigation.NavigationConstants
 import com.avelycure.core_navigation.NavigationConstants.GET_MORE_INFO
 import com.avelycure.core_navigation.NavigationConstants.NAVIGATOR
 import com.avelycure.core_navigation.Navigator
+import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
 import com.avelycure.movie.constants.HomeConstants.NUMBER_OF_FETCHED_MOVIES
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -28,9 +30,11 @@ class HomeFragment : Fragment() {
     private lateinit var adapter: HomeAdapter
     private val homeViewModel: HomeViewModel by viewModels()
 
-    private lateinit var loadImages: (String, ImageView) -> Unit
-    private lateinit var openMovieInfo: (Int, navigator: Navigator) -> Unit
-    private lateinit var compas: Navigator
+    @Inject
+    lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var compas: Navigator
 
     companion object Instantiator : IInstantiator {
         private const val tag = "HOME"
@@ -52,15 +56,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.home_fragment, container, false)
-        loadImages =
-            arguments?.getSerializable(NavigationConstants.LOAD_IMAGES) as? (String, ImageView) -> Unit
-                ?: { _, _ -> }
-
-        openMovieInfo = arguments?.getSerializable(GET_MORE_INFO) as? (Int, navigator: Navigator) -> Unit
-            ?: { _ ,_-> }
-
-        compas = (arguments?.getSerializable(NAVIGATOR) as? Navigator)!!
-
         initViewElements(view)
 
         lifecycleScope.launchWhenStarted {
@@ -82,13 +77,16 @@ class HomeFragment : Fragment() {
     private fun initViewElements(view: View) {
         homeRecyclerView = view.findViewById(R.id.home_rv_movies)
         adapter = HomeAdapter()
-        adapter.loadImages = loadImages
+        adapter.loadImages = { url, iv -> imageLoader.loadImage(url, iv) }
         homeRecyclerView.layoutManager =
             LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
         homeRecyclerView.adapter = adapter
 
-        adapter.onClickedItem = openMovieInfo
-        adapter.compas = compas
+        adapter.onClickedItem = { id ->
+            compas.add("MOVIES", "MOVIE_INFO", Bundle().apply {
+                putInt("movie_id", id)
+            })
+        }
         adapter.fetchMore = homeViewModel::fetchPopularMovies
     }
 }
