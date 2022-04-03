@@ -38,12 +38,12 @@ internal class AppRepository(
     }
 
     override suspend fun getPersonInfo(id: Int): PersonInfo {
-        //return try {
-        return getPersonInfoFromRemoteSource(id)
-        //} catch (e: Exception) {
-        // Log.d("mytag", "Exception in repo(person info): ${e.message}")
-        //getPersonInfoFromDb(id)
-        // }
+        return try {
+        getPersonInfoFromRemoteSource(id)
+        } catch (e: Exception) {
+         Log.d("mytag", "Exception in repo(person info): ${e.message}")
+        getPersonInfoFromDb(id)
+         }
     }
 
     override suspend fun getDetails(id: Int): MovieInfo {
@@ -172,7 +172,52 @@ internal class AppRepository(
     }
 
     private suspend fun getPersonInfoFromDb(id: Int): PersonInfo {
-        return PersonInfo()
+        return suspendCoroutine { continuation ->
+            val db = appDbHelper.writableDatabase
+            val cursor = db.query(TABLE_NAME_PERSONS, null, "person_id = ?", arrayOf(id.toString()), null, null, null)
+            var result: PersonInfo? = null
+
+            if (cursor.moveToFirst()) {
+                val personIdColIndex = cursor.getColumnIndex("person_id")
+                val profilePathColIndex = cursor.getColumnIndex("profile_path")
+                val adultColIndex = cursor.getColumnIndex("adult")
+                val nameColIndex = cursor.getColumnIndex("name")
+                val popularityColIndex = cursor.getColumnIndex("popularity")
+                val knownForDepartmentColIndex = cursor.getColumnIndex("known_for_department")
+                val knownForMovieColIndex = cursor.getColumnIndex("known_for_movie")
+                val knownForTvColIndex = cursor.getColumnIndex("known_for_tv")
+                val expandedIdColIndex = cursor.getColumnIndex("expanded")
+                val birthdayColIndex = cursor.getColumnIndex("birthday")
+                val deathDayColIndex = cursor.getColumnIndex("death_day")
+                val alsoKnownAsColIndex = cursor.getColumnIndex("also_known_as")
+                val genderColIndex = cursor.getColumnIndex("gender")
+                val biographyColIndex = cursor.getColumnIndex("biography")
+                val placeOfBirthColIndex = cursor.getColumnIndex("place_of_birth")
+                val imdbIdColIndex = cursor.getColumnIndex("imdb_id")
+                val homepageColIndex = cursor.getColumnIndex("homepage")
+                val profileImagesColIndex = cursor.getColumnIndex("profile_images")
+
+                result = PersonInfo(
+                    cursor.getString(birthdayColIndex),
+                    cursor.getString(knownForDepartmentColIndex),
+                    cursor.getString(deathDayColIndex),
+                    cursor.getInt(personIdColIndex),
+                    cursor.getString(nameColIndex),
+                    emptyList(),
+                    cursor.getInt(genderColIndex),
+                    cursor.getString(biographyColIndex),
+                    cursor.getFloat(popularityColIndex),
+                    cursor.getString(placeOfBirthColIndex),
+                    cursor.getString(profilePathColIndex),
+                    cursor.getInt(adultColIndex).toBoolean(),
+                    cursor.getString(imdbIdColIndex),
+                    cursor.getString(homepageColIndex),
+                    emptyList()
+                )
+            }
+            cursor.close()
+            continuation.resume(result ?: PersonInfo())
+        }
     }
 
     private suspend fun getPopularPersonsFromDb(page: Int): List<Person> {
@@ -196,16 +241,6 @@ internal class AppRepository(
                 val knownForDepartmentColIndex = cursor.getColumnIndex("known_for_department")
                 val knownForMovieColIndex = cursor.getColumnIndex("known_for_movie")
                 val knownForTvColIndex = cursor.getColumnIndex("known_for_tv")
-                val expandedIdColIndex = cursor.getColumnIndex("expanded")
-                val birthdayColIndex = cursor.getColumnIndex("birthday")
-                val deathDayColIndex = cursor.getColumnIndex("death_day")
-                val alsoKnownAsColIndex = cursor.getColumnIndex("also_known_as")
-                val genderColIndex = cursor.getColumnIndex("gender")
-                val biographyColIndex = cursor.getColumnIndex("biography")
-                val placeOfBirthColIndex = cursor.getColumnIndex("place_of_birth")
-                val imdbIdColIndex = cursor.getColumnIndex("imdb_id")
-                val homepageColIndex = cursor.getColumnIndex("homepage")
-                val profileImagesColIndex = cursor.getColumnIndex("profile_images")
 
                 var i = 0
                 do {
@@ -218,24 +253,12 @@ internal class AppRepository(
                         cursor.getString(knownForDepartmentColIndex),
                         emptyList(),
                         emptyList()
-                    ).apply {
-                        expanded = false
-                        birthday = cursor.getString(birthdayColIndex)
-                        deathDay = cursor.getString(deathDayColIndex)
-                        alsoKnownAs = emptyList()
-                        gender = cursor.getInt(genderColIndex)
-                        biography = cursor.getString(biographyColIndex)
-                        placeOfBirth = cursor.getString(placeOfBirthColIndex)
-                        imdbId = cursor.getString(imdbIdColIndex)
-                        homepage = cursor.getString(homepageColIndex)
-                        profileImages = emptyList()
-                    })
+                    ))
                     i++
                 } while (cursor.moveToNext() && i < endIndex)
             }
 
             cursor.close()
-            Log.d("mytag", "size: " + result.size)
             continuation.resume(result)
         }
     }
@@ -274,21 +297,34 @@ internal class AppRepository(
         cv.put("known_for_department", person.knownForDepartment)
         cv.put("known_for_movie", person.knownForMovie.toString())
         cv.put("known_for_tv", person.knownForTv.toString())
-        cv.put("expanded", person.expanded)
-        cv.put("birthday", person.birthday)
-        cv.put("death_day", person.deathDay)
-        cv.put("also_known_as", person.alsoKnownAs.toString())
-        cv.put("gender", person.gender)
-        cv.put("biography", person.biography)
-        cv.put("place_of_birth", person.placeOfBirth)
-        cv.put("imdb_id", person.imdbId)
-        cv.put("homepage", person.homepage)
-        cv.put("profile_images", person.profileImages.toString())
+
+        cv.put("expanded", false)
+        cv.put("birthday", "")
+        cv.put("death_day", "")
+        cv.put("also_known_as", "")
+        cv.put("gender", "")
+        cv.put("biography", "")
+        cv.put("place_of_birth", "")
+        cv.put("imdb_id", "")
+        cv.put("homepage", "")
+        cv.put("profile_images","")
         db.insert(TABLE_NAME_PERSONS, null, cv)
     }
 
     private fun savePersonInfoToLocalDb(personInfo: PersonInfo) {
-
+        val cv = ContentValues()
+        val db = appDbHelper.writableDatabase
+        cv.put("expanded", false)
+        cv.put("birthday", personInfo.birthday)
+        cv.put("death_day", personInfo.deathDay)
+        cv.put("also_known_as", personInfo.alsoKnownAs.toString())
+        cv.put("gender", personInfo.gender)
+        cv.put("biography", personInfo.biography)
+        cv.put("place_of_birth", personInfo.placeOfBirth)
+        cv.put("imdb_id", personInfo.imdbId)
+        cv.put("homepage", personInfo.homepage)
+        cv.put("profile_images", personInfo.profileImages.toString())
+        db.update(TABLE_NAME_PERSONS, cv, "person_id = ?", arrayOf(personInfo.id.toString()))
     }
 
     private fun saveMovieInfoToLocalDb(movieInfo: MovieInfo) {
