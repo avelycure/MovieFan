@@ -63,6 +63,9 @@ class AppDbHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, 1)
                 "tagline TEXT," +
                 "title TEXT," +
                 "vote_average REAL," +
+                "vote_count INTEGER," +
+                "poster_path TEXT," +
+                "film_cast TEXT," +
                 "movie_id INTEGER," +
                 "images_backdrop TEXT," +
                 "images_posters TEXT);"

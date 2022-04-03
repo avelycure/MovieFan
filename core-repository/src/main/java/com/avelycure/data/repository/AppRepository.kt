@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.util.Log
 import com.avelycure.data.local.AppDbHelper
+import com.avelycure.data.local.SQLiteConstants
 import com.avelycure.data.local.SQLiteConstants.PAGE_SIZE
 import com.avelycure.data.local.SQLiteConstants.TABLE_NAME_MOVIES
+import com.avelycure.data.local.SQLiteConstants.TABLE_NAME_MOVIE_INFO
 import com.avelycure.data.local.SQLiteConstants.TABLE_NAME_PERSONS
 import com.avelycure.data.remote.mappers.*
 import com.avelycure.data.remote.service.movie.MovieInfoService
@@ -39,11 +41,11 @@ internal class AppRepository(
 
     override suspend fun getPersonInfo(id: Int): PersonInfo {
         return try {
-        getPersonInfoFromRemoteSource(id)
+            getPersonInfoFromRemoteSource(id)
         } catch (e: Exception) {
-         Log.d("mytag", "Exception in repo(person info): ${e.message}")
-        getPersonInfoFromDb(id)
-         }
+            Log.d("mytag", "Exception in repo(person info): ${e.message}")
+            getPersonInfoFromDb(id)
+        }
     }
 
     override suspend fun getDetails(id: Int): MovieInfo {
@@ -174,7 +176,15 @@ internal class AppRepository(
     private suspend fun getPersonInfoFromDb(id: Int): PersonInfo {
         return suspendCoroutine { continuation ->
             val db = appDbHelper.writableDatabase
-            val cursor = db.query(TABLE_NAME_PERSONS, null, "person_id = ?", arrayOf(id.toString()), null, null, null)
+            val cursor = db.query(
+                TABLE_NAME_PERSONS,
+                null,
+                "person_id = ?",
+                arrayOf(id.toString()),
+                null,
+                null,
+                null
+            )
             var result: PersonInfo? = null
 
             if (cursor.moveToFirst()) {
@@ -244,16 +254,18 @@ internal class AppRepository(
 
                 var i = 0
                 do {
-                    result.add(Person(
-                        cursor.getInt(personIdColIndex),
-                        cursor.getString(profilePathColIndex),
-                        cursor.getInt(adultColIndex).toBoolean(),
-                        cursor.getString(nameColIndex),
-                        cursor.getFloat(popularityColIndex),
-                        cursor.getString(knownForDepartmentColIndex),
-                        emptyList(),
-                        emptyList()
-                    ))
+                    result.add(
+                        Person(
+                            cursor.getInt(personIdColIndex),
+                            cursor.getString(profilePathColIndex),
+                            cursor.getInt(adultColIndex).toBoolean(),
+                            cursor.getString(nameColIndex),
+                            cursor.getFloat(popularityColIndex),
+                            cursor.getString(knownForDepartmentColIndex),
+                            emptyList(),
+                            emptyList()
+                        )
+                    )
                     i++
                 } while (cursor.moveToNext() && i < endIndex)
             }
@@ -263,12 +275,80 @@ internal class AppRepository(
         }
     }
 
+    @SuppressLint("Recycle")
     private suspend fun getMovieInfoFromDb(id: Int): MovieInfo {
-        return MovieInfo(
-            false, 0, "", "", "", "", 0f, emptyList(),
-            emptyList(), emptyList(), "", "", 0, "", "", 0f, 0, "", emptyList(),
-            0, emptyList(), emptyList(), emptyList()
-        )
+        return suspendCoroutine { continuation ->
+            val db = appDbHelper.writableDatabase
+            val cursor = db.query(
+                SQLiteConstants.TABLE_NAME_MOVIE_INFO,
+                null,
+                "movie_id = ?",
+                arrayOf(id.toString()),
+                null,
+                null,
+                null
+            )
+            var result: MovieInfo? = null
+
+            if (cursor.moveToFirst()) {
+                val adultColIndex = cursor.getColumnIndex("adult")
+                val budgetColIndex = cursor.getColumnIndex("budget")
+                val imdbIdColIndex = cursor.getColumnIndex("imdb_id")
+                val originalLangColIndex = cursor.getColumnIndex("original_lang")
+                val originalTitleColIndex = cursor.getColumnIndex("original_title")
+                val overviewColIndex = cursor.getColumnIndex("overview")
+                val popularityColIndex = cursor.getColumnIndex("popularity")
+                val genresColIndex = cursor.getColumnIndex("genres")
+                val pCompaniesColIndex = cursor.getColumnIndex("p_companies")
+                val pCountriesColIndex = cursor.getColumnIndex("p_countries")
+                val releaseDateColIndex = cursor.getColumnIndex("release_date")
+                val statusColIndex = cursor.getColumnIndex("status")
+                val revenueColIndex = cursor.getColumnIndex("revenue")
+                val taglineColIndex = cursor.getColumnIndex("tagline")
+                val titleColIndex = cursor.getColumnIndex("title")
+                val voteAverageColIndex = cursor.getColumnIndex("vote_average")
+                val voteCountColIndex = cursor.getColumnIndex("vote_count")
+                val posterPathColIndex = cursor.getColumnIndex("poster_path")
+                val movieIdColIndex = cursor.getColumnIndex("movie_id")
+                val castIdColIndex = cursor.getColumnIndex("film_cast")
+                val imagesBackdropColIndex = cursor.getColumnIndex("images_backdrop")
+                val imagesPostersColIndex = cursor.getColumnIndex("images_posters")
+
+                result = MovieInfo(
+                    cursor.getInt(adultColIndex).toBoolean(),
+                    cursor.getInt(budgetColIndex),
+                    cursor.getString(imdbIdColIndex),
+                    cursor.getString(originalLangColIndex),
+                    cursor.getString(originalTitleColIndex),
+                    cursor.getString(overviewColIndex),
+                    cursor.getFloat(popularityColIndex),
+                    emptyList(),
+                    emptyList(),
+                    emptyList(),
+                    cursor.getString(releaseDateColIndex),
+                    cursor.getString(statusColIndex),
+                    cursor.getInt(revenueColIndex),
+                    cursor.getString(taglineColIndex),
+                    cursor.getString(titleColIndex),
+                    cursor.getFloat(voteAverageColIndex),
+                    cursor.getInt(voteCountColIndex),
+                    cursor.getString(posterPathColIndex),
+                    emptyList(),
+                    cursor.getInt(movieIdColIndex),
+                    emptyList(),
+                    emptyList(),
+                    emptyList()
+                )
+            }
+
+            continuation.resume(
+                result ?: MovieInfo(
+                    false, 0, "", "", "", "", 0f, emptyList(),
+                    emptyList(), emptyList(), "", "", 0, "", "", 0f, 0, "", emptyList(),
+                    0, emptyList(), emptyList(), emptyList()
+                )
+            )
+        }
     }
 
     private fun saveMovieToLocalDb(movie: Movie) {
@@ -307,7 +387,7 @@ internal class AppRepository(
         cv.put("place_of_birth", "")
         cv.put("imdb_id", "")
         cv.put("homepage", "")
-        cv.put("profile_images","")
+        cv.put("profile_images", "")
         db.insert(TABLE_NAME_PERSONS, null, cv)
     }
 
@@ -328,7 +408,33 @@ internal class AppRepository(
     }
 
     private fun saveMovieInfoToLocalDb(movieInfo: MovieInfo) {
+        val cv = ContentValues()
+        val db = appDbHelper.writableDatabase
 
+        cv.put("adult", movieInfo.adult)
+        cv.put("budget", movieInfo.budget)
+        cv.put("imdb_id", movieInfo.imdbId)
+        cv.put("original_lang", movieInfo.originalLanguage)
+        cv.put("original_title", movieInfo.originalTitle)
+        cv.put("overview", movieInfo.overview)
+        cv.put("popularity", movieInfo.popularity)
+        cv.put("genres", movieInfo.genres.toString())
+        cv.put("p_companies", movieInfo.productionCompanies.toString())
+        cv.put("p_countries", movieInfo.productionCountries.toString())
+        cv.put("release_date", movieInfo.releaseDate)
+        cv.put("status", movieInfo.status)
+        cv.put("revenue", movieInfo.revenue)
+        cv.put("tagline", movieInfo.tagline)
+        cv.put("title", movieInfo.title)
+        cv.put("vote_average", movieInfo.voteAverage)
+        cv.put("vote_count", movieInfo.voteCount)
+        cv.put("poster_path", movieInfo.posterPath)
+        cv.put("film_cast", movieInfo.cast.toString())
+        cv.put("movie_id", movieInfo.movieId)
+        cv.put("images_backdrop", movieInfo.imagesBackdrop.toString())
+        cv.put("images_posters", movieInfo.imagesPosters.toString())
+
+        db.insert(TABLE_NAME_MOVIE_INFO, null, cv)
     }
 
 }
