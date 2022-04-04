@@ -49,8 +49,6 @@ internal class Compass() : Navigator, Serializable {
                     .remove(screen.fragment)
                     .commit()
 
-
-                //    if (dir == screen.directory) {
                 fragmentManager
                     .beginTransaction()
                     .add(containerId, screen.fragment)

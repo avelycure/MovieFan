@@ -50,6 +50,7 @@ dependencies {
     implementation(project(":movie"))
     implementation(project(":person"))
     implementation(project(":office"))
+    implementation(project(":settings"))
     implementation(project(":movie-info"))
     implementation(project(":movie-picker"))
     implementation(project(':crash-report'))

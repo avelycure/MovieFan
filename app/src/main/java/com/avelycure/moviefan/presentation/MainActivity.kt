@@ -2,28 +2,25 @@ package com.avelycure.moviefan.presentation
 
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
-import android.widget.ImageView
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.FragmentManager
 import com.avelycure.anr_checking.CrashReporter
 import com.avelycure.core_navigation.DirectoryStack
-import com.avelycure.core_navigation.NavigationConstants.GET_MORE_INFO
-import com.avelycure.core_navigation.NavigationConstants.LOAD_IMAGES
-import com.avelycure.core_navigation.NavigationConstants.NAVIGATOR
 import com.avelycure.core_navigation.Navigator
-import com.avelycure.domain.constants.MovieConstants.MOVIE_ID
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.presentation.HomeFragment
 import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.movie_picker.presentation.MoviePickerFragment
 import com.avelycure.moviefan.R
 import com.avelycure.person.presentation.PersonFragment
+import com.avelycure.settings.presentation.SettingsFragment
 import com.example.office.presentation.LoginFragment
 import com.example.office.presentation.OfficeFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.Serializable
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -35,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fragmentManager: FragmentManager
 
     private lateinit var bottomNavigationView: BottomNavigationView
+
+    private lateinit var mainToolbar: Toolbar
 
     @Inject
     lateinit var compas: Navigator
@@ -49,6 +48,9 @@ class MainActivity : AppCompatActivity() {
 
         crashReporter = CrashReporter(handler, applicationContext)
         crashReporter.registerObserver()
+
+        mainToolbar = findViewById(R.id.main_toolbar)
+        setSupportActionBar(mainToolbar)
 
         setUpRoots(savedInstanceState)
         initHome(savedInstanceState)
@@ -70,11 +72,7 @@ class MainActivity : AppCompatActivity() {
                         compas.add(
                             directory = "PERSONS",
                             tag = PersonFragment.Instantiator.getTag(),
-                            bundle = Bundle().apply {
-                                putSerializable(LOAD_IMAGES, { url: String, id: ImageView ->
-                                    imageLoader.loadImage(url, id)
-                                } as Serializable)
-                            }
+                            bundle = Bundle()
                         )
                     true
                 }
@@ -131,7 +129,8 @@ class MainActivity : AppCompatActivity() {
                     PersonFragment.Instantiator,
                     MoviePickerFragment.Instantiator,
                     OfficeFragment.Instantiator,
-                    LoginFragment.Instantiator
+                    LoginFragment.Instantiator,
+                    SettingsFragment.Instantiator
                 ),
                 id = R.id.fragment_container, finish = this::finish
             )
@@ -145,36 +144,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addHomeScreen() {
-        val loadImage = { url: String, id: ImageView ->
-            imageLoader.loadImage(url, id)
-        } as Serializable
-
-        val getMoreInfo = { id: Int, navigator: Navigator ->
-            compas.add(
-                directory = "MOVIES",
-                tag = "MOVIE_INFO",
-                bundle = Bundle().apply {
-                    putInt(MOVIE_ID, id)
-
-                    //putSerializable(
-                    //    LOAD_IMAGES, loadImage
-                    //)
-
-                    //putSerializable(NAVIGATOR, navigator)
-                }
-            )
-        } as Serializable
-
         compas.add(
             directory = "MOVIES",
             tag = HomeFragment.Instantiator.getTag(),
-            bundle = Bundle().apply {
-                //putSerializable(GET_MORE_INFO, getMoreInfo)
-
-                //putSerializable(LOAD_IMAGES, loadImage)
-
-                //putSerializable(NAVIGATOR, compas)
-            }
+            bundle = Bundle()
         )
     }
 
@@ -185,5 +158,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         compas.back()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> {
+                compas.add(
+                    directory = "MOVIES",
+                    tag = SettingsFragment.Instantiator.getTag(),
+                    bundle = Bundle()
+                )
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
