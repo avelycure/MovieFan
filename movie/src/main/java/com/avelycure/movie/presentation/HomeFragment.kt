@@ -2,11 +2,10 @@ package com.avelycure.movie.presentation
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +19,7 @@ import com.avelycure.core_navigation.Navigator
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
 import com.avelycure.movie.constants.HomeConstants.NUMBER_OF_FETCHED_MOVIES
+import com.avelycure.settings.presentation.SettingsFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
@@ -58,6 +58,7 @@ class HomeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.home_fragment, container, false)
         initViewElements(view)
+        setHasOptionsMenu(true)
 
         lifecycleScope.launchWhenStarted {
             homeViewModel.state.collect { homeState ->
@@ -72,7 +73,29 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity).supportActionBar?.title = "Movies"
         homeViewModel.fetchPopularMovies()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        Log.d("mytag", "In movie")
+        menu.clear()
+        inflater.inflate(R.menu.main_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            when (item.itemId) {
+                R.id.action_settings -> {
+                    compas.add(
+                        directory = "MOVIES",
+                        tag = SettingsFragment.Instantiator.getTag(),
+                        bundle = Bundle()
+                    )
+                    return true
+                }
+            }
+            return super.onOptionsItemSelected(item)
     }
 
     private fun initViewElements(view: View) {

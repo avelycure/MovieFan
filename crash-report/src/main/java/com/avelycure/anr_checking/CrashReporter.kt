@@ -17,9 +17,9 @@ const val TAG = "CrashReporter"
  * But if not -> ANR
  */
 class CrashReporter(
-    private val mainHandler: Handler,
     private val context: Context
 ) : LifecycleObserver {
+    private val mainHandler = Handler(context.mainLooper)
     private var tick1: Int = 0
     private var tick2: Int = 0
     private lateinit var analytics: FirebaseAnalytics

@@ -1,9 +1,8 @@
 package com.avelycure.settings.presentation
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.avelycure.core_navigation.IInstantiator
@@ -44,6 +43,16 @@ class SettingsFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.settings_fragment, container, false)
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        (activity as AppCompatActivity).supportActionBar?.title = "Settings"
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.empty_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
 }

@@ -1,11 +1,11 @@
 package com.avelycure.movie_info.presentation
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatRatingBar
 import androidx.appcompat.widget.AppCompatTextView
@@ -97,6 +97,7 @@ class MovieInfoFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.movie_info, container, false)
         movieId = arguments?.getInt(MOVIE_ID, DEFAULT_MOVIE_ID) ?: DEFAULT_MOVIE_ID
+        setHasOptionsMenu(true)
         return view
     }
 
@@ -192,18 +193,19 @@ class MovieInfoFragment : Fragment() {
                 MovieInfoFragment.Instantiator.tag,
                 Bundle().apply {
                     putInt(MOVIE_ID, id)
-
-                    //putSerializable(
-                    //    LOAD_IMAGES, loadImage as Serializable
-                    //)
-
-                    //putSerializable(NAVIGATOR, compas)
                 }
             )
         }
         rvSimilarMovies.adapter = similarMoviesAdapter
         rvSimilarMovies.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        Log.d("mytag", "In movieInfo")
+        menu.clear()
+        inflater.inflate(R.menu.empty_menu, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
 }

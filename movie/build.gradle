@@ -39,6 +39,7 @@ android {
 
 dependencies {
     implementation(project(':resources'))
+    implementation(project(':settings'))
     implementation(project(':core-models'))
     implementation(project(':core-repository'))
     implementation(project(':image-loader'))

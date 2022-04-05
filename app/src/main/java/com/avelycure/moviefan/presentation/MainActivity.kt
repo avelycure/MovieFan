@@ -26,10 +26,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var handler: Handler
     private lateinit var crashReporter: CrashReporter
-    private lateinit var imageLoader: ImageLoader
-    private lateinit var fragmentManager: FragmentManager
 
     private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -42,11 +39,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        handler = Handler(mainLooper)
-        imageLoader = ImageLoader(this, R.drawable.placeholder)
-        fragmentManager = supportFragmentManager
-
-        crashReporter = CrashReporter(handler, applicationContext)
+        crashReporter = CrashReporter(applicationContext)
         crashReporter.registerObserver()
 
         mainToolbar = findViewById(R.id.main_toolbar)
@@ -158,24 +151,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         compas.back()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_settings -> {
-                compas.add(
-                    directory = "MOVIES",
-                    tag = SettingsFragment.Instantiator.getTag(),
-                    bundle = Bundle()
-                )
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 }

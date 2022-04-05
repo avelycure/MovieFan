@@ -1,9 +1,8 @@
 package com.avelycure.movie_picker.presentation
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.avelycure.core_navigation.IInstantiator
 import com.avelycure.movie_picker.R
@@ -31,6 +30,7 @@ class MoviePickerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.movie_picker_fragment, container, false)
         roulette = view.findViewById(R.id.la_roulette)
         roulette.setData(listOf("Action", "Drama", "Comedy", "Horror", "TvShow", "Cartoon", "War", "History"))
@@ -38,7 +38,14 @@ class MoviePickerFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        (activity as AppCompatActivity).supportActionBar?.title = "Movie chooser"
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.empty_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
 
