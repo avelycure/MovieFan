@@ -1,16 +1,11 @@
 package com.avelycure.moviefan.presentation
 
 import android.os.Bundle
-import android.os.Handler
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.FragmentManager
 import com.avelycure.anr_checking.CrashReporter
 import com.avelycure.core_navigation.DirectoryStack
 import com.avelycure.core_navigation.Navigator
-import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.presentation.HomeFragment
 import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.movie_picker.presentation.MoviePickerFragment

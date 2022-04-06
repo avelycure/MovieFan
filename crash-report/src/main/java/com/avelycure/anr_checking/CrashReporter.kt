@@ -4,8 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import androidx.lifecycle.LifecycleObserver
-import com.google.firebase.analytics.FirebaseAnalytics
 import java.lang.Exception
 
 const val PING_TIME: Long = 4000L
@@ -18,15 +16,15 @@ const val TAG = "CrashReporter"
  */
 class CrashReporter(
     private val context: Context
-) : LifecycleObserver {
+) {
     private val mainHandler = Handler(context.mainLooper)
     private var tick1: Int = 0
     private var tick2: Int = 0
-    private lateinit var analytics: FirebaseAnalytics
+    //private lateinit var analytics: FirebaseAnalytics
     private lateinit var t: Thread
 
     fun registerObserver() {
-        analytics = FirebaseAnalytics.getInstance(context)
+        //analytics = FirebaseAnalytics.getInstance(context)
         pingMainLooper()
     }
 
@@ -51,7 +49,7 @@ class CrashReporter(
                             putString("type", "ANR")
                             putString("description", "UI thread is not responding")
                         }
-                        analytics.logEvent("ANR", bundle)
+                        //analytics.logEvent("ANR", bundle)
                     }
                 } catch (e: Exception) {
                     if (e is InterruptedException)

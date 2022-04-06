@@ -4,8 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
     id 'dagger.hilt.android.plugin'
-    id 'com.google.gms.google-services'
-    id 'com.google.firebase.crashlytics'
+    //id 'com.google.gms.google-services'
 }
 
 android {
@@ -68,7 +67,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
 
     //Crashlytics
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.8'
+    //implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.8'
 
     //Hilt
     implementation "com.google.dagger:hilt-android:2.40.5"
