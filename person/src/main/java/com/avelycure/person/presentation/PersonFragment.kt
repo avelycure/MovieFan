@@ -3,7 +3,6 @@ package com.avelycure.person.presentation
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
@@ -69,7 +68,7 @@ class PersonFragment : Fragment() {
 
         pb = view.findViewById(R.id.p_progress_bar)
 
-        personViewModel.onTrigger(PersonEvents.OnRequestMorePersons)
+        personViewModel.onTrigger(PersonEvents.OnRequestPopularPerson)
 
         lifecycleScope.launchWhenStarted {
             personViewModel.state.collect { state ->
@@ -98,7 +97,7 @@ class PersonFragment : Fragment() {
             personViewModel.onTrigger(PersonEvents.OnExpandPerson(personId, itemId))
         }
         personAdapter.fetchMore = {
-            personViewModel.onTrigger(PersonEvents.OnRequestMorePersons)
+            personViewModel.onTrigger(PersonEvents.OnRequestMoreData)
         }
 
         rvPersons = view.findViewById(R.id.p_recycler_view)
@@ -111,7 +110,6 @@ class PersonFragment : Fragment() {
         menu.clear()
         inflater.inflate(R.menu.persons_menu, menu)
         initSearchView(menu)
-        personViewModel.searchPersonByName(searchView.getQueryChangeStateFlow())
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -121,6 +119,7 @@ class PersonFragment : Fragment() {
         searchView = menu.findItem(R.id.search_view).actionView as SearchView
         searchView.setSearchableInfo(searchManager.getSearchableInfo((activity as AppCompatActivity).componentName))
         searchView.setIconifiedByDefault(false)
+        personViewModel.onTrigger(PersonEvents.OnSearchPerson(searchView.getQueryChangeStateFlow()))
 
         // The default state of the homeFragment is showing popular movies, so when we close
         // searchView we are calling fetchPopularMovies()
@@ -132,7 +131,7 @@ class PersonFragment : Fragment() {
 
             override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
                 (activity as AppCompatActivity).invalidateOptionsMenu()
-                personViewModel.onTrigger(PersonEvents.OnRequestMorePersons)
+                personViewModel.onTrigger(PersonEvents.OnRequestPopularPerson)
                 return true
             }
         })

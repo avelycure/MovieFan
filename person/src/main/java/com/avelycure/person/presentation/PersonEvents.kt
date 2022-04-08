@@ -1,9 +1,15 @@
 package com.avelycure.person.presentation
 
+import kotlinx.coroutines.flow.Flow
+
 sealed class PersonEvents {
-    object OnRemoveHeadFromQueue: PersonEvents()
+    object OnRemoveHeadFromQueue : PersonEvents()
 
-    object OnRequestMorePersons: PersonEvents()
+    object OnRequestMoreData : PersonEvents()
 
-    data class OnExpandPerson(val personId: Int, val itemId: Int): PersonEvents()
+    object OnRequestPopularPerson : PersonEvents()
+
+    data class OnSearchPerson(val queryFlow: Flow<String>) : PersonEvents()
+
+    data class OnExpandPerson(val personId: Int, val itemId: Int) : PersonEvents()
 }

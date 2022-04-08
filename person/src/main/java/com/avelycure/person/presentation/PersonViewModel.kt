@@ -3,8 +3,6 @@ package com.avelycure.person.presentation
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.avelycure.domain.models.Person
-import com.avelycure.domain.models.PersonInfo
 import com.avelycure.domain.state.DataState
 import com.avelycure.domain.state.Queue
 import com.avelycure.domain.state.UIComponent
@@ -15,7 +13,6 @@ import com.avelycure.person.utils.setProperties
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,14 +27,31 @@ class PersonViewModel
     private val _state = MutableStateFlow(PersonState())
     val state = _state.asStateFlow()
 
+    private var query = flow<String> { }
+
     fun onTrigger(event: PersonEvents) {
         when (event) {
             is PersonEvents.OnRemoveHeadFromQueue -> removeHeadMessage()
-            is PersonEvents.OnRequestMorePersons -> {
+            is PersonEvents.OnRequestPopularPerson -> {
+                _state.value = _state.value.copy(mode = "popular")
                 getPopularPerson()
             }
             is PersonEvents.OnExpandPerson -> {
                 onExpand(event.personId, event.itemId)
+            }
+            is PersonEvents.OnSearchPerson -> {
+                query = event.queryFlow
+                searchPersonByName(query)
+            }
+            is PersonEvents.OnRequestMoreData -> {
+                when (_state.value.mode) {
+                    "popular" -> {
+                        getPopularPerson()
+                    }
+                    "search" -> {
+                        searchPersonByName(query)
+                    }
+                }
             }
         }
     }
@@ -63,8 +77,8 @@ class PersonViewModel
                         )
                     }
                     is DataState.Loading -> {
-                       _state.value = _state.value.copy(
-                           progressBarState = dataState.progressBarState
+                        _state.value = _state.value.copy(
+                            progressBarState = dataState.progressBarState
                         )
                     }
                 }
@@ -72,15 +86,17 @@ class PersonViewModel
         }
     }
 
+    private var lastVisiblePage = 1
+
     private fun getPopularPerson() {
         viewModelScope.launch {
-            getPopularPersons.execute(_state.value.lastVisiblePage).collect { dataState ->
+            getPopularPersons.execute(lastVisiblePage).collect { dataState ->
                 when (dataState) {
                     is DataState.Data -> {
                         _state.value = _state.value.copy(
                             persons = _state.value.persons + (dataState.data ?: emptyList()),
-                            lastVisiblePage = _state.value.lastVisiblePage + 1
                         )
+                        lastVisiblePage++
                     }
                     is DataState.Loading -> {
                         _state.value = _state.value.copy(
@@ -97,7 +113,8 @@ class PersonViewModel
         }
     }
 
-    fun searchPersonByName(queryFlow: Flow<String>) {
+    //todo add clear previous persons from list
+    private fun searchPersonByName(queryFlow: Flow<String>) {
         viewModelScope.launch {
             queryFlow
                 .debounce(500)
@@ -106,13 +123,17 @@ class PersonViewModel
                 }
                 .distinctUntilChanged()
                 .flatMapLatest { query ->
-                    searchPerson.execute(query, 1)
+                    Log.d("mytag", "requested")
+                    _state.value = _state.value.copy(mode = "search")
+                    lastVisiblePage = 1
+                    searchPerson.execute(query, lastVisiblePage)
                 }.collect { dataState ->
                     when (dataState) {
                         is DataState.Data -> {
                             _state.value = _state.value.copy(
-                                persons = dataState.data ?: emptyList()
+                                persons = _state.value.persons + (dataState.data ?: emptyList()),
                             )
+                            lastVisiblePage++
                         }
                         is DataState.Response -> {
                             Log.d("mytag", "no internet exception in vm")
