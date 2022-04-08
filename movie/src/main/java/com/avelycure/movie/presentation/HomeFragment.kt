@@ -1,27 +1,34 @@
 package com.avelycure.movie.presentation
 
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.core_navigation.IInstantiator
-import com.avelycure.core_navigation.NavigationConstants
-import com.avelycure.core_navigation.NavigationConstants.GET_MORE_INFO
-import com.avelycure.core_navigation.NavigationConstants.NAVIGATOR
 import com.avelycure.core_navigation.Navigator
+import com.avelycure.domain.models.Movie
+import com.avelycure.domain.state.ProgressBarState
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
 import com.avelycure.movie.constants.HomeConstants.NUMBER_OF_FETCHED_MOVIES
+import com.avelycure.movie.utils.MovieDiffUtilCallback
+import com.avelycure.movie.utils.getQueryChangeStateFlow
 import com.avelycure.settings.presentation.SettingsFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,6 +37,7 @@ class HomeFragment : Fragment() {
     private lateinit var homeRecyclerView: RecyclerView
     private lateinit var adapter: HomeAdapter
     private val homeViewModel: HomeViewModel by viewModels()
+    private lateinit var searchView: SearchView
 
     @Inject
     lateinit var imageLoader: ImageLoader
@@ -62,10 +70,12 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launchWhenStarted {
             homeViewModel.state.collect { homeState ->
-                val insertPos = adapter.data.size
-                adapter.data = homeState.movies
-                adapter.notifyItemRangeInserted(insertPos, NUMBER_OF_FETCHED_MOVIES)
-                adapter.loading = false
+                val movieDiffUtilCallback = MovieDiffUtilCallback(adapter.data, homeState.movies)
+                val diffUtilResult = DiffUtil.calculateDiff(movieDiffUtilCallback)
+                adapter.data.clear()
+                adapter.data.addAll(homeState.movies)
+                diffUtilResult.dispatchUpdatesTo(adapter)
+                adapter.loading = (homeState.progressBarState is ProgressBarState.Loading)
             }
         }
         return view
@@ -80,22 +90,25 @@ class HomeFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         Log.d("mytag", "In movie")
         menu.clear()
-        inflater.inflate(R.menu.main_menu, menu)
+        inflater.inflate(R.menu.home_menu, menu)
+        initSearchView(menu)
+        homeViewModel.searchMovieByTitle(searchView.getQueryChangeStateFlow())
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            when (item.itemId) {
-                R.id.action_settings -> {
-                    compas.add(
-                        directory = "MOVIES",
-                        tag = SettingsFragment.Instantiator.getTag(),
-                        bundle = Bundle()
-                    )
-                    return true
-                }
+        when (item.itemId) {
+            R.id.action_settings -> {
+                compas.add(
+                    directory = "MOVIES",
+                    tag = SettingsFragment.Instantiator.getTag(),
+                    bundle = Bundle()
+                )
+                return true
             }
-            return super.onOptionsItemSelected(item)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initViewElements(view: View) {
@@ -114,4 +127,28 @@ class HomeFragment : Fragment() {
         adapter.fetchMore = homeViewModel::fetchPopularMovies
 
     }
+
+    private fun initSearchView(menu: Menu) {
+        val searchManager =
+            (activity as AppCompatActivity).getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchView = menu.findItem(R.id.search_view).actionView as SearchView
+        searchView.setSearchableInfo(searchManager.getSearchableInfo((activity as AppCompatActivity).componentName))
+        searchView.setIconifiedByDefault(false)
+
+        // The default state of the homeFragment is showing popular movies, so when we close
+        // searchView we are calling fetchPopularMovies()
+        (menu.findItem(R.id.search_view) as MenuItem).setOnActionExpandListener(object :
+            MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+                (activity as AppCompatActivity).invalidateOptionsMenu()
+                homeViewModel.fetchPopularMovies()
+                return true
+            }
+        })
+    }
+
 }

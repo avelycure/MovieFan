@@ -1,6 +1,5 @@
 package com.avelycure.movie.presentation
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,16 +9,14 @@ import androidx.appcompat.widget.AppCompatRatingBar
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.avelycure.core_navigation.Navigator
 import com.avelycure.data.constants.RequestConstants
-import com.avelycure.data.constants.TranslationConstants
 import com.avelycure.domain.models.Movie
 import com.avelycure.domain.models.formatters.getNiceGenres
 import com.avelycure.domain.models.formatters.getOriginalTitleAndReleaseDate
 import com.avelycure.movie.R
 
 class HomeAdapter() : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
-    var data: List<Movie> = emptyList()
+    val data: MutableList<Movie> = mutableListOf()
     var onClickedItem: (Int) -> Unit = {_->}
     var fetchMore: () -> Unit = {}
     var loadImages: (String, ImageView) -> Unit = {_,_->}

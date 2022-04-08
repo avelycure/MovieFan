@@ -20,14 +20,13 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
-const val TAG = "PersonViewModel"
-
 @HiltViewModel
 class PersonViewModel
 @Inject constructor(
     private val getPopularPersons: GetPopularPersons,
     private val getPersonInfo: GetPersonInfo
 ) : ViewModel() {
+    private val TAG = "PersonViewModel"
 
     private val _state = MutableStateFlow(PersonState())
     val state = _state.asStateFlow()

@@ -12,6 +12,7 @@ import com.avelycure.data.local.SQLiteConstants.TABLE_NAME_PERSONS
 import com.avelycure.data.remote.mappers.*
 import com.avelycure.data.remote.service.movie.MovieInfoService
 import com.avelycure.data.remote.service.movie.PopularMovieService
+import com.avelycure.data.remote.service.movie.SearchMovieService
 import com.avelycure.data.remote.service.movie.VideoService
 import com.avelycure.data.remote.service.person.PersonInfoService
 import com.avelycure.data.remote.service.person.PopularPersonService
@@ -27,6 +28,7 @@ internal class AppRepository(
     private val popularPersonService: PopularPersonService,
     private val videoService: VideoService,
     private val personInfoService: PersonInfoService,
+    private val searchMovieService: SearchMovieService,
     private val appDbHelper: AppDbHelper,
 ) : IRepository {
 
@@ -37,6 +39,10 @@ internal class AppRepository(
             Log.d("mytag", "Exception in repo(popular movies): ${e.message}")
             getPopularMoviesFromDb(nextPage - 1)
         }
+    }
+
+    override suspend fun searchMovie(title: String, page: Int): List<Movie> {
+        return searchMovieService.getMovieByName(title, page).results.map { it.toMovie() }
     }
 
     override suspend fun getPersonInfo(id: Int): PersonInfo {
