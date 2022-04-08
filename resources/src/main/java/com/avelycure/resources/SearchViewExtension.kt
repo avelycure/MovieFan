@@ -1,4 +1,4 @@
-package com.avelycure.movie.utils
+package com.avelycure.resources
 
 import androidx.appcompat.widget.SearchView
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -8,6 +8,7 @@ import com.avelycure.data.remote.service.movie.SearchMovieService
 import com.avelycure.data.remote.service.movie.VideoService
 import com.avelycure.data.remote.service.person.PersonInfoService
 import com.avelycure.data.remote.service.person.PopularPersonService
+import com.avelycure.data.remote.service.person.SearchPersonService
 import com.avelycure.data.repository.AppRepository
 import com.avelycure.domain.repository.IMovieInfoRepository
 import com.avelycure.domain.repository.IMovieRepository
@@ -89,6 +90,12 @@ object RepositoryModule {
         return SearchMovieService(client)
     }
 
+    @Singleton
+    @Provides
+    fun provideSearchPersonService(client: HttpClient): SearchPersonService {
+        return SearchPersonService(client)
+    }
+
     /**
      * This way we will divide logic and every module will get only needed functionality
      * I checked hash codes, they are the same, so we get the same object every time
@@ -103,7 +110,8 @@ object RepositoryModule {
         videoService: VideoService,
         personInfoService: PersonInfoService,
         searchMovieService: SearchMovieService,
-        appDbHelper: AppDbHelper
+        appDbHelper: AppDbHelper,
+        searchPersonService: SearchPersonService
     ): IRepository {
         return AppRepository(
             popularMovieService,
@@ -113,6 +121,7 @@ object RepositoryModule {
             personInfoService,
             searchMovieService,
             appDbHelper,
+            searchPersonService
         )
     }
 

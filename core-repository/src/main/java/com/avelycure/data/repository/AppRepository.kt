@@ -16,6 +16,7 @@ import com.avelycure.data.remote.service.movie.SearchMovieService
 import com.avelycure.data.remote.service.movie.VideoService
 import com.avelycure.data.remote.service.person.PersonInfoService
 import com.avelycure.data.remote.service.person.PopularPersonService
+import com.avelycure.data.remote.service.person.SearchPersonService
 import com.avelycure.domain.models.*
 import com.avelycure.domain.repository.IRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,6 +31,7 @@ internal class AppRepository(
     private val personInfoService: PersonInfoService,
     private val searchMovieService: SearchMovieService,
     private val appDbHelper: AppDbHelper,
+    private val searchPerson: SearchPersonService
 ) : IRepository {
 
     override suspend fun getPopularMovies(nextPage: Int): List<Movie> {
@@ -52,6 +54,23 @@ internal class AppRepository(
             Log.d("mytag", "Exception in repo(person info): ${e.message}")
             getPersonInfoFromDb(id)
         }
+    }
+
+    override suspend fun searchPerson(query: String, page: Int): List<Person> {
+        return try {
+            searchPersonsInRemoteSource(query, page)
+        }catch (e: Exception){
+            Log.d("mytag", "Exception in repo(search person): ${e.message}")
+            searchPersonsInDb(query, page)
+        }
+    }
+
+    private fun searchPersonsInDb(query: String, page: Int): List<Person> {
+        return emptyList()
+    }
+
+    private suspend fun searchPersonsInRemoteSource(query: String, page: Int): List<Person> {
+        return searchPerson.getPersonsByName(query, page).results.map { it.toPerson() }
     }
 
     override suspend fun getDetails(id: Int): MovieInfo {

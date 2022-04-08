@@ -10,12 +10,10 @@ import com.avelycure.domain.state.Queue
 import com.avelycure.domain.state.UIComponent
 import com.avelycure.person.domain.interactors.GetPersonInfo
 import com.avelycure.person.domain.interactors.GetPopularPersons
+import com.avelycure.person.domain.interactors.SearchPerson
 import com.avelycure.person.utils.setProperties
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -24,7 +22,8 @@ import javax.inject.Inject
 class PersonViewModel
 @Inject constructor(
     private val getPopularPersons: GetPopularPersons,
-    private val getPersonInfo: GetPersonInfo
+    private val getPersonInfo: GetPersonInfo,
+    private val searchPerson: SearchPerson
 ) : ViewModel() {
     private val TAG = "PersonViewModel"
 
@@ -95,6 +94,35 @@ class PersonViewModel
                     }
                 }
             }
+        }
+    }
+
+    fun searchPersonByName(queryFlow: Flow<String>) {
+        viewModelScope.launch {
+            queryFlow
+                .debounce(500)
+                .filter { query ->
+                    return@filter query.isNotEmpty()
+                }
+                .distinctUntilChanged()
+                .flatMapLatest { query ->
+                    searchPerson.execute(query, 1)
+                }.collect { dataState ->
+                    when (dataState) {
+                        is DataState.Data -> {
+                            _state.value = _state.value.copy(
+                                persons = dataState.data ?: emptyList()
+                            )
+                        }
+                        is DataState.Response -> {
+                            Log.d("mytag", "no internet exception in vm")
+                        }
+                        is DataState.Loading -> {
+                            _state.value =
+                                _state.value.copy(progressBarState = dataState.progressBarState)
+                        }
+                    }
+                }
         }
     }
 

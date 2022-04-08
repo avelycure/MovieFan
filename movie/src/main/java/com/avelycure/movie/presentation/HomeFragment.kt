@@ -15,20 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.avelycure.core_navigation.IInstantiator
 import com.avelycure.core_navigation.Navigator
-import com.avelycure.domain.models.Movie
 import com.avelycure.domain.state.ProgressBarState
 import com.avelycure.image_loader.ImageLoader
 import com.avelycure.movie.R
-import com.avelycure.movie.constants.HomeConstants.NUMBER_OF_FETCHED_MOVIES
 import com.avelycure.movie.utils.MovieDiffUtilCallback
-import com.avelycure.movie.utils.getQueryChangeStateFlow
+import com.avelycure.resources.getQueryChangeStateFlow
 import com.avelycure.settings.presentation.SettingsFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -88,7 +82,6 @@ class HomeFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        Log.d("mytag", "In movie")
         menu.clear()
         inflater.inflate(R.menu.home_menu, menu)
         initSearchView(menu)
