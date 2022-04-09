@@ -11,6 +11,7 @@ import com.avelycure.person.domain.interactors.GetPopularPersons
 import com.avelycure.person.domain.interactors.SearchPerson
 import com.avelycure.person.utils.setProperties
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,21 +28,17 @@ class PersonViewModel
     private val _state = MutableStateFlow(PersonState())
     val state = _state.asStateFlow()
 
-    private var query = flow<String> { }
-
     fun onTrigger(event: PersonEvents) {
         when (event) {
             is PersonEvents.OnRemoveHeadFromQueue -> removeHeadMessage()
             is PersonEvents.OnRequestPopularPerson -> {
-                _state.value = _state.value.copy(mode = "popular")
                 getPopularPerson()
             }
             is PersonEvents.OnExpandPerson -> {
                 onExpand(event.personId, event.itemId)
             }
             is PersonEvents.OnSearchPerson -> {
-                query = event.queryFlow
-                searchPersonByName(query)
+                searchPersonByName(event.queryFlow)
             }
             is PersonEvents.OnRequestMoreData -> {
                 when (_state.value.mode) {
@@ -49,9 +46,15 @@ class PersonViewModel
                         getPopularPerson()
                     }
                     "search" -> {
-                        searchPersonByName(query)
+                        searchMorePersons(lastQuery)
                     }
                 }
+            }
+            PersonEvents.OnDefaultModeEnabled -> {
+                _state.value = _state.value.copy(mode = "popular")
+            }
+            PersonEvents.OnSearchModeEnabled -> {
+                _state.value = _state.value.copy(mode = "search")
             }
         }
     }
@@ -87,6 +90,7 @@ class PersonViewModel
     }
 
     private var lastVisiblePage = 1
+    private var lastQuery = ""
 
     private fun getPopularPerson() {
         viewModelScope.launch {
@@ -113,25 +117,48 @@ class PersonViewModel
         }
     }
 
-    //todo add clear previous persons from list
+    private fun searchMorePersons(query: String) {
+        viewModelScope.launch {
+            searchPerson.execute(query, lastVisiblePage).collect { dataState ->
+                when (dataState) {
+                    is DataState.Data -> {
+                        _state.value = _state.value.copy(
+                            persons = _state.value.persons + (dataState.data ?: emptyList()),
+                        )
+                        lastVisiblePage++
+                    }
+                    is DataState.Loading -> {
+                        _state.value = _state.value.copy(
+                            progressBarState = dataState.progressBarState
+                        )
+                    }
+                    is DataState.Response -> {
+                        appendToMessageQueue(
+                            dataState.uiComponent as UIComponent.Dialog
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     private fun searchPersonByName(queryFlow: Flow<String>) {
         viewModelScope.launch {
             queryFlow
                 .debounce(500)
-                .filter { query ->
-                    return@filter query.isNotEmpty()
-                }
                 .distinctUntilChanged()
                 .flatMapLatest { query ->
-                    Log.d("mytag", "requested")
-                    _state.value = _state.value.copy(mode = "search")
                     lastVisiblePage = 1
-                    searchPerson.execute(query, lastVisiblePage)
+                    lastQuery = query
+                    if (query.isEmpty())
+                        getPopularPersons.execute(lastVisiblePage)
+                    else
+                        searchPerson.execute(query, lastVisiblePage)
                 }.collect { dataState ->
                     when (dataState) {
                         is DataState.Data -> {
                             _state.value = _state.value.copy(
-                                persons = _state.value.persons + (dataState.data ?: emptyList()),
+                                persons = dataState.data ?: emptyList()
                             )
                             lastVisiblePage++
                         }

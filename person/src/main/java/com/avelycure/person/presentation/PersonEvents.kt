@@ -9,6 +9,9 @@ sealed class PersonEvents {
 
     object OnRequestPopularPerson : PersonEvents()
 
+    object OnSearchModeEnabled: PersonEvents()
+    object OnDefaultModeEnabled: PersonEvents()
+
     data class OnSearchPerson(val queryFlow: Flow<String>) : PersonEvents()
 
     data class OnExpandPerson(val personId: Int, val itemId: Int) : PersonEvents()

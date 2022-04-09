@@ -126,12 +126,13 @@ class PersonFragment : Fragment() {
         (menu.findItem(R.id.search_view) as MenuItem).setOnActionExpandListener(object :
             MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+                personViewModel.onTrigger(PersonEvents.OnSearchModeEnabled)
                 return true
             }
 
             override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
                 (activity as AppCompatActivity).invalidateOptionsMenu()
-                personViewModel.onTrigger(PersonEvents.OnRequestPopularPerson)
+                personViewModel.onTrigger(PersonEvents.OnDefaultModeEnabled)
                 return true
             }
         })
