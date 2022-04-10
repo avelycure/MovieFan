@@ -1,14 +1,20 @@
 package com.example.widgets.movie
 
+import android.app.PendingIntent
 import android.app.Service
 import android.appwidget.AppWidgetManager
+import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
+import android.widget.Toast
 import com.avelycure.domain.models.formatters.getYear
 import com.avelycure.domain.repository.IMovieRepository
 import com.example.widgets.R
+import com.example.widgets.utils.NotificationConstants.NOTIFICATION_ID
 import com.example.widgets.utils.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +34,7 @@ class MovieWidgetUpdateService : Service() {
     override fun onCreate() {
         super.onCreate()
         notificationHelper = NotificationHelper(applicationContext)
-        startForeground(notificationHelper.NOTIFICATION_ID, notificationHelper.getNotification())
+        startForeground(NOTIFICATION_ID, notificationHelper.getNotification())
     }
 
     @Inject
@@ -61,6 +67,36 @@ class MovieWidgetUpdateService : Service() {
                         "3. ${list[2].title}, ${list[2].getYear()}"
                     )
                     appWidgetManager.updateAppWidget(widgetId, remoteViews)
+
+                    try {
+                        val intent = Intent("android.intent.action.MAIN")
+                        intent.addCategory("android.intent.category.LAUNCHER")
+
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent.component = ComponentName(
+                            "com.avelycure.moviefan",
+                            "com.avelycure.moviefan.presentation.MainActivity"
+                        )
+                        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            PendingIntent.getActivity(
+                                applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE
+                            )
+                        } else {
+                            PendingIntent.getActivity(
+                                applicationContext, 0, intent, 0
+                            )
+                        }
+                        remoteViews.setOnClickPendingIntent(
+                            R.id.mw_container, pendingIntent
+                        )
+                        appWidgetManager.updateAppWidget(widgetId, remoteViews)
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(
+                            applicationContext,
+                            "There was a problem loading the application: ",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
 
                     stopSelf(startId)
                 }

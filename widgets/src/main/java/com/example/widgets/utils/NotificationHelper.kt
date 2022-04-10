@@ -8,13 +8,12 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.widgets.R
+import com.example.widgets.utils.NotificationConstants.CHANNEL_DESCRIPTION
+import com.example.widgets.utils.NotificationConstants.CHANNEL_ID
+import com.example.widgets.utils.NotificationConstants.CHANNEL_NAME
+import com.example.widgets.utils.NotificationConstants.NOTIFICATION_ID
 
 class NotificationHelper(private val context: Context) {
-    private val CHANNEL_ID = "1"
-    private val CHANNEL_DESCRIPTION = "Updating movie widget"
-    private val CHANNEL_NAME = "MovieWidget"
-
-
     private val notificationManager by lazy {
         context.getSystemService(
             Context.NOTIFICATION_SERVICE
@@ -23,7 +22,7 @@ class NotificationHelper(private val context: Context) {
 
     private val notificationBuilder: NotificationCompat.Builder by lazy {
         NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentTitle("MovieWidget")
+            .setContentTitle("MovieFan")
             .setSound(null)
             .setSmallIcon(R.drawable.artist_icon)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -37,7 +36,6 @@ class NotificationHelper(private val context: Context) {
         return notificationBuilder.build()
     }
 
-    val NOTIFICATION_ID = 101
     fun updateNotification(notificationText: String? = null){
         notificationText?.let {
             notificationBuilder.setContentText(it)
@@ -55,5 +53,4 @@ class NotificationHelper(private val context: Context) {
             description = CHANNEL_DESCRIPTION
             setSound(null,null)
         }
-
 }

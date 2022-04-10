@@ -7,6 +7,7 @@ import android.os.IBinder
 import android.widget.RemoteViews
 import com.avelycure.domain.repository.IPersonRepository
 import com.example.widgets.R
+import com.example.widgets.utils.NotificationConstants.NOTIFICATION_ID
 import com.example.widgets.utils.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -28,7 +29,7 @@ class PersonWidgetUpdateService : Service() {
     override fun onCreate() {
         super.onCreate()
         notificationHelper = NotificationHelper(applicationContext)
-        startForeground(notificationHelper.NOTIFICATION_ID, notificationHelper.getNotification())
+        startForeground(NOTIFICATION_ID, notificationHelper.getNotification())
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
