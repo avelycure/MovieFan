@@ -12,7 +12,7 @@ class PersonDiffutilsCallback(
     override fun getNewListSize(): Int = newList.size
 
     /**
-     * This method is called first, we check if ids are not the same than it is different elements
+     * This method is called first, we check if ids are not the same then it is different elements
      * If ids are the same then the personNew and personOld are the same elements but from different
      * list and we should call areContents the same
      */

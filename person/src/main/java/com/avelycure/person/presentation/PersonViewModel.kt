@@ -11,7 +11,6 @@ import com.avelycure.person.domain.interactors.GetPopularPersons
 import com.avelycure.person.domain.interactors.SearchPerson
 import com.avelycure.person.utils.setProperties
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,31 +29,29 @@ class PersonViewModel
 
     fun onTrigger(event: PersonEvents) {
         when (event) {
-            is PersonEvents.OnRemoveHeadFromQueue -> removeHeadMessage()
-            is PersonEvents.OnRequestPopularPerson -> {
-                getPopularPerson()
+            is PersonEvents.OnRemoveHeadFromQueue -> {
+                //when handled message remove it from queue
+                removeHeadMessage()
             }
             is PersonEvents.OnExpandPerson -> {
                 onExpand(event.personId, event.itemId)
             }
-            is PersonEvents.OnSearchPerson -> {
+            is PersonEvents.OnGotTextFlow -> {
                 searchPersonByName(event.queryFlow)
             }
             is PersonEvents.OnRequestMoreData -> {
                 when (_state.value.mode) {
-                    "popular" -> {
+                    PersonFragmentMode.POPULAR -> {
                         getPopularPerson()
                     }
-                    "search" -> {
+                    PersonFragmentMode.SEARCH -> {
                         searchMorePersons(lastQuery)
                     }
                 }
             }
-            PersonEvents.OnDefaultModeEnabled -> {
-                _state.value = _state.value.copy(mode = "popular")
-            }
-            PersonEvents.OnSearchModeEnabled -> {
-                _state.value = _state.value.copy(mode = "search")
+            is PersonEvents.OnModeEnabled -> {
+                //this event is triggered when fragment changes mode
+                _state.value = _state.value.copy(mode = event.mode)
             }
         }
     }
@@ -64,14 +61,16 @@ class PersonViewModel
             getPersonInfo.execute(personId).collect { dataState ->
                 when (dataState) {
                     is DataState.Data -> {
+                        //first we need to make new list not to change old
                         val list = _state.value.persons.toMutableList()
-                        val updatedPerson = list[itemId].copy()
-                        updatedPerson.setProperties(dataState.data)
-                        updatedPerson.expanded = !list[itemId].expanded
+                        //second we need to make new person not to change old
+                        val updatedPerson = list[itemId].copy().apply {
+                            setProperties(dataState.data)
+                            expanded = !list[itemId].expanded
+                        }
                         list[itemId] = updatedPerson
                         _state.value = _state.value.copy(
-                            persons = list,
-                            lastExpandedItem = itemId
+                            persons = list
                         )
                     }
                     is DataState.Response -> {
@@ -117,6 +116,8 @@ class PersonViewModel
         }
     }
 
+    // this method is called when we already called searchPersonByName, so we add persons
+    // to previously created list
     private fun searchMorePersons(query: String) {
         viewModelScope.launch {
             searchPerson.execute(query, lastVisiblePage).collect { dataState ->
@@ -163,7 +164,9 @@ class PersonViewModel
                             lastVisiblePage++
                         }
                         is DataState.Response -> {
-                            Log.d("mytag", "no internet exception in vm")
+                            appendToMessageQueue(
+                                dataState.uiComponent as UIComponent.Dialog
+                            )
                         }
                         is DataState.Loading -> {
                             _state.value =

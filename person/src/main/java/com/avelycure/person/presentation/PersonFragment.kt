@@ -68,7 +68,7 @@ class PersonFragment : Fragment() {
 
         pb = view.findViewById(R.id.p_progress_bar)
 
-        personViewModel.onTrigger(PersonEvents.OnRequestPopularPerson)
+        personViewModel.onTrigger(PersonEvents.OnRequestMoreData)
 
         lifecycleScope.launchWhenStarted {
             personViewModel.state.collect { state ->
@@ -119,20 +119,20 @@ class PersonFragment : Fragment() {
         searchView = menu.findItem(R.id.search_view).actionView as SearchView
         searchView.setSearchableInfo(searchManager.getSearchableInfo((activity as AppCompatActivity).componentName))
         searchView.setIconifiedByDefault(false)
-        personViewModel.onTrigger(PersonEvents.OnSearchPerson(searchView.getQueryChangeStateFlow()))
+        personViewModel.onTrigger(PersonEvents.OnGotTextFlow(searchView.getQueryChangeStateFlow()))
 
         // The default state of the homeFragment is showing popular movies, so when we close
         // searchView we are calling fetchPopularMovies()
         (menu.findItem(R.id.search_view) as MenuItem).setOnActionExpandListener(object :
             MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
-                personViewModel.onTrigger(PersonEvents.OnSearchModeEnabled)
+                personViewModel.onTrigger(PersonEvents.OnModeEnabled(PersonFragmentMode.SEARCH))
                 return true
             }
 
             override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
                 (activity as AppCompatActivity).invalidateOptionsMenu()
-                personViewModel.onTrigger(PersonEvents.OnDefaultModeEnabled)
+                personViewModel.onTrigger(PersonEvents.OnModeEnabled(PersonFragmentMode.POPULAR))
                 return true
             }
         })

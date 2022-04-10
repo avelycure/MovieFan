@@ -9,6 +9,5 @@ data class PersonState(
     val progressBarState: ProgressBarState = ProgressBarState.Idle,
     val errorQueue: Queue<UIComponent> = Queue(mutableListOf()),
     val persons: List<Person> = emptyList(),
-    val lastExpandedItem: Int = -1,
-    val mode: String = "popular"
+    val mode: PersonFragmentMode = PersonFragmentMode.POPULAR
 )
