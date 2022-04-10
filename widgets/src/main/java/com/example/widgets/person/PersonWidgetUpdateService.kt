@@ -67,7 +67,7 @@ class PersonWidgetUpdateService : Service() {
                         intent.addCategory("android.intent.category.LAUNCHER")
                         intent.action = System.currentTimeMillis().toString()
 
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //todo add flags here
                         intent.component = ComponentName(
                             "com.avelycure.moviefan",
                             "com.avelycure.moviefan.presentation.MainActivity"

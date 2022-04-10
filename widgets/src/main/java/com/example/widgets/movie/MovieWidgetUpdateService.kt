@@ -72,7 +72,6 @@ class MovieWidgetUpdateService : Service() {
                         val intent = Intent("android.intent.action.MAIN")
                         intent.addCategory("android.intent.category.LAUNCHER")
 
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.component = ComponentName(
                             "com.avelycure.moviefan",
                             "com.avelycure.moviefan.presentation.MainActivity"

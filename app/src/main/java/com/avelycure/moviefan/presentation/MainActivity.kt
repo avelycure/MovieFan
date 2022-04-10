@@ -95,16 +95,19 @@ class MainActivity : AppCompatActivity() {
         }
         setUpRoots(savedInstanceState)
         initHome(savedInstanceState)
-        handleIntent(savedInstanceState)
+        handleIntent()
     }
 
-    private fun handleIntent(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null) {
-            Log.d("mytag", "Handle: " + savedInstanceState.getString("WIDGET_TYPE", "MOVIE"))
-            when (savedInstanceState.getString("WIDGET_TYPE", "MOVIE")) {
-                "MOVIE" -> compas.openLastFragmentInDirectory("MOVIES")
-                "PERSON" -> compas.openLastFragmentInDirectory("PERSONS")
-            }
+    private fun handleIntent() {
+        val type = intent?.extras?.getString("WIDGET_TYPE", "MOVIE")
+        Log.d("mytag", "Type: " + type)
+        when (type) {
+            "MOVIE" -> compas.openLastFragmentInDirectory("MOVIES")
+            "PERSON" -> compas.add(
+                directory = "PERSONS",
+                tag = PersonFragment.Instantiator.getTag(),
+                bundle = Bundle()
+            )
         }
     }
 
