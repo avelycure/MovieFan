@@ -1,27 +1,38 @@
-package com.avelycure.movie_picker.presentation
+package com.avelycure.settings.presentation
 
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.avelycure.core_navigation.IInstantiator
-import com.avelycure.movie_picker.R
-import com.example.laroullete.Roulette
+import com.avelycure.core_navigation.Navigator
+import com.avelycure.image_loader.ImageLoader
+import com.avelycure.settings.R
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class MoviePickerFragment : Fragment() {
+@AndroidEntryPoint
+class SettingsFragment: Fragment() {
 
-    lateinit var roulette: Roulette
+    @Inject
+    lateinit var imageLoader: ImageLoader
+
+    @Inject
+    lateinit var compas: Navigator
+
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     companion object Instantiator : IInstantiator {
-        private const val tag = "MoviePickerFragment"
+        private const val tag = "SETTINGS"
         override fun getTag(): String {
             return tag
         }
 
         override fun getInstance(bundle: Bundle): Fragment {
-            val moviePickerFragment = MoviePickerFragment()
-            moviePickerFragment.arguments = bundle;
-            return moviePickerFragment
+            val settingsFragment = SettingsFragment()
+            settingsFragment.arguments = bundle
+            return settingsFragment
         }
     }
 
@@ -30,23 +41,18 @@ class MoviePickerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true)
-        val view = inflater.inflate(R.layout.movie_picker_fragment, container, false)
-        roulette = view.findViewById(R.id.la_roulette)
-        roulette.setData(listOf("Action", "Drama", "Comedy", "Horror", "TvShow", "Cartoon", "War", "History"))
+        val view = inflater.inflate(R.layout.settings_fragment, container, false)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        (activity as AppCompatActivity).supportActionBar?.title = "Movie chooser"
+        (activity as AppCompatActivity).supportActionBar?.title = "Settings"
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
         inflater.inflate(R.menu.empty_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
-
 
 }

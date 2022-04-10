@@ -3,12 +3,11 @@ package com.example.office.presentation
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -41,6 +40,7 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         val view = inflater.inflate(R.layout.login_fragment, container, false)
         return view
     }
@@ -70,7 +70,6 @@ class LoginFragment : Fragment() {
 
         }
 
-
         lifecycleScope.launchWhenCreated {
             officeViewModel.state.collect { state ->
                 Log.d("mytag", state.token.requestToken)
@@ -81,5 +80,12 @@ class LoginFragment : Fragment() {
             }
         }
         officeViewModel.login()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.office_menu, menu)
+        (activity as AppCompatActivity).supportActionBar?.title = "Office"
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }

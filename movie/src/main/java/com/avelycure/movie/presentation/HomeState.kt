@@ -9,5 +9,5 @@ data class HomeState(
     val movies: List<Movie> = emptyList(),
     val progressBarState: ProgressBarState = ProgressBarState.Idle,
     val errorQueue: Queue<UIComponent> = Queue(mutableListOf()),
-    val lastVisiblePage: Int = 1
+    val mode: HomeFragmentMode = HomeFragmentMode.POPULAR
 )
