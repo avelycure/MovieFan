@@ -78,14 +78,14 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = "Movies"
-        homeViewModel.fetchPopularMovies()
+        homeViewModel.onTrigger(HomeEvents.OnRequestMoreData)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.clear()
         inflater.inflate(R.menu.home_menu, menu)
         initSearchView(menu)
-        homeViewModel.searchMovieByTitle(searchView.getQueryChangeStateFlow())
+        homeViewModel.onTrigger(HomeEvents.OnGotTextFlow(searchView.getQueryChangeStateFlow()))
 
         super.onCreateOptionsMenu(menu, inflater)
     }
@@ -117,7 +117,9 @@ class HomeFragment : Fragment() {
                 putInt("movie_id", id)
             })
         }
-        adapter.fetchMore = homeViewModel::fetchPopularMovies
+        adapter.fetchMore = {
+            homeViewModel.onTrigger(HomeEvents.OnRequestMoreData)
+        }
 
     }
 
@@ -133,12 +135,13 @@ class HomeFragment : Fragment() {
         (menu.findItem(R.id.search_view) as MenuItem).setOnActionExpandListener(object :
             MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+                homeViewModel.onTrigger(HomeEvents.OnModeEnabled(HomeFragmentMode.SEARCH))
                 return true
             }
 
             override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
                 (activity as AppCompatActivity).invalidateOptionsMenu()
-                homeViewModel.fetchPopularMovies()
+                homeViewModel.onTrigger(HomeEvents.OnModeEnabled(HomeFragmentMode.POPULAR))
                 return true
             }
         })

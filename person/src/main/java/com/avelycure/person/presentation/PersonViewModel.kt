@@ -93,26 +93,28 @@ class PersonViewModel
 
     private fun getPopularPerson() {
         viewModelScope.launch {
-            getPopularPersons.execute(lastVisiblePage).collect { dataState ->
-                when (dataState) {
-                    is DataState.Data -> {
-                        _state.value = _state.value.copy(
-                            persons = _state.value.persons + (dataState.data ?: emptyList()),
-                        )
-                        lastVisiblePage++
-                    }
-                    is DataState.Loading -> {
-                        _state.value = _state.value.copy(
-                            progressBarState = dataState.progressBarState
-                        )
-                    }
-                    is DataState.Response -> {
-                        appendToMessageQueue(
-                            dataState.uiComponent as UIComponent.Dialog
-                        )
+            getPopularPersons
+                .execute(lastVisiblePage)
+                .collect { dataState ->
+                    when (dataState) {
+                        is DataState.Data -> {
+                            _state.value = _state.value.copy(
+                                persons = _state.value.persons + (dataState.data ?: emptyList()),
+                            )
+                            lastVisiblePage++
+                        }
+                        is DataState.Loading -> {
+                            _state.value = _state.value.copy(
+                                progressBarState = dataState.progressBarState
+                            )
+                        }
+                        is DataState.Response -> {
+                            appendToMessageQueue(
+                                dataState.uiComponent as UIComponent.Dialog
+                            )
+                        }
                     }
                 }
-            }
         }
     }
 
