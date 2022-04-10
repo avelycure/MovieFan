@@ -1,6 +1,8 @@
 package com.avelycure.moviefan.presentation
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.avelycure.anr_checking.CrashReporter
@@ -34,14 +36,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        Log.d("mytag", "MainOnCreate: " + savedInstanceState?.getString("WIDGET_TYPE", "MOVIE"))
+        Log.d("mytag", "MainOnCreate: " + intent.extras?.getString("WIDGET_TYPE", "MOVIE"))
+
         crashReporter = CrashReporter(applicationContext)
         crashReporter.registerObserver()
 
         mainToolbar = findViewById(R.id.main_toolbar)
         setSupportActionBar(mainToolbar)
-
-        setUpRoots(savedInstanceState)
-        initHome(savedInstanceState)
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener {
@@ -91,6 +93,27 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        setUpRoots(savedInstanceState)
+        initHome(savedInstanceState)
+        handleIntent()
+    }
+
+    private fun handleIntent() {
+        val type = intent?.extras?.getString("WIDGET_TYPE", "MOVIE")
+        Log.d("mytag", "Type: " + type)
+        when (type) {
+            "MOVIE" -> compas.openLastFragmentInDirectory("MOVIES")
+            "PERSON" -> compas.add(
+                directory = "PERSONS",
+                tag = PersonFragment.Instantiator.getTag(),
+                bundle = Bundle()
+            )
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        Log.d("mytag", "On NewIntent: " + intent?.extras?.getString("WIDGET_TYPE", "MOVIE"))
     }
 
     private fun setUpRoots(savedInstanceState: Bundle?) {

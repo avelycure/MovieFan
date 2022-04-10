@@ -10,7 +10,7 @@ import android.util.Log
 
 class MovieWidget: AppWidgetProvider() {
 
-    // this method is called every 30 minutes
+    // this method is called every 12 hours
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
