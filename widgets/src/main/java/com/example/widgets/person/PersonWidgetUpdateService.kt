@@ -1,10 +1,15 @@
 package com.example.widgets.person
 
+import android.app.PendingIntent
 import android.app.Service
 import android.appwidget.AppWidgetManager
+import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
+import android.widget.Toast
 import com.avelycure.domain.repository.IPersonRepository
 import com.example.widgets.R
 import com.example.widgets.utils.NotificationConstants.NOTIFICATION_ID
@@ -56,6 +61,39 @@ class PersonWidgetUpdateService : Service() {
                         "3. ${list[2].name}, ${list[2].knownForDepartment}"
                     )
                     appWidgetManager.updateAppWidget(widgetId, remoteViews)
+
+                    try {
+                        val intent = Intent("android.intent.action.MAIN")
+                        intent.addCategory("android.intent.category.LAUNCHER")
+                        intent.action = System.currentTimeMillis().toString()
+
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.component = ComponentName(
+                            "com.avelycure.moviefan",
+                            "com.avelycure.moviefan.presentation.MainActivity"
+                        )
+                        intent.putExtra("WIDGET_TYPE", "PERSON")
+                        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                            PendingIntent.getActivity(
+                                applicationContext,
+                                0,
+                                intent,
+                                PendingIntent.FLAG_IMMUTABLE
+                            )
+                        else
+                            PendingIntent.getActivity(
+                                applicationContext, 0, intent, 0
+                            )
+
+                        remoteViews.setOnClickPendingIntent(R.id.pw_container, pendingIntent)
+                        appWidgetManager.updateAppWidget(widgetId, remoteViews)
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(
+                            applicationContext,
+                            "There was a problem loading the application: ",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
 
                     stopSelf(startId)
                 }

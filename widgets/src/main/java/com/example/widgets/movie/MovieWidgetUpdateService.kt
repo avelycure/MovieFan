@@ -1,5 +1,6 @@
 package com.example.widgets.movie
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.Service
 import android.appwidget.AppWidgetManager
@@ -47,7 +48,6 @@ class MovieWidgetUpdateService : Service() {
         val allWidgetIds = intent?.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)
 
         if (allWidgetIds != null) {
-
             for (widgetId in allWidgetIds) {
                 serviceScope.launch {
                     val remoteViews =
@@ -72,25 +72,34 @@ class MovieWidgetUpdateService : Service() {
                         val intent = Intent("android.intent.action.MAIN")
                         intent.addCategory("android.intent.category.LAUNCHER")
 
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.component = ComponentName(
                             "com.avelycure.moviefan",
                             "com.avelycure.moviefan.presentation.MainActivity"
                         )
+                        intent.putExtra("WIDGET_TYPE", "MOVIE")
+                        intent.action = System.currentTimeMillis().toString()
                         val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             PendingIntent.getActivity(
-                                applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE
+                                applicationContext,
+                                0,
+                                intent,
+                                PendingIntent.FLAG_IMMUTABLE
                             )
                         } else {
                             PendingIntent.getActivity(
-                                applicationContext, 0, intent, 0
+                                applicationContext,
+                                0,
+                                intent,
+                                0
                             )
                         }
-                        remoteViews.setOnClickPendingIntent(
-                            R.id.mw_container, pendingIntent
-                        )
+                        Log.d("mytag", "No error: " + intent.extras?.getString("WIDGET_TYPE", "MOVIE"))
+
+                        remoteViews.setOnClickPendingIntent(R.id.mw_container, pendingIntent)
                         appWidgetManager.updateAppWidget(widgetId, remoteViews)
                     } catch (e: ActivityNotFoundException) {
+                        Log.d("mytag", "Error: " + intent.extras?.getString("WIDGET_TYPE", "MOVIE"))
                         Toast.makeText(
                             applicationContext,
                             "There was a problem loading the application: ",
