@@ -59,6 +59,7 @@ dependencies {
     implementation(project(':core-navigation'))
     implementation(project(':navigation'))
     implementation(project(':widgets'))
+    implementation(project(':analytics-proxy'))
 
     //Core
     implementation 'androidx.core:core-ktx:1.7.0'
