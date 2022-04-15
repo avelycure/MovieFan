@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.avelycure.analytics_proxy.AnalyticsProxy
+import com.avelycure.analytics_proxy.create
 import com.avelycure.anr_checking.CrashReporter
 import com.avelycure.core_navigation.DirectoryStack
 import com.avelycure.core_navigation.Navigator
@@ -12,6 +14,8 @@ import com.avelycure.movie.presentation.HomeFragment
 import com.avelycure.movie_info.presentation.MovieInfoFragment
 import com.avelycure.movie_picker.presentation.MoviePickerFragment
 import com.avelycure.moviefan.R
+import com.avelycure.moviefan.analytics.AppAnalytics
+import com.avelycure.moviefan.analytics.LogAnalyticsTracker
 import com.avelycure.person.presentation.PersonFragment
 import com.avelycure.settings.presentation.SettingsFragment
 import com.example.office.presentation.LoginFragment
@@ -36,11 +40,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d("mytag", "MainOnCreate: " + savedInstanceState?.getString("WIDGET_TYPE", "MOVIE"))
-        Log.d("mytag", "MainOnCreate: " + intent.extras?.getString("WIDGET_TYPE", "MOVIE"))
-
-        crashReporter = CrashReporter(applicationContext)
-        crashReporter.registerObserver()
+        setUpAnalytics()
 
         mainToolbar = findViewById(R.id.main_toolbar)
         setSupportActionBar(mainToolbar)
@@ -98,10 +98,22 @@ class MainActivity : AppCompatActivity() {
         handleIntent()
     }
 
+    private fun setUpAnalytics() {
+        crashReporter = CrashReporter(applicationContext)
+        crashReporter.registerObserver()
+
+        val analyticsProxy =
+            AnalyticsProxy
+                .Builder()
+                .analyticsTracker(LogAnalyticsTracker())
+                .build()
+        val appAnalytics: AppAnalytics = analyticsProxy.create()
+        appAnalytics.trackAppStart()
+        appAnalytics.trackANR()
+    }
+
     private fun handleIntent() {
-        val type = intent?.extras?.getString("WIDGET_TYPE", "MOVIE")
-        Log.d("mytag", "Type: " + type)
-        when (type) {
+        when (intent?.extras?.getString("WIDGET_TYPE", "MOVIE")) {
             "MOVIE" -> compas.openLastFragmentInDirectory("MOVIES")
             "PERSON" -> compas.add(
                 directory = "PERSONS",
@@ -109,11 +121,6 @@ class MainActivity : AppCompatActivity() {
                 bundle = Bundle()
             )
         }
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        Log.d("mytag", "On NewIntent: " + intent?.extras?.getString("WIDGET_TYPE", "MOVIE"))
     }
 
     private fun setUpRoots(savedInstanceState: Bundle?) {
