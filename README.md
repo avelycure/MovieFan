@@ -14,19 +14,19 @@ Multi-module project to get information from TMDB.
 * ANR tracking
 * Widgets on main screen
 
-# [[CustomImageLoader]](https://github.com/avelycure/MovieFan/tree/master/image-loader)
+# [CustomImageLoader](https://github.com/avelycure/MovieFan/tree/master/image-loader)
 To load images, a module was written that uses a pool of threads to quickly load a lot of pictures
 
-# [[CustomView]]
+# CustomView
 Here I used LaRoulette, custom view from one of [[my repositories]](https://github.com/avelycure/LaRoulette)
 
-# [[Custom navigation]](https://github.com/avelycure/MovieFan/tree/master/navigation)
+# [Custom navigation](https://github.com/avelycure/MovieFan/tree/master/navigation)
 Here I created a class that is responsible for navigation in the application. Implemented a stack stack structure and saving the state of fragments when the screen is rotated
 
-# [[ANR tracking]](https://github.com/avelycure/MovieFan/tree/master/crash-report)
+# [ANR tracking](https://github.com/avelycure/MovieFan/tree/master/crash-report)
 The way to check if ANR occurred is to ping main thread using handler
 
-# [[Widgets]](https://github.com/avelycure/MovieFan/tree/master/widgets)
+# [Widgets](https://github.com/avelycure/MovieFan/tree/master/widgets)
 Small signs where you can quickly see the most popular actors and the most interesting films
 
 # Screenshots
